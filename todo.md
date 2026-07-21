@@ -2,19 +2,11 @@
 
 for realease of ***v0.4.0-beta*** version
 
+## Airfoil Designer
 ---
 
-### Airfoil
-An airfoil tree was adjusted to match new convention
-**ToDo:**
-- [x] Add 'type' column Airfoil tree
-    - [ ] ~~control type of LE and TE: free (F), circle (C), elipse(E)~~ **postponed to version v4.1**
-- [x] Fixed the bug on tree refresh when ***Type*** is missing
-- [x] To make the widget store the selected object info data
- 
 ### Reference
 A reference can now be handled using both bar menu and specified widget. Both allow to add, delete, show and hide a reference airfoil
-
 **ToDo:**
 - [x] **Add** button works properly for selig format airfoils
 - [x] **Delete** button works properly for selig format airfoils
@@ -23,26 +15,6 @@ A reference can now be handled using both bar menu and specified widget. Both al
 - [ ] Secondary: **postponed to version v4.1**
     - [ ] ~~To allow to modify the reference~~
     - [ ] ~~To allow to flip the reference~~
-
-### Parameter Table
-A table was adjusted to new airfoil format. It now updates and populates the tabele properly with the selected airfoil data.
-**ToDo:**
-- [x] To clear out the rows after airfoil was deleted
-- [ ] To repair nominal to stay put untill project open or refresh
- 
-### Airfoil Description Editing
-Description Widget in Airfoil Designer shows the description of an airfoil in the widget or in the dialog. Clicking Edit button allows to edit the text. To edit an airfoil user must first select an airfoil in the airfoil tree. If an airfoil is deleted the default message is being displayed.
-**ToDo:**
-- [x] To populate the text area with description of selected airfoil
-- [x] To save/reject the changes on user's request
-- [x] Bullet proof the widget for possible unwanted events
-- [x] To clear out after deleding an airfoil
-
-### Statistics Table
-New widget added to display statistics of the selected airfoil.
-**ToDo:**
-- [ ] To investigate the statistics of interest
-- [ ] To enlarge the available statistics storage
 
 ### Tool Bar
 New element added to GUI to quickly navigate the functions of the program. For now the airfoil functions are displayed for quick access it also supports shortcuts:
@@ -56,44 +28,44 @@ New element added to GUI to quickly navigate the functions of the program. For n
 - [x] To assign functions to each button
 - [x] To enlarge the Toolbar with other Essentail Tools
 
-### Menu Bar
+### Menu Bar / Basic functions
 Has a lot to investiagte
 **Checked/Partially Checked:**
 - File Menu:
-    - [ ] New ← works and refreshes the widgets of tree airfoil and reference
+    - [x] New ← works and refreshes the widgets of tree airfoil and reference
     - [ ] Open ← works as a button but **function should be checked after clarification of new airfoil definition**
-    - [ ] Save ← works as a button but **function should be checked after clarification of new airfoil definition**
-    - [ ] Save As ← works as a button but **function should be checked after clarification of new airfoil definition**
-    - [x] Edit Project Description ← **works as intended**
-    - [x] Exit ← **works as intended**
+    - [x] Save ← works and the export was adapted to the new hierarchy of airfoil object
+    - [x] Save As ← works and the export was adapted to the new hierarchy of airfoil object
+    - [x] Edit Project Description ← works as intended, updates between widgets and modules
+    - [x] Exit ← works as intended
 
 - Program Menu:
-    - [x] User Manual ← **works as intended**
-    - [x] About ← **works as intended**
-    - [x] Preferences ← **works as intended**
+    - [x] User Manual ← works as intended, opens user manual in web browser
+    - [x] About ← works as intended, opens about window as pop-up window
+    - [x] Preferences ← works as intended, opens window as pop-up window, allows to save or abort, still requires reboot in some functions.
 
 **ToDo:**
-- Airfoil -- *Check if functions are working with new airfoil definition:*
+- Airfoil -- **Check if functions are working with new airfoil definition:**    
     - [x] Create ← works, added to toolbar
     - [ ] Append
-    - [ ] Delete ← works, added to tool bar
-    - [ ] Flip
-    - [ ] Save
+    - [ ] Delete ← **doesn't work**
+    - [x] Flip ← flips the airfoil but does not change the position of PS and SS. Should it?
+    - [x] Save ← Saves an airfoil to .arf.ddls format based on json
     - [ ] Export
-    - [x] Rename ← works!
-    - [x] Edit description ← works!
+    - [x] Rename ← renames an airfoil and assures the unique name
+    - [ ] ~~Edit description~~ *no longer applicable*
     - [ ] ~~Fit2Reference~~ **postponed to version v4.1**
 - Reference
-    - [x] Add
-    - [x] Delete
-    - [x] Show
+    - [ ] Add ← adds the reference to project
+    - [ ] Delete ← deletes selected reference (maybe add warning)
+    - [ ] Show ← changes the visibility state, resulting in object appearing ad dissappearing in the viewport
     - [ ] ~~Edit~~ **postponed to version v4.1**
     - [ ] ~~Flip~~ **postponed to version v4.1**
 - View
-    - [ ] Fit view
+    - [x] Fit view ← **works!**
     - [ ] ~~Show Curvature comb~~ **postponed to version v4.1**
     - [ ] ~~Show camberline~~ **postponed to version v4.1**
-- Window
+- Window -- **NO TICK UPDATE IN MENU BAR**
     - [x] Airfoil Tree
     - [x] Reference Tree
     - [x] Parameter Table
@@ -101,13 +73,69 @@ Has a lot to investiagte
     - [x] Description TextArea
     - [x] Statistics Table
 - Module
-    - [ ] Wing Module
+    - [x] Wing Module ← **changes the module correctly**
 
-## Rework:
-**View menu**
-- [ ] set view back to airfoil
 
+## Wing Designer
 ---
+### Object Tree
+- [x] Adding components ← **works**
+- [x] Adding wings ← **works**
+- [x] Adding segments ← **works**
+    - [x] Adding segments causes parent airfoil do be added to tree ← **works**
+- [ ] Deleting components
+- [ ] Deleting wings
+- [ ] Deleting segments
+    - [ ] Deleting segments causes parent airfoil do be added to tree
+
+## Wing Creation
+- [x] Segment Wireframe is created
+- [x] Connection wireframe is created
+- [ ] Surface is created:
+    - [ ] Creating Skin instance
+    - [ ] Creating Surface patches and assigning exisiting wireframe to it
+    - [ ] All handled by OpenGL
+
+### STEP export
+- [ ] adapt STEP classes to new objects and methods in DAEDALUS 0.4
+- [ ] modify export algorythm
+---
+ 
+### Airfoil tree --> Finished and tested for AD
+An airfoil tree was adjusted to match new convention
+**ToDo:**
+- [x] Add 'type' column Airfoil tree
+    - [ ] ~~control type of LE and TE: free (F), circle (C), elipse(E)~~ **postponed to version v4.1**
+- [x] Fixed the bug on tree refresh when ***Type*** is missing
+- [x] To make the widget store the selected object info data
+
+### Parameter Table --> Finished and tested for AD / WD
+A table was adjusted to new airfoil format. It now updates and populates the tabele properly with the selected airfoil data.
+**ToDo:**
+- [x] To clear out the rows after airfoil was deleted
+- [x] To repair nominal to stay put untill project open or refresh
+
+### Description Editing --> Finished and tested for AD / WD
+Description Widget in Airfoil Designer shows the description of an airfoil in the widget or in the dialog. Clicking Edit button allows to edit the text. To edit an airfoil user must first select an airfoil in the airfoil tree. If an airfoil is deleted the default message is being displayed.
+*ToDo:*
+- [x] To populate the text area with description of selected airfoil
+- [x] To save/reject the changes on user's request
+- [x] Bullet proof the widget for possible unwanted events
+- [x] To clear out after deleding an airfoil
+
+### Statistics Table --> Finiseh and tested for AD
+New widget added to display statistics of the selected airfoil.
+**ToDo:**
+- [x] To ensure the Table Widget Can work in AirfoilDesigner and in WingDesigner
+- [x] Table widget reacts to chaing parameters in Parameters Table
+- [ ] ~~To investigate the statistics of interest~~ -->  **postponed to version v4.1**
+- [ ] ~~To enlarge the available statistics storage~~ -->  **postponed to version v4.1**
+
+### Home Screen --> Finished
+Correct buttons and styling
+*ToDo:*
+- [x] correct cards in home screen
+- [x] ensure proper buttons functions
 
 # Changelog notes
 

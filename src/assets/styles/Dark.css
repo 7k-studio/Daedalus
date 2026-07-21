@@ -1,10 +1,21 @@
-DeadalusStyle
+DaedalusStyle
 {
     LoggerMain: #ffffff;
     LoggerDebug: #00c3ff;
     LoggerWarning: #eeff00;
     LoggerError: #ff0000;
-    pathToIcons: "src/assets/IconPack/Classic_Black";
+    pathToIcons: "src/assets/IconPack/Classic";
+}
+
+QFrame[CardFrame="true"] {
+    background-color: #e0e0e0;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+}
+QWidget[CardFrame="true"]
+{
+	background-color: transparent;
+	color: #000000;
 }
 
 /*-----QWidget-----*/

@@ -27,7 +27,6 @@ class Rectangle:
     def __init__(self):
         pass
     
-
 class Wheels:
     def __init__(self):
         self.ground_clearance = 0.030

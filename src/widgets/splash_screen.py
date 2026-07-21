@@ -19,15 +19,9 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 
-from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QApplication, QMessageBox, QFileDialog
-    )
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QIcon
-
-from src.arfdes.airfoil_designer import AirfoilDesigner  # Import the AirfoilDesigner class from the correct module
-from src.wngdes.wing_designer import WingDesigner
-import src.program.project as project
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPixmap, QIcon
 
 import logging
 
@@ -39,9 +33,7 @@ class SplashScreen(QWidget):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.setWindowTitle("Splash Screen")
         self.setFixedSize(500, 500)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        #self.setAttribute(Qt.WA_TranslucentBackground, True)
-        #self.setAttribute(Qt.WA_DeleteOnClose, True)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -52,93 +44,21 @@ class SplashScreen(QWidget):
         if pixmap.isNull():
             self.logger.error(" 'logo.png' not found or invalid path.")
         splash_label.setPixmap(pixmap)
-        splash_label.setAlignment(Qt.AlignCenter)
+        splash_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(splash_label)
 
         program_label = QLabel('Daedalus Airfoil & Wing designer')
         program_label.setStyleSheet("font-size: 12px; font-weight: regular;")
-        layout.addWidget(program_label, alignment=Qt.AlignLeft | Qt.AlignTop)
+        layout.addWidget(program_label, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
         version_label = QLabel('v{}'.format(self.DAEDALUS.version))
         version_label.setStyleSheet("font-size: 12px; font-weight: regular;")
-        layout.addWidget(version_label, alignment=Qt.AlignLeft | Qt.AlignTop)
+        layout.addWidget(version_label, alignment=Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
         copyright_label = QLabel('Copyright © 2025-2026 Jakub Kamyk')
         copyright_label.setStyleSheet("font-size: 9px; font-weight: regular;")
-        layout.addWidget(copyright_label, alignment=Qt.AlignCenter | Qt.AlignTop)
+        layout.addWidget(copyright_label, alignment=Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignTop)
         
-        # Add buttons
-        program_button_layout = QHBoxLayout()
-        button1 = QPushButton(icon = QIcon(f"{self.DAEDALUS.color_scheme['pathToIcons']}/NewFile.svg"), text="New Project")
-        button1.setStyleSheet(f"QPushButton {{border-radius: 10px;}}")
-        button1.clicked.connect(self.new_project)
-        button1.setFixedSize(220, 30)  # Set fixed size for the button
-
-        button2 = QPushButton(icon = QIcon(f"{self.DAEDALUS.color_scheme['pathToIcons']}/OpenFile.svg"), text="Open Project")
-        button2.setStyleSheet(f"QPushButton  {{ border-radius: 10px; }}")
-        button2.clicked.connect(self.open_project)
-        button2.setFixedSize(220, 30)  # Set fixed size for the button
-
-        info_button_layout = QHBoxLayout()
-        button3 = QPushButton(icon = QIcon(f"{self.DAEDALUS.color_scheme['pathToIcons']}/Manual.svg"), text="User Manual")
-        button3.setStyleSheet(f"QPushButton {{ border-radius: 10px;}} ")
-        button3.clicked.connect(self.open_manual)
-        button3.setFixedSize(220, 30)  # Set fixed size for the button
-
-        button4 = QPushButton(icon = QIcon(f"{self.DAEDALUS.color_scheme['pathToIcons']}/Web.svg"), text="Reales Notes")
-        button4.setStyleSheet(f"QPushButton {{ border-radius: 10px;}} ")
-        button4.clicked.connect(self.open_notes)
-        button4.setFixedSize(220, 30)  # Set fixed size for the button
-
-        program_button_layout.addWidget(button1)
-        program_button_layout.addWidget(button2)
-        info_button_layout.addWidget(button3)
-        info_button_layout.addWidget(button4)
-        layout.addLayout(program_button_layout)
-        layout.addLayout(info_button_layout)
-
-        # Center the buttons
-        program_button_layout.setAlignment(Qt.AlignCenter)
-        info_button_layout.setAlignment(Qt.AlignCenter)
-
-        # Add close button
-        close_button = QPushButton(self)
-        icon = QIcon(f"{self.DAEDALUS.color_scheme['pathToIcons']}/ExitCross.svg")
-
-        close_button.setIcon(icon)
-        close_button.setFixedSize(30, 30)
-        close_button.setStyleSheet("border: none;")
-        close_button.clicked.connect(self.close)
-
-        # Add close button to the top-right corner
-        close_layout = QHBoxLayout()
-        close_layout.addWidget(close_button)
-        close_layout.setAlignment(Qt.AlignRight)
-        layout.insertLayout(0, close_layout)  # Insert at the top of the main layout
-
-        self.logger.info("SplashScreen initialized")
-
-    def new_project(self):
-        """Create new DAEDALUS project and open the AirfoilDesigner window."""
-        self.logger.info("Creating new project")
-        self.PROJECT = project.Project(self.DAEDALUS)
-        self.DAEDALUS.AIRFOILDESIGNER.set_project(self.PROJECT)
-        self.DAEDALUS.AIRFOILDESIGNER.show()
-        self.close()
-
-    def open_project(self):
-        """Load DAEDALUS project and open the AirfoilDesigner window."""
-        self.logger.info("Opening existing project")
-        self.PROJECT = project.Project(self.DAEDALUS)
-        self.PROJECT.open()
-        self.DAEDALUS.AIRFOILDESIGNER.set_project(self.PROJECT)
-        self.DAEDALUS.WINGDESIGNER.set_project(self.PROJECT)
-        self.DAEDALUS.AIRFOILDESIGNER.show()
-        self.close()
-
-    def open_manual(self):
-        self.logger.info("Opening user manual")
-        manual = self.DAEDALUS.showUserManual()
-
-    def open_notes(self):
-        manual = self.DAEDALUS.showRealiseNotes()
+        self.logger.debug("SplashScreen initialized")
+       
+        # self.close()

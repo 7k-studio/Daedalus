@@ -1,8 +1,28 @@
-from PyQt5.QtWidgets import QTextEdit
-from PyQt5.QtCore import QTimer, Qt, QFileSystemWatcher
-from PyQt5.QtGui import QTextCursor, QColor, QTextCharFormat, QFont
+'''
+
+Copyright (C) 2026 Jakub Kamyk
+
+This file is part of DAEDALUS.
+
+DAEDALUS is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+DAEDALUS is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
+
+'''
+
+from PyQt6.QtWidgets import QTextEdit
+from PyQt6.QtCore import QTimer, QFileSystemWatcher
+from PyQt6.QtGui import QTextCursor, QColor, QTextCharFormat, QFont
 import os
-# from src.program import DAEDALUS
 
 class LogViewer(QTextEdit):
     def __init__(self, log_file, parent=None, program=None):
@@ -10,7 +30,7 @@ class LogViewer(QTextEdit):
         self.log_file = log_file
         self.DAEDALUS = program  # Separate the program reference from the widget parent
         self.setReadOnly(True)
-        self.setLineWrapMode(QTextEdit.NoWrap)
+        self.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
         self.last_position = 0  # Track the last read position in the file
 
         # Set monospaced font
@@ -86,7 +106,7 @@ class LogViewer(QTextEdit):
             format.setForeground(QColor(color_scheme.get('LoggerMain', default_colors['LoggerMain'])))
 
         cursor = self.textCursor()
-        cursor.movePosition(QTextCursor.End)
+        cursor.movePosition(QTextCursor.MoveOperation.End)
 
         cursor.insertText(line + '\n', format)
         self.setTextCursor(cursor)

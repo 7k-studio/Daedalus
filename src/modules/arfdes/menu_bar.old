@@ -1,0 +1,358 @@
+'''
+
+Copyright (C) 2026 Jakub Kamyk
+
+This file is part of DAEDALUS.
+
+DAEDALUS is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+DAEDALUS is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
+
+'''
+
+import logging
+
+from PyQt5.QtWidgets import (
+    QWidget,
+    QHBoxLayout, QVBoxLayout,
+    QMenuBar, QAction, QFileDialog, 
+    QLineEdit, QTextEdit,
+    QTreeWidget, QTreeWidgetItem, 
+    QApplication, QLabel, QInputDialog, QDialog, QDialogButtonBox,
+    QStackedWidget, QMessageBox, QTableWidget, QTableWidgetItem, QPushButton, QHeaderView,
+    )
+from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal
+
+import src.utils.dxf as dxf
+import src.modules.arfdes.tools_airfoils as tools_airfoils
+from src.modules.arfdes.tools_airfoils import Reference_load
+
+from datetime import date
+import src.modules.arfdes.fit_2_reference as fit_2_reference  # Import the fitting module
+from src.modules.arfdes.widget_description import TextDescription
+import src.modules.arfdes.tools_airfoils as tools
+import src.modules.arfdes.tools_reference as tools_ref
+
+class MenuBar(QMenuBar):
+    referenceStatus = pyqtSignal(bool, str)
+
+    def __init__(self, program=None, project=None, parent=None, airfoil_designer=None, time=None):
+        super(MenuBar, self).__init__(parent)
+        self.DAEDALUS = program
+        self.PROJECT = project
+        self.ARFDES = airfoil_designer
+        self.time = time
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.createMenu()
+
+    def set_project(self, project):
+        self.PROJECT = project
+
+    def createMenu(self):
+        """File menu creation"""
+        fileMenu = self.addMenu('File')
+        
+        newAction = QAction('New', self)
+        openAction = QAction('Open', self)
+        saveAction = QAction('Save', self)
+        saveAsAction = QAction('Save As', self)
+        editDescAction = QAction('Edit project description', self)
+        exitAction = QAction('Exit', self)
+
+        newAction.triggered.connect(self.new_project)
+        openAction.triggered.connect(self.open_project)
+        saveAction.triggered.connect(self.save_project)
+        saveAsAction.triggered.connect(self.save_as_project)
+        editDescAction.triggered.connect(self.edit_description_project)
+        exitAction.triggered.connect(self.DAEDALUS.quit)
+
+        fileMenu.addAction(newAction)
+        fileMenu.addAction(openAction)
+        fileMenu.addAction(saveAction)
+        fileMenu.addAction(saveAsAction)
+        fileMenu.addSeparator()
+        fileMenu.addAction(editDescAction)
+        fileMenu.addSeparator()
+        fileMenu.addAction(exitAction)
+        
+        """Airfoil menu creation"""
+        airfoilMenu = self.addMenu('Airfoil')
+
+        newAirfoilAction = QAction('New', self)
+        appendAirfoilAction = QAction('Append', self)
+        deleteAirfoilAction = QAction('Delete', self)
+        saveAirfoilAction = QAction('Save', self)
+        exportAirfoilAction = QAction('Export', self)
+        flipAirfoilAction = QAction('Flip Airfoil', self)
+        renameAirfoilAction = QAction('Rename', self)
+        editDescriptionAction = QAction('Edit Description', self)
+        fit2refAction = QAction('Fit2Reference', self)
+
+        newAirfoilAction.triggered.connect(self.ARFDES.newAirfoil)
+        appendAirfoilAction.triggered.connect(self.ARFDES.appendAirfoil)
+        deleteAirfoilAction.triggered.connect(self.ARFDES.deleteAirfoil)  
+        saveAirfoilAction.triggered.connect(self.ARFDES.saveAirfoil)
+        exportAirfoilAction.triggered.connect(self.ARFDES.exportAirfoil)
+        flipAirfoilAction.triggered.connect(self.ARFDES.flipAirfoil)
+        renameAirfoilAction.triggered.connect(self.ARFDES.renameAirfoil)
+        editDescriptionAction.triggered.connect(self.ARFDES.editDescriptionAirfoil)
+        fit2refAction.triggered.connect(self.fit2ref)
+        
+        airfoilMenu.addAction(newAirfoilAction)
+        airfoilMenu.addAction(appendAirfoilAction)
+        airfoilMenu.addAction(deleteAirfoilAction)
+        airfoilMenu.addAction(saveAirfoilAction)
+        airfoilMenu.addAction(exportAirfoilAction)
+        airfoilMenu.addAction(flipAirfoilAction)
+        airfoilMenu.addSeparator()
+        airfoilMenu.addAction(renameAirfoilAction)
+        airfoilMenu.addAction(editDescriptionAction)
+        if self.DAEDALUS.preferences['general']['beta_features']:
+            airfoilMenu.addAction(fit2refAction)
+        
+        """Reference menu creation"""
+        self.referenceMenu = self.addMenu('Reference')
+
+        addReferenceAction = QAction('Add', self)
+        deleteReferenceAction = QAction('Delete', self)
+        showReferenceAction = QAction('Show', self)
+        editReferenceAction = QAction('Edit', self)
+        flipReferenceAction = QAction('Flip', self)
+
+        addReferenceAction.triggered.connect(self.addReference)
+        deleteReferenceAction.triggered.connect(self.deleteReference)  
+        showReferenceAction.triggered.connect(self.showReference)
+        editReferenceAction.triggered.connect(self.editReference)
+        flipReferenceAction.triggered.connect(self.flipReference)
+        
+        self.referenceMenu.addAction(addReferenceAction)
+        self.referenceMenu.addAction(deleteReferenceAction)
+        self.referenceMenu.addAction(showReferenceAction)
+        if self.DAEDALUS.preferences['general']['beta_features']:
+            self.referenceMenu.addAction(editReferenceAction)
+            self.referenceMenu.addAction(flipReferenceAction)
+
+        """View menu creation"""
+        viewMenu = self.addMenu('View')
+
+        fitViewAction = QAction('Fit view', self)
+        self.showCurvCombAction = QAction('Show curvature comb', self)
+        self.showCurvCombAction.setCheckable(True)
+        self.showCurvCombAction.setChecked(False)
+        self.showCamberlineAction = QAction('Show camberline', self)
+        self.showCamberlineAction.setCheckable(True)
+        self.showCamberlineAction.setChecked(False)
+
+        fitViewAction.triggered.connect(self.fitView)
+        self.showCurvCombAction.triggered.connect(self.showCurvComb)
+        self.showCamberlineAction.triggered.connect(self.showCamberline)
+
+        viewMenu.addAction(fitViewAction)
+        if self.DAEDALUS.preferences['general']['beta_features']:
+            viewMenu.addAction(self.showCurvCombAction)
+            viewMenu.addAction(self.showCamberlineAction)
+
+        """Window menu creation"""
+        windowMenu = self.addMenu('Window')
+
+        self.airfoilWidgetAction = QAction('Airfoil Tree', self)
+        self.airfoilWidgetAction.setCheckable(True)
+        self.airfoilWidgetAction.setChecked(True)
+        self.airfoilWidgetAction.triggered.connect(self.toggle_airfoil)
+
+        self.parametersWidgetAction = QAction('Parameters Table', self)
+        self.parametersWidgetAction.setCheckable(True)
+        self.parametersWidgetAction.setChecked(True)
+        self.parametersWidgetAction.triggered.connect(self.toggle_parameters)
+
+        self.referenceWidgetAction = QAction('Reference Tree', self)
+        self.referenceWidgetAction.setCheckable(True)
+        self.referenceWidgetAction.setChecked(True)
+        self.referenceWidgetAction.triggered.connect(self.toggle_reference)
+
+        self.statisticsWidgetAction = QAction('Statistics Table', self)
+        self.statisticsWidgetAction.setCheckable(True)
+        self.statisticsWidgetAction.setChecked(True)
+        self.statisticsWidgetAction.triggered.connect(self.toggle_statistics)
+
+        self.descriptionWidgetAction = QAction('Description Widget', self)
+        self.descriptionWidgetAction.setCheckable(True)
+        self.descriptionWidgetAction.setChecked(True)
+        self.descriptionWidgetAction.triggered.connect(self.toggle_description)
+
+        self.loggerWidgetAction = QAction('Logger Console', self)
+        self.loggerWidgetAction.setCheckable(True)
+        self.loggerWidgetAction.setChecked(True)
+        self.loggerWidgetAction.triggered.connect(self.toggle_logger)
+
+        windowMenu.addAction(self.airfoilWidgetAction)
+        windowMenu.addAction(self.parametersWidgetAction)
+        windowMenu.addAction(self.referenceWidgetAction)
+        windowMenu.addAction(self.statisticsWidgetAction)
+        windowMenu.addAction(self.descriptionWidgetAction)
+        windowMenu.addAction(self.loggerWidgetAction)
+
+        """Module menu creation"""
+        moduleMenu = self.addMenu('Module')
+        WingModule = QAction('Wing Module', self)
+        WingModule.triggered.connect(self.open_wing_module)
+        moduleMenu.addAction(WingModule)
+
+        """Program menu creation"""
+        programMenu = self.addMenu('Program')
+
+        manualAction = QAction('User Manual', self)
+        aboutAction = QAction('About', self)
+        preferencesAction = QAction('Preferences', self)
+
+        manualAction.triggered.connect(self.DAEDALUS.showUserManual)
+        aboutAction.triggered.connect(self.DAEDALUS.showAboutDialog)
+        preferencesAction.triggered.connect(self.DAEDALUS.showPreferences)
+
+        programMenu.addAction(manualAction)
+        programMenu.addAction(aboutAction)
+        programMenu.addSeparator()
+        programMenu.addAction(preferencesAction)
+    
+    """Airfoil menu actions"""
+
+    def fit2ref(self):
+        """Fit the currently selected airfoil in airfoils_menu to the reference_airfoil by optimizing its parameters."""
+        self.logger.info("Opening Fit2Ref window...")
+        # Get selected item and corresponding airfoil object
+        selected_items = self.ARFDES.TREE_AIRFOIL.tree.selectedItems()
+        if not selected_items:
+            self.logger.warning("No airfoil selected in the tree menu.")
+            return None
+        selected_item = selected_items[0]
+        airfoil_name = selected_item.text(0)
+        # Find airfoil object by name
+        current_airfoil = None
+        for af in globals.PROJECT.project_airfoils:
+            if af.info.get('name', '') == airfoil_name:
+                current_airfoil = af
+                break
+        if current_airfoil is None:
+            self.logger.warning("Selected airfoil object not found.")
+            return None
+        
+        # Open the Fit2RefWindow dialog
+        dlg = fit_2_reference.Fit2RefWindow(parent=self.ARFDES, current_airfoil=current_airfoil, reference_airfoil=self.ARFDES.reference_airfoil)
+        dlg.exec_()          
+
+    def toggleReference(self):
+        sender = self.sender()
+        if hasattr(sender, 'isChecked') and callable(sender.isChecked):
+            if sender.isChecked():
+                self.logger.info("Show reference")
+                options = QFileDialog.Options()
+                fileName, _ = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*);;Text Files (*.txt)", options=options)
+                if fileName:
+                    self.logger.info(f"Found file: {fileName}")
+                    #AirfoilCoord, UP_points, DW_points, name = DataBase_load(fileName, os.getcwd())
+                    referenceState = True
+                    self.referenceStatus.emit(referenceState, fileName)
+            else:
+                self.logger.info("Hide reference")
+                referenceState = False
+                self.referenceStatus.emit(referenceState, None)
+
+    def toggle_airfoil(self):
+        """Toggle the description widget."""
+        if self.parent():
+            self.parent().toggle_airfoil()  # Call the correct method in AirfoilDesigner
+
+    def toggle_parameters(self):
+        """Toggle the description widget."""
+        if self.parent():
+            self.parent().toggle_parameters()  # Call the correct method in AirfoilDesigner
+
+    def toggle_statistics(self):
+        """Toggle the description widget."""
+        if self.parent():
+            self.parent().toggle_statistics()  # Call the correct method in AirfoilDesigner
+
+    def toggle_reference(self):
+        """Toggle the description widget."""
+        if self.parent():
+            self.parent().toggle_reference()  # Call the correct method in AirfoilDesigner
+
+    def toggle_description(self):
+        """Toggle the description widget."""
+        if self.parent():
+            self.parent().toggle_description()  # Call the correct method in AirfoilDesigner
+    
+    def toggle_logger(self):
+        """Toggle the description widget."""
+        if self.parent():
+            self.parent().toggle_logger()  # Call the correct method in AirfoilDesigner
+    
+    def update_action_state(self, action, dock_widget):
+        """Update the state of the given action based on the dock widget's visibility."""
+        action.setChecked(dock_widget.isVisible())
+
+    def open_wing_module(self):
+        if not self.PROJECT:
+            return
+        
+        for airfoil in self.PROJECT.airfoils:
+            airfoil.update()
+
+        self.DAEDALUS.WINGDESIGNER.set_project(self.PROJECT)
+        self.DAEDALUS.WINGDESIGNER.show()
+    
+    def new_project(self):
+        if self.PROJECT:
+            self.PROJECT.new()
+            self.ARFDES.refresh()
+
+    def open_project(self):
+        if self.PROJECT:
+            self.PROJECT.open()
+            self.ARFDES.refresh()
+
+    def save_project(self):
+        if self.PROJECT:
+            self.PROJECT.save()
+
+    def save_as_project(self):
+        if self.PROJECT:
+            self.PROJECT.save_as()
+
+    def edit_description_project(self):
+        if self.PROJECT:
+            self.PROJECT.edit_description()
+    
+    def addReference(self):
+        self.ARFDES.TREE_REFERENCE.add_reference()
+
+    def deleteReference(self):
+        self.ARFDES.TREE_REFERENCE.show_delete_dialog()
+
+    def showReference(self):
+        self.ARFDES.TREE_REFERENCE.show_show_dialog()
+
+    def editReference(self):
+        self.ARFDES.TREE_REFERENCE.show_edit_dialog()
+
+    def flipReference(self):
+        self.ARFDES.TREE_REFERENCE.show_flip_dialog()
+
+    def fitView(self):
+        self.ARFDES.OPEN_GL.fit_to_airfoil()
+
+    def showCurvComb(self):
+        pass
+
+    def showCamberline(self):
+        pass

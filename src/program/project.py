@@ -20,45 +20,16 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 # Library imports
-import re
 import logging
 import json
-import tempfile
-import shutil
-import tarfile
-import struct
-import os
-import numpy as np
 
-# PyQt imports
-from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QTextEdit
-from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import Qt
+import os
+import datetime
 
 # In-Program imports
 # import src.obj.objects3D as objects3D
-from src.utils.tools_program import new_id
-
-from PyQt5.QtWidgets import (
-    QWidget,
-    QHBoxLayout, QVBoxLayout,
-    QMenuBar, QAction, QFileDialog, 
-    QLineEdit, QTextEdit,
-    QTreeWidget, QTreeWidgetItem, 
-    QApplication, QLabel, QInputDialog, QDialog, QDialogButtonBox,
-    QStackedWidget, QMessageBox, QTableWidget, QTableWidgetItem, QPushButton, QHeaderView,
-    )
-from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSignal
-
-import src.arfdes.tools_airfoils as tools_airfoils
-from src.arfdes.tools_airfoils import Reference_load
-
-import datetime
-import src.arfdes.fit_2_reference as fit_2_reference  # Import the fitting module
-import src.arfdes.widget_airfoils as widget_airfoils
-from src.arfdes.widget_description import TextDescription
-import src.arfdes.tools_airfoils as tools
+from src.modules.arfdes.tools_airfoils import load_airfoil_from_json, Reference_load
+from src.utils.tools_program import convert_ndarray_to_list, convert_list_to_ndarray, parse_from_params, parse_from_attrs
 
 class Project:
     def __init__(self, program=None):
@@ -69,6 +40,8 @@ class Project:
         self.modification_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.description = "Project description"
         self.path = None  # Path to the project directory
+
+        self.unit = None
         
         self.airfoils = []
         self.nominal_airfoils = []
@@ -79,36 +52,29 @@ class Project:
 
     def new(self):
         """Create a new project."""
-        msg = QMessageBox.question(None, "New Project", "Do you want to create a new project?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if msg == QMessageBox.Yes:
-            self.logger.info("Creating new project...")
-            # Reset the project components
-            
-            self.name = None
-            self.creation_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.modification_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.description = "New project created"
-            self.path = None  # Set the path to the project directory
-            self.project_components.clear()
-            self.project_airfoils.clear()
+        self.logger.info("Creating new project...")
+        
+        self.name = None
+        self.creation_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.modification_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.description = "New project created"
+        self.path = None  # Set the path to the project directory
+
+        self.components.clear()
+        self.airfoils.clear()
 
     def save(self):
-        if self.name != None and self.path != None:
+        if self.name != None and self.path is None:
+            raise ValueError("Cannot save: 'name' and/or 'path' must be defined!")
 
-            self.modification_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            txt = self._prep_json_data(self, self.DAEDALUS.name, self.DAEDALUS.version)
-            self.logger.debug(txt)
+        self.modification_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        txt = self._prep_json_data()
+        self.logger.debug(txt)
 
-            self.logger.info(f"Saved file: {self.path}")
-        else:
-            self.save_as()
+        self.logger.info(f"Saved file: {self.path}")
 
-    def save_as(self):
-        options = QFileDialog.Options()
-        default_name = f"{self.name}.ddls" if self.name else f"Untitled.ddls"
-        filePath, _ = QFileDialog.getSaveFileName(None, "Save File", default_name, "Daedalus Database Files (*.ddls);; All Files (*)", options=options)
-        print('filepath', filePath)
-        print('_', _)
+    def save_as(self, filePath):
+        
         if filePath:
             self.name = os.path.basename(filePath).split('.')[0]
             self.path = filePath
@@ -117,16 +83,12 @@ class Project:
             txt = self._prep_json_data()
             self.logger.debug(txt)
 
-        self.logger.info(f"Saved file as: {self.name} to location: {self.path}")
+            self.logger.info(f"Saved file as: {self.name} to location: {self.path}")
 
-    def open(self):
-        from src.arfdes.tools_airfoils import load_airfoil_from_json
-        from src.utils.tools_program import convert_list_to_ndarray
+    def open(self, fileName):
         from src.obj.class_airfoil import Airfoil
-        from src.obj.objects3D import Component, Wing, Segment  # Import the templates
+        from src.obj.surfaces import Component, Wing, Segment  # Import the templates
         
-        options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(None, "Open File", "", "Daedalus Database Files (*.ddls);; All Files (*)", options=options)
         if fileName:
             warning_count = 0
 
@@ -256,49 +218,15 @@ class Project:
             self.logger.info("\n".join(report))
 
             return True
+        
+    def set_description(self, new_text):
+        """Update the description of the project."""
+        self.logger.info("Updating description of the project...")
+        self.description = new_text
+        # This is also the perfect place to set an "unsaved changes" flag if you have one!
+        # self.is_modified = True
 
-    def edit_description(self):
-        """Edit the description of the project. Using pop-up TextArea Widget with two buttons: Save and Cance"""
-        self.logger.info("Editing description of the project...")
-        
-        # Create a dialog with text area
-        dialog = QDialog()
-        dialog.setWindowTitle("Edit Project Description")
-        dialog.setGeometry(100, 100, 400, 200)
-        
-        layout = QVBoxLayout()
-        
-        # Create text edit widget
-        text_edit = QTextEdit()
-        text_edit.setText(self.description if hasattr(self, 'description') else "")
-        layout.addWidget(text_edit)
-        
-        # Create buttons
-        button_layout = QHBoxLayout()
-        save_button = QPushButton("Save")
-        cancel_button = QPushButton("Cancel")
-        
-        button_layout.addWidget(save_button)
-        button_layout.addWidget(cancel_button)
-        layout.addLayout(button_layout)
-        
-        dialog.setLayout(layout)
-        
-        # Connect buttons
-        def on_save():
-            self.description = text_edit.toPlainText()
-            self.logger.info("Project description updated.")
-            dialog.accept()
-        
-        def on_cancel():
-            dialog.reject()
-        
-        save_button.clicked.connect(on_save)
-        cancel_button.clicked.connect(on_cancel)
-        
-        dialog.exec_()
-
-    def _ensure_unique_name(self, airfoil):
+    def _ensure_unique_airfoil_name(self, airfoil):
         """Ensure the airfoil has a unique name by appending a number if necessary."""
         base_name = airfoil.name
         counter = 1
@@ -306,10 +234,25 @@ class Project:
         while airfoil.name in existing_names:
             airfoil.name = f"{base_name}.{str(counter).zfill(3)}"
             counter += 1
+    
+    def _ensure_unique_object_name(self, object):
+        """Ensure the airfoil has a unique name by appending a number if necessary."""
+        base_name = object.name
+        counter = 1
+        existing_names = []
+
+        for component in self.components:
+            existing_names.append(component.name)
+            for wing in component.wings:
+                existing_names.append(wing.name)
+                for segment in wing.segments:
+                    existing_names.append(segment.name)
                     
+        while object.name in existing_names:
+            object.name = f"{base_name}.{str(counter).zfill(3)}"
+            counter += 1
+    
     def _prep_json_data(self):
-        from src.arfdes.tools_airfoils import save_airfoil_to_json
-        from src.utils.tools_program import convert_ndarray_to_list
 
         designed_components = []
 
@@ -317,76 +260,10 @@ class Project:
         airfoil_entries = []
         for arf_obj in self.airfoils:
 
-            airfoil_data = save_airfoil_to_json(arf_obj, self, self.DAEDALUS)  # serialized JSON string
-            airfoil_json = json.loads(airfoil_data)   # parse to dict
-            
-            airfoil_entries.append({
-                "airfoil": airfoil_json
-            })
+            airfoil_data = self._serialize_airfoil_to_json(self.path, arf_obj)  # serialized JSON string
+            airfoil_entries.append(airfoil_data)
 
-        # Build components → wings → segments
-        for component in self.project_components:
-            designed_wings = []
-            for wing in component.wings:
-                designed_segments = []
-                for segment in wing.segments:
-                    infos = {
-                        "name": segment.infos.get('name', 'Unknown'),
-                        "creation_date": segment.infos.get('creation_date', 'Unknown'),
-                        "modification_date": segment.infos.get('modification_date', 'Unknown'),
-                    }
-                    params = {
-                        "origin_X": segment.params.get('origin_X', 0),
-                        "origin_Y": segment.params.get('origin_Y', 0),
-                        "origin_Z": segment.params.get('origin_Z', 0),
-                        "incidence": segment.params.get('incidence', 0),
-                        "scale": segment.params.get('scale', 1.0),
-                        "tan_accel": segment.params.get('tan_accel', 0.1),
-                    }
-
-                    segments = {
-                        "infos": infos,
-                        "airfoil": segment.airfoil.name,  # link by name
-                        "anchor": segment.anchor,
-                        "params": params,
-                    }
-                    designed_segments.append(segments)
-
-                infos = {
-                    "name": wing.infos.get('name', 'Unknown'),
-                    "creation_date": wing.infos.get('creation_date', 'Unknown'),
-                    "modification_date": wing.infos.get('modification_date', 'Unknown'),
-                }
-                params = {
-                    "origin_X": wing.params.get('origin_X', 0),
-                    "origin_Y": wing.params.get('origin_Y', 0),
-                    "origin_Z": wing.params.get('origin_Z', 0),
-                }
-
-                wings = {
-                    "infos": infos,
-                    "params": params,
-                    "segments": designed_segments,
-                }
-                designed_wings.append(wings)
-
-            infos = {
-                "name": component.infos.get('name', 'Unknown'),
-                "creation_date": component.infos.get('creation_date', 'Unknown'),
-                "modification_date": component.infos.get('modification_date', 'Unknown'),
-            }
-            params = {
-                "origin_X": component.params.get('origin_X', 0),
-                "origin_Y": component.params.get('origin_Y', 0),
-                "origin_Z": component.params.get('origin_Z', 0),
-            }
-
-            components = {
-                "infos": infos,
-                "params": params,
-                "wings": designed_wings
-            }
-            designed_components.append(components)
+        component_entries = self._serialize_components_to_json()
 
         Daedalus = {
             "program name": self.DAEDALUS.name,
@@ -395,11 +272,11 @@ class Project:
 
         Project = {
             "name": self.name,
+            "path": self.path,
             "creation date": self.creation_date,
             "modification date": self.modification_date,
             "description": self.description,
-            "path": self.path,
-            "components": designed_components,
+            "components": component_entries,
             "airfoils": airfoil_entries
         }
 
@@ -416,3 +293,102 @@ class Project:
             json.dump(data, f, indent=2)
 
         return 'Project archive successfully saved'
+
+    def _serialize_airfoil_to_json(self, path=None, current_airfoil=None):
+        """Save the airfoil data to a JSON format file."""
+        
+        # Get main airfoil params (origin_X, stretch etc.)
+        airfoil_params = parse_from_params(current_airfoil.params)
+        airfoil_attrs = parse_from_attrs(current_airfoil.attrs)
+        airfoil_stats = parse_from_params(current_airfoil.stats)
+
+        # Dynamically check childs of an airfoil (LE, TE, PS, SS)
+        for section_name in ["LE", "TE", "PS", "SS"]:
+            section = getattr(current_airfoil, section_name, None)
+            if section and hasattr(section, "params"):
+                airfoil_params[section_name] = parse_from_params(section.params)
+            elif section and hasattr(section, "attrs"):
+                airfoil_attrs[section_name] = parse_from_params(section.attrs)
+
+        # Build main structure
+
+        airfoil = {
+            "name": str(current_airfoil.name),
+            "path": str(path if path else self.path),
+            "format": str(current_airfoil.format),
+            "info": {key: str(val) for key, val in current_airfoil.info.items()},
+            "attrs": airfoil_attrs,
+            "params": airfoil_params,
+            "stats": airfoil_stats
+        }
+    
+        # json_object = json.dumps(airfoils, indent=1)
+
+        return airfoil
+    
+    def _serialize_components_to_json(self):
+        """Save the airfoil data to a JSON format file."""
+        # Build components → wings → segments
+        designed_components = []
+        for component in self.components:
+            designed_wings = []
+            for wing in component.wings:
+                designed_segments = []
+                for segment in wing.segments:
+
+                    # Get main airfoil params (origin_X, stretch etc.)
+                    segment_attrs = parse_from_attrs(segment.attrs)
+                    segment_params = parse_from_params(segment.params)
+                    segment_stats = parse_from_params(segment.stats)
+
+                    # Dynamically check childs of an airfoil (LE, TE, PS, SS)
+                    for section_name in ["LE", "TE", "PS", "SS"]:
+                        section = getattr(segment, section_name, None)
+                        if section and hasattr(section, "params"):
+                            segment_params[section_name] = parse_from_params(section.params)
+                        elif section and hasattr(section, "attrs"):
+                            segment_attrs[section_name] = parse_from_params(section.attrs)
+                        elif section and hasattr(section, "stats"):
+                            segment_stats[section_name] = parse_from_params(section.attrs)
+                    
+                    segment_data = {
+                        "name": str(segment.name),
+                        "info": {key: str(val) for key, val in segment.info.items()},
+                        "attrs": segment_attrs,
+                        "params": segment_params,
+                        "stats": segment_stats
+                    }
+
+                    designed_segments.append(segment_data)
+
+                wing_attrs = parse_from_attrs(wing.attrs)
+                wing_params = parse_from_params(wing.params)
+                wing_stats = parse_from_params(wing.stats)
+
+                wing_data = {
+                    "name": str(wing.name),
+                    "info": {key: str(val) for key, val in wing.info.items()},
+                    "attrs": wing_attrs,
+                    "params": wing_params,
+                    "stats": wing_stats,
+                    "segments": designed_segments
+                }
+                designed_wings.append(wing_data)
+
+            component_attrs = parse_from_attrs(component.attrs)
+            component_params = parse_from_params(component.params)
+            component_stats = parse_from_params(component.stats)
+
+            component_data = {
+                "name": str(component.name),
+                "info": {key: str(val) for key, val in component.info.items()},
+                "attrs": component_attrs,
+                "params": component_params,
+                "stats": component_stats,
+                "wings": designed_wings
+            }
+            designed_components.append(component_data)
+        
+        # json_object = json.dumps(airfoils, indent=1)
+
+        return designed_components

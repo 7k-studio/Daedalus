@@ -19,27 +19,42 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 import logging
-import math
-import numpy as np
-from geomdl import BSpline, utilities
-
-from src.utils.tools_program import CreateBSpline_3D
-
-from geomdl import NURBS
-from geomdl import tessellate
-from geomdl import knotvector
-from src.obj.objects3D import Surface
+from src.obj.surfaces import Patch
 
 class Skin:
-    def __init__(self):
+    def __init__(self, program, parent):
         self.logger = logging.getLogger(self.__class__.__name__)
+        self.DAEDALUS = program
+        self.parent = parent
         self.name = 'Skin'
         self.infos = {'creation_date': '',
                       'modification_date': ''}
-        
-        self.anchor = 'G0' # G1 or G2 later add 'segment'
 
-        self.LE = Surface()
-        self.PS = Surface()
-        self.SS = Surface()
-        self.TE = Surface()
+        self.LE = Patch(self.DAEDALUS, self)
+        self.PS = Patch(self.DAEDALUS, self)
+        self.SS = Patch(self.DAEDALUS, self)
+        self.TE = Patch(self.DAEDALUS, self)
+    
+    def build(self):
+        """
+        Generuje pojedynczą, ciągłą i gładką powierzchnię dla całego skrzydła.
+        """
+        self.logger.info("Building wing skin...")
+        wing = self.parent
+        if not wing or not wing.segments:
+            self.logger.warning("Brak segmentów do zbudowania poszycia skrzydła")
+            return
+
+        for key in ['le', 'ps', 'ss', 'te']:
+            spline_attr = f"{key.lower()}_spline"
+            
+            # Zbiór krzywych z segmentów
+            curves = [
+                getattr(seg, spline_attr).geom 
+                for seg in wing.segments 
+                if hasattr(getattr(seg, spline_attr, None), 'geom')
+            ]
+
+            # Każdy patch w Skin po prostu buduje się swoją metodą loft!
+            patch_obj = getattr(self, key.upper())
+            patch_obj.build_loft(curves)

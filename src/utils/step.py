@@ -34,6 +34,7 @@ class Deadalus2Step:
         self.name = "Deadalus2Step203"
         self.description = "Deadalus Python STEP AP203 Export"
         self.version =  "0.1.1-beta"
+        
 
 def HEADER(file, base_name, script_obj):
     file.write("ISO-10303-21;\n")

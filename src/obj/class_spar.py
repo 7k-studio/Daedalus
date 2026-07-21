@@ -19,16 +19,12 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 import logging
-import math
 import numpy as np
 from geomdl import BSpline, utilities
 
-from src.utils.tools_program import CreateBSpline_3D
-import src.obj.objects2D as objects2D
+from src.obj.curves import Line, BSpline
 
-from geomdl import NURBS
-from geomdl import tessellate
-from geomdl import knotvector
+from geomdl import NURBS, knotvector
 
 class Spar:
     def __init__(self):
@@ -38,7 +34,7 @@ class Spar:
                       'creation_date': '',
                       'modification_date': ''}
         
-        self.airfoil = objects2D.Airfoil()
+        self.airfoil = None
         self.anchor = 'G0' # G1 or G2 later add 'segment'
 
         self.params = {
@@ -179,10 +175,10 @@ class Spar:
         control_points_Z = [self.params['origin_Z']] * len(self.airfoil.constr['te'][0])
         self.control_points['te'] = np.vstack([self.control_points['te'], control_points_Z])
 
-        self.geom['le'] = CreateBSpline_3D(self.control_points['le'], len(self.airfoil.constr['le'][0])-1)
-        self.geom['ps'] = CreateBSpline_3D(self.control_points['ps'], len(self.airfoil.constr['ps'][0])-1)
-        self.geom['ss'] = CreateBSpline_3D(self.control_points['ss'], len(self.airfoil.constr['ss'][0])-1)
-        self.geom['te'] = CreateBSpline_3D(self.control_points['te'], len(self.airfoil.constr['te'][0])-1)
+        #self.geom['le'] = CreateBSpline_3D(self.control_points['le'], len(self.airfoil.constr['le'][0])-1)
+        #self.geom['ps'] = CreateBSpline_3D(self.control_points['ps'], len(self.airfoil.constr['ps'][0])-1)
+        #self.geom['ss'] = CreateBSpline_3D(self.control_points['ss'], len(self.airfoil.constr['ss'][0])-1)
+        #self.geom['te'] = CreateBSpline_3D(self.control_points['te'], len(self.airfoil.constr['te'][0])-1)
 
         self.transform(grandparent_index, parent_index, item_index)
 
@@ -430,10 +426,10 @@ class Wing:
                 degree = len(tmp_le_ps)-1
                 #print('Degree: ', degree)
 
-                self.segments[i].geom['le_ps'] = CreateBSpline_3D(self.segments[i].control_points['le_ps'], degree)
-                self.segments[i].geom['te_ps'] = CreateBSpline_3D(self.segments[i].control_points['te_ps'], degree)
-                self.segments[i].geom['le_ss'] = CreateBSpline_3D(self.segments[i].control_points['le_ss'], degree)
-                self.segments[i].geom['te_ss'] = CreateBSpline_3D(self.segments[i].control_points['te_ss'], degree)
+                #self.segments[i].geom['le_ps'] = CreateBSpline_3D(self.segments[i].control_points['le_ps'], degree)
+                #self.segments[i].geom['te_ps'] = CreateBSpline_3D(self.segments[i].control_points['te_ps'], degree)
+                #self.segments[i].geom['le_ss'] = CreateBSpline_3D(self.segments[i].control_points['le_ss'], degree)
+                #self.segments[i].geom['te_ss'] = CreateBSpline_3D(self.segments[i].control_points['te_ss'], degree)
 
                 u_start_cp = self.segments[i].control_points['ps']
                 u_end_cp   = self.segments[i+1].control_points['ps']

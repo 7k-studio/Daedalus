@@ -19,16 +19,8 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 import logging
-import math
-import numpy as np
-from geomdl import BSpline, utilities
 
-from src.utils.tools_program import CreateBSpline_3D
-import src.obj.objects2D as objects2D
-
-from geomdl import NURBS
-from geomdl import tessellate
-from geomdl import knotvector
+from src.obj.class_param import Param, M, DEG
 
 class Component:
     def __init__(self, program=None, project=None):
@@ -37,19 +29,21 @@ class Component:
         self.PROJECT = project
 
         self.name = 'Component'
-        self.infos = {'creation_date': '',
+        self.info = {'creation_date': '',
                       'modification_date': ''}
         
         self.params = {
-            'origin_X': 0,
-            'origin_Y': 0,
-            'origin_Z': 0,
+            'origin_X': Param('origin_X', 0, M),
+            'origin_Y': Param('origin_Y', 0, M),
+            'origin_Z': Param('origin_Z', 0, M),
         }
 
-        self.unit = {
-            'origin_X': 'm',
-            'origin_Y': 'm',
-            'origin_Z': 'm',
+        self.attrs = {
+            
+        }
+
+        self.stats = {
+            'Test': Param('test', 0, M)
         }
 
         self.wings = []
@@ -58,9 +52,9 @@ class Component:
 
         self.logger.debug(f"WNGWB > Moving COMPONENT geometry by X:{cmp_X}, Y:{cmp_Y}, Z:{cmp_Z}...")
 
-        tmp_X = self.params['origin_X'] + cmp_X
-        tmp_Y = self.params['origin_Y'] + cmp_Y
-        tmp_Z = self.params['origin_Z'] + cmp_Z
+        tmp_X = self.params['origin_X'].get() + cmp_X
+        tmp_Y = self.params['origin_Y'].get() + cmp_Y
+        tmp_Z = self.params['origin_Z'].get() + cmp_Z
 
         return tmp_X, tmp_Y, tmp_Z
     
@@ -73,10 +67,12 @@ class Component:
 
     def transform(self, grandparent_index):
 
-        cmp_X = self.PROJECT.components[grandparent_index].origin_X
-        cmp_Y = self.PROJECT.components[grandparent_index].origin_Y
-        cmp_Z = self.PROJECT.components[grandparent_index].origin_Z
+        cmp_X = self.PROJECT.components[grandparent_index].params['origin_X'].get()
+        cmp_Y = self.PROJECT.components[grandparent_index].params['origin_Y'].get()
+        cmp_Z = self.PROJECT.components[grandparent_index].params['origin_Z'].get()
 
         self.logger.info("Transforming component...")
-        self.params['origin_X'], self.params['origin_Y'], self.params['origin_Z'] = self.move_component(cmp_X, cmp_Y, cmp_Z)
+        self.params['origin_X'].set(self.params['origin_X'].get() + cmp_X)
+        self.params['origin_Y'].set(self.params['origin_Y'].get() + cmp_Y)
+        self.params['origin_Z'].set(self.params['origin_Z'].get() + cmp_Z)
         self.logger.debug("Done!")

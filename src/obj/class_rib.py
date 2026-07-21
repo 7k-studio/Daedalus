@@ -18,17 +18,13 @@ You should have received a copy of the GNU General Public License
 along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import logging
-import math
+
 import numpy as np
 from geomdl import BSpline, utilities
 
 from src.utils.tools_program import CreateBSpline_3D
-import src.obj.objects2D as objects2D
 
-from geomdl import NURBS
-from geomdl import tessellate
-from geomdl import knotvector
+from geomdl import NURBS, knotvector
 
 class Rib:
     def __init__(self):

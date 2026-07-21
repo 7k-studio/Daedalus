@@ -21,10 +21,10 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import logging
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication, QWidget, QTabWidget, QVBoxLayout, QCheckBox, QLabel, QDialog, QPushButton, QHBoxLayout, QComboBox, QSlider
 )
-from PyQt5.QtCore import Qt
+from PyQt6.QtCore import Qt
 import json
 
 class PreferencesWindow(QDialog):
@@ -106,7 +106,7 @@ class PreferencesWindow(QDialog):
         perf_text.setToolTip("Select the general performance level for the application.")
 
         # Slider for performance (10% - 100%)
-        self.general_performance_slider = QSlider(Qt.Horizontal)
+        self.general_performance_slider = QSlider(Qt.Orientation.Horizontal)
         self.general_performance_slider.setMinimum(10)
         self.general_performance_slider.setMaximum(100)
         self.general_performance_slider.setTickInterval(10)

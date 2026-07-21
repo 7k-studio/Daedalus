@@ -105,6 +105,9 @@ Chords statistic: calc from Pitagoras
 
 A new airfoil definition was introduced in the 0.4 version. LE, TE, PS and SS are now separated objects, creating whole airofil.
 This led to new Tree Layout where Airfoil is created out of respective objects as parents and childrens.
+
+Migration to PyQt6
+
 ## Program class
 
 ## Project

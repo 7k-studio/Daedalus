@@ -1,6 +1,6 @@
 '''
 
-Copyright (C) 2026 Jakub Kamyk
+Copyright (C) 2025-2026 Jakub Kamyk
 
 This file is part of DAEDALUS.
 
@@ -28,14 +28,11 @@ import datetime
 logger = logging.getLogger(__name__)
 
 # PyQt import 
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtGui import QIcon
-from src.widgets.splash_screen import SplashScreen
-from src.arfdes.airfoil_designer import AirfoilDesigner
-from src.wngdes.wing_designer import WingDesigner
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtGui import QIcon
 
-# In-Program import
-# from src.program import DAEDALUS
+from src.widgets.splash_screen import SplashScreen
+from src.program.main_window import MainWindow
 
 def log_uncaught_exceptions(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, KeyboardInterrupt):
@@ -48,11 +45,6 @@ def log_uncaught_exceptions(exc_type, exc_value, exc_traceback):
 def main():
     from src.program.program import Program
     DAEDALUS = Program()
-
-    #app = QApplication(sys.argv)
-    #icon = QIcon("src/assets/logo.png")
-    #app.setWindowIcon(icon)
-    #app.setStyleSheet(DAEDALUS.buildStyleSheet())
 
     log_file = 'toolout.log'
 
@@ -69,28 +61,33 @@ def main():
     DAEDALUS.APP = QApplication(sys.argv)
     icon = QIcon("src/assets/logo.png")
     DAEDALUS.APP.setWindowIcon(icon)
-    DAEDALUS.APP.setStyleSheet(DAEDALUS.buildStyleSheet())
-    DAEDALUS.SPLASHSCREEN = SplashScreen(DAEDALUS)
-    DAEDALUS.AIRFOILDESIGNER = AirfoilDesigner(DAEDALUS, project=None)
-    DAEDALUS.WINGDESIGNER = WingDesigner(DAEDALUS, project=None)
-    DAEDALUS.SPLASHSCREEN.show()
 
-    #splash = SplashScreen(DAEDALUS)
-    #splash.show()
+    DAEDALUS.buildStyleSheet()
+    DAEDALUS.APP.setStyleSheet(DAEDALUS.buildStyleSheet())
+
+    # Show splash screen or main window
+    DAEDALUS.SPLASHSCREEN = SplashScreen(DAEDALUS)
+    DAEDALUS.SPLASHSCREEN.show()
     
-    # sys.exit(app.exec_())
-    sys.exit(DAEDALUS.APP.exec_())
+    # Create the main window (single window for all modules)
+    DAEDALUS.MAIN_WINDOW = MainWindow(program=DAEDALUS, project=None)
+    
+    # Show the main window
+    DAEDALUS.SPLASHSCREEN.close()
+    DAEDALUS.MAIN_WINDOW.showMaximized()
+    
+    sys.exit(DAEDALUS.APP.exec())
 
 def header(version, file):
-    file.write("       _______        _________    ___________    _______        ___________    ___           ___     ___    __________  \n")
-    file.write("      /  ___  \      /  ______/\  /  _____   /\  /  ___  \      /  _____   /\  /  /\         /  /\   /  /\  /  _______/\ \n")
-    file.write("     /  /\__\  \    /  /\_____\/ /  /\___/  / / /  /\__\  \    /  /\___/  / / /  / /        /  / /  /  / / /  /\______\/ \n")
-    file.write("    /  / /  /  /\  /  /_/___    /  /_/__/  / / /  / /  /  /\  /  /_/__/  / / /  / /        /  / /  /  / / /  /_/_____    \n")
-    file.write("   /  / /  /  / / /  ______/\  /  _____   / / /  / /  /  / / /  _____   / / /  / /        /  / /  /  / / /_______   /\   \n")
-    file.write("  /  / /  /  / / /  /\_____\/ /  /\___/  / / /  / /  /  / / /  /\___/  / / /  / /        /  / /  /  / /  \______/  / /   \n")
-    file.write(" /  /_/__/  / / /  /_/____   /  / /  /  / / /  /_/__/  / / /  / /  /  / / /  /_/_____   /  /_/__/  / / ________/  / /    \n")
-    file.write("/__________/ / /_________/\ /__/ /  /__/ / /__________/ / /__/ /  /__/ / /__________/\ /__________/ / /__________/ /     \n")
-    file.write("\__________\/  \_________\/ \__\/   \__\/  \__________\/  \__\/   \__\/  \__________\/ \__________\/  \__________\/      \n")
+    file.write("       _______        ___________    _________    _______        ___________    ___           ___     ___    __________  \n")
+    file.write("      /  ___  \      /  _____   /\  /  ______/\  /  ___  \      /  _____   /\  /  /\         /  /\   /  /\  /  _______/\ \n")
+    file.write("     /  /\__\  \    /  /\___/  / / /  /\_____\/ /  /\__\  \    /  /\___/  / / /  / /        /  / /  /  / / /  /\______\/ \n")
+    file.write("    /  / /  /  /\  /  /_/__/  / / /  /_/___    /  / /  /  /\  /  /_/__/  / / /  / /        /  / /  /  / / /  /_/_____    \n")
+    file.write("   /  / /  /  / / /  _____   / / /  ______/\  /  / /  /  / / /  _____   / / /  / /        /  / /  /  / / /_______   /\   \n")
+    file.write("  /  / /  /  / / /  /\___/  / / /  /\_____\/ /  / /  /  / / /  /\___/  / / /  / /        /  / /  /  / /  \______/  / /   \n")
+    file.write(" /  /_/__/  / / /  / /  /  / / /  /_/____   /  /_/__/  / / /  / /  /  / / /  /_/_____   /  /_/__/  / / ________/  / /    \n")
+    file.write("/__________/ / /__/ /  /__/ / /_________/\ /__________/ / /__/ /  /__/ / /__________/\ /__________/ / /__________/ /     \n")
+    file.write("\__________\/  \__\/   \__\/  \_________\/ \__________\/  \__\/   \__\/  \__________\/ \__________\/  \__________\/      \n")
     file.write("\n")
     file.write("|/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n")
     file.write(f"Program version: {version}\n")
@@ -98,18 +95,5 @@ def header(version, file):
     
 
 if __name__ == "__main__":
-
-    # log_file = 'toolout.log'
-
-    # if os.path.exists(log_file):
-    #     os.remove(log_file)
-
-    # with open(log_file, "w") as file:
-    #     header(DAEDALUS, file)
-    
-    # logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s: %(name)s: %(funcName)s: %(message)s", handlers=[logging.FileHandler("toolout.log"), logging.StreamHandler()])
-    # logger = logging.getLogger(__name__)
-
-    # sys.excepthook = log_uncaught_exceptions
 
     main()

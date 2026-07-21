@@ -19,205 +19,102 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 import logging
-import math
 import numpy as np
-from geomdl import BSpline, utilities
 
-from src.utils.tools_program import CreateBSpline_3D
-from src.obj.class_airfoil import Airfoil
 from src.obj.class_skin import Skin
-
-from geomdl import NURBS
-from geomdl import tessellate
-from geomdl import knotvector
+from src.obj.class_param import Param, Attr, M, DEG
+from src.obj.curves import BSpline
 
 class Segment:
-    def __init__(self, program=None, project=None):
+    def __init__(self, program=None, project=None, parent=None):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.DAEDALUS = program
         self.PROJECT = project
+        self.parent = parent
 
         self.name = 'Segment'
-        
-        self.anchor = 'G0' # G1 or G2 later add 'segment'
-        self.infos = {'creation_date': '',
+        self.info = {'creation_date': '',
                       'modification_date': ''}
         
-        self.airfoil = Airfoil(self.DAEDALUS)
-        self.skin = Skin()
+        self.le_spline = BSpline(self.DAEDALUS, self)
+        self.te_spline = BSpline(self.DAEDALUS, self)
+        self.ps_spline = BSpline(self.DAEDALUS, self)
+        self.ss_spline = BSpline(self.DAEDALUS, self)
+
+        self.ps_le_spline = None
+        self.ps_te_spline = None
+        self.ss_le_spline = None
+        self.ss_te_spline = None
+
+        self.skin = Skin(self.DAEDALUS, self)
         
+        self.attrs = {
+            'airfoil': Attr('airfoil', self.PROJECT.airfoils[-1], [arf.name for arf in self.PROJECT.airfoils]) # G2 later add 'segment'
+        }
+        
+        # Segment positioning parameters
         self.params = {
-            'origin_X': 0,
-            'origin_Y': 0,
-            'origin_Z': 0,
-            'incidence': 0,
-            'scale': 1,
-            'tan_accel': 0.1,
-            #'curv_accel': 0.1,
-            #'curv_theta': 0   
+            "position_X":  Param("position_X",0,M),
+            "position_Y":  Param("position_Y",0,M),
+            'span': Param("span",0,M),
+            # 'tan_accel': Param('tan_accel', 0.1, M)
         }
 
-        self.unit = {
-            'origin_X': 'm',
-            'origin_Y': 'm',
-            'origin_Z': 'm',
-            'incidence': 'deg',
-            'scale': '-',
-            'tan_accel': 'm',
-            #'curv_accel': 0.1,
-            #'curv_theta': 0   
-        }
-
-        self.control_points = {
-            'le': [],
-            'ps': [],
-            'ss': [],
-            'te': [],
-            'le_ps': [],
-            'te_ps': [],
-            'le_ss': [],
-            'te_ss': []
-        }
-
-        self.uv_grid = {
-            'le': [],
-            'ps': [],
-            'ss': [],
-            'te': []
-        }
-
-        self.surfaces = {
-            'le': [],
-            'ps': [],
-            'ss': [],
-            'te': []
-        }
-
-        self.geom = {
-            'le': [],
-            'ps': [],
-            'ss': [],
-            'te': [],
-            'le_ps': [],
-            'te_ps': [],
-            'le_ss': [],
-            'te_ss': []
-        }
-
-    def move(self, cmp_X:float, cmp_Y:float, cmp_Z:float, wng_X:float, wng_Y:float, wng_Z:float, seg_X:float, seg_Y:float, seg_Z:float):
-
-        move_X = cmp_X + wng_X + seg_X
-        move_Y = cmp_Y + wng_Y + seg_Y
-        move_Z = cmp_Z + wng_Z
-
-        self.logger.debug(f"> Moving SEGMENT geometry by X:{move_X}, Y:{move_Y}, Z:{move_Z}...")
-
-        tmp_le = np.vstack([self.geom['le'][0] + move_X, self.geom['le'][1] + move_Y, self.geom['le'][2] + move_Z])
-        tmp_ps = np.vstack([self.geom['ps'][0] + move_X, self.geom['ps'][1] + move_Y, self.geom['ps'][2] + move_Z])
-        tmp_ss = np.vstack([self.geom['ss'][0] + move_X, self.geom['ss'][1] + move_Y, self.geom['ss'][2] + move_Z])
-        tmp_te = np.vstack([self.geom['te'][0] + move_X, self.geom['te'][1] + move_Y, self.geom['te'][2] + move_Z])
-
-        tmp_c_le = np.vstack([self.skin.LE.control_points[0] + move_X, self.skin.LE.control_points[1] + move_Y, self.skin.LE.control_points[2] + move_Z])
-        tmp_c_ps = np.vstack([self.skin.PS.control_points[0] + move_X, self.skin.PS.control_points[1] + move_Y, self.skin.PS.control_points[2] + move_Z])
-        tmp_c_ss = np.vstack([self.skin.SS.control_points[0] + move_X, self.skin.SS.control_points[1] + move_Y, self.skin.SS.control_points[2] + move_Z])
-        tmp_c_te = np.vstack([self.skin.TE.control_points[0] + move_X, self.skin.TE.control_points[1] + move_Y, self.skin.TE.control_points[2] + move_Z])
-
-        return tmp_le, tmp_ps, tmp_ss, tmp_te, tmp_c_le, tmp_c_ps, tmp_c_ss, tmp_c_te
-
-    def scale(self, scale:float):
-
-        self.logger.debug(f"> Scaling SEGMENT geometry by {scale}...")
-
-        tmp_le = np.array([[scale], [scale], [1]]) * np.array(self.geom['le'])
-        tmp_ps = np.array([[scale], [scale], [1]]) * np.array(self.geom['ps'])
-        tmp_ss = np.array([[scale], [scale], [1]]) * np.array(self.geom['ss'])
-        tmp_te = np.array([[scale], [scale], [1]]) * np.array(self.geom['te'])
-
-        tmp_c_le = np.array([[scale], [scale], [1]]) * np.array(self.control_points['le'])
-        tmp_c_ps = np.array([[scale], [scale], [1]]) * np.array(self.control_points['ps'])
-        tmp_c_ss = np.array([[scale], [scale], [1]]) * np.array(self.control_points['ss'])
-        tmp_c_te = np.array([[scale], [scale], [1]]) * np.array(self.control_points['te'])
-
-        return tmp_le, tmp_ps, tmp_ss, tmp_te, tmp_c_le, tmp_c_ps, tmp_c_ss, tmp_c_te
-
-    def rotate(self, aoa: float, center=(0.0, 0.0)):
-        self.logger.debug(f"> Rotating SEGMENT geometry by {aoa} degrees around {center}...")
-
-        cx, cy = center
-        theta = np.radians(float(aoa))
-        rotation_matrix = np.array([
-            [np.cos(theta), -np.sin(theta)],
-            [np.sin(theta),  np.cos(theta)]
-        ])
-
-        def rotate_points(points):
-            # points shape: (2, N)
-            center_col = np.array([[cx], [cy]])  # shape (2, 1) for broadcasting
-            xy_rotated = rotation_matrix @ (points[:2] - center_col) + center_col
-            return np.vstack([xy_rotated, points[2]])  # keep original Z
-
-        tmp_le = rotate_points(self.geom['le'])
-        tmp_ps = rotate_points(self.geom['ps'])
-        tmp_ss = rotate_points(self.geom['ss'])
-        tmp_te = rotate_points(self.geom['te'])
-
-        tmp_c_le = rotate_points(self.control_points['le'])
-        tmp_c_ps = rotate_points(self.control_points['ps'])
-        tmp_c_ss = rotate_points(self.control_points['ss'])
-        tmp_c_te = rotate_points(self.control_points['te'])
-
-        return tmp_le, tmp_ps, tmp_ss, tmp_te, tmp_c_le, tmp_c_ps, tmp_c_ss, tmp_c_te
+        self.stats = {
+            'Test': Param('test', 0, M)
+            }
     
-    def update(self, grandparent_index, parent_index, item_index):
-
+    def update(self):
+        """
+        Copy 2D control points from the linked master Airfoil, 
+        transform them into 3D space, and generate the segment's splines.
+        """
         self.logger.info("Updating SEGMENT geometry...")
 
-        self.control_points['le'] = self.airfoil.constr['le']
-        control_points_Z = [self.params['origin_Z']] * len(self.airfoil.constr['le'][0])
-        self.control_points['le'] = np.vstack([self.control_points['le'], control_points_Z])
+        # Get the referenced master airfoil
+        linked_airfoil = self.attrs['airfoil'].value
+        if not linked_airfoil:
+            self.logger.warning("No airfoil linked to this segment.")
+            return
+        
+        # Calculate absolute 3D positioning
+        component = self.parent.parent
+        total_X = component.params['origin_X'].get() + self.params['position_X'].value
+        total_Y = component.params['origin_Y'].get() + self.params['position_Y'].value
+        total_Z = component.params['origin_Z'].get() + self.params['span'].value
+        
+        # Helper function to transform 2D control points into 3D space
+        def transform_cps(source_spline):
+            if len(source_spline.control_points) == 0:
+                return []
+                
+            # Copy the master 2D control points
+            cp = np.array(source_spline.control_points, copy=True)
+            
+            # Apply X and Y translations
+            cp[0, :] += total_X
+            cp[1, :] += total_Y
+            
+            # Add or replace the Z coordinate for span
+            if cp.shape[0] == 2:
+                cp_z_coords = np.full(cp.shape[1], total_Z)
+                cp = np.vstack([cp, cp_z_coords])
+            elif cp.shape[0] >= 3:
+                cp[2, :] = np.full(cp.shape[1], total_Z)
+                
+            return cp
+        
+        # Copy, translate, and assign control points to the Segment's splines
+        self.le_spline.control_points = transform_cps(linked_airfoil.LE.spline)
+        self.te_spline.control_points = transform_cps(linked_airfoil.TE.spline)
+        self.ps_spline.control_points = transform_cps(linked_airfoil.PS.spline)
+        self.ss_spline.control_points = transform_cps(linked_airfoil.SS.spline)
 
-        self.control_points['ps'] = self.airfoil.constr['ps']
-        control_points_Z = [self.params['origin_Z']] * len(self.airfoil.constr['ps'][0])
-        self.control_points['ps'] = np.vstack([self.control_points['ps'], control_points_Z])
-
-        self.control_points['ss'] = self.airfoil.constr['ss']
-        control_points_Z = [self.params['origin_Z']] * len(self.airfoil.constr['ss'][0])
-        self.control_points['ss'] = np.vstack([self.control_points['ss'], control_points_Z])
-
-        self.control_points['te'] = self.airfoil.constr['te']
-        control_points_Z = [self.params['origin_Z']] * len(self.airfoil.constr['te'][0])
-        self.control_points['te'] = np.vstack([self.control_points['te'], control_points_Z])
-
-        self.geom['le'] = CreateBSpline_3D(self.control_points['le'], len(self.airfoil.constr['le'][0])-1, resolution=int(self.DAEDALUS.preferences['general']['performance']))
-        self.geom['ps'] = CreateBSpline_3D(self.control_points['ps'], len(self.airfoil.constr['ps'][0])-1, resolution=int(self.DAEDALUS.preferences['general']['performance']))
-        self.geom['ss'] = CreateBSpline_3D(self.control_points['ss'], len(self.airfoil.constr['ss'][0])-1, resolution=int(self.DAEDALUS.preferences['general']['performance']))
-        self.geom['te'] = CreateBSpline_3D(self.control_points['te'], len(self.airfoil.constr['te'][0])-1, resolution=int(self.DAEDALUS.preferences['general']['performance']))
-
-        self.transform(grandparent_index, parent_index, item_index)
-
-        #print(self.geom['le'])
-        #print(self.geom['ps'])
-        #print(self.geom['ss'])
-        #print(self.geom['te'])
-
-    def transform(self, grandparent_index, parent_index, item_index):
-
-        cmp_X = self.PROJECT.components[grandparent_index].params['origin_X']
-        cmp_Y = self.PROJECT.components[grandparent_index].params['origin_Y']
-        cmp_Z = self.PROJECT.components[grandparent_index].params['origin_Z']
-
-        wng_X = self.PROJECT.components[grandparent_index].wings[parent_index].params['origin_X']
-        wng_Y = self.PROJECT.components[grandparent_index].wings[parent_index].params['origin_Y']
-        wng_Z = self.PROJECT.components[grandparent_index].wings[parent_index].params['origin_Z']
-
-        seg_X = self.PROJECT.components[grandparent_index].wings[parent_index].segments[item_index].params['origin_X']
-        seg_Y = self.PROJECT.components[grandparent_index].wings[parent_index].segments[item_index].params['origin_Y']
-        seg_Z = self.PROJECT.components[grandparent_index].wings[parent_index].segments[item_index].params['origin_Z']
-        scale = self.PROJECT.components[grandparent_index].wings[parent_index].segments[item_index].params['scale']
-        incidence = self.PROJECT.components[grandparent_index].wings[parent_index].segments[item_index].params['incidence']
-
-        self.logger.info("Transforming SEGMENT geometry...")
-        self.geom['le'], self.geom['ps'], self.geom['ss'], self.geom['te'], self.control_points['le'], self.control_points['ps'], self.control_points['ss'], self.control_points['te'] = self.scale(scale)
-        self.geom['le'], self.geom['ps'], self.geom['ss'], self.geom['te'], self.control_points['le'], self.control_points['ps'], self.control_points['ss'], self.control_points['te'] = self.move(cmp_X, cmp_Y, cmp_Z, wng_X, wng_Y, wng_Z, seg_X, seg_Y, seg_Z)
-        self.geom['le'], self.geom['ps'], self.geom['ss'], self.geom['te'], self.control_points['le'], self.control_points['ps'], self.control_points['ss'], self.control_points['te'] = self.rotate(incidence, (wng_X, wng_Y))
-        self.logger.info("                              Done!")
+        # Generate the final 3D geometry from the new control points
+        self.le_spline.create()
+        self.te_spline.create()
+        self.ps_spline.create()
+        self.ss_spline.create()
+        
+        self.logger.info("SEGMENT 3D splines successfully generated from shared airfoil.")
+    

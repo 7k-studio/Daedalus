@@ -24,23 +24,12 @@ import re
 import logging
 from datetime import date
 import json
-import tempfile
-import shutil
-import tarfile
-import struct
 import os
 
-import datetime
-import numpy as np
 import webbrowser
 
-# PyQt imports
-from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QTextEdit, QMessageBox, QApplication
-from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import Qt
+from src.widgets.about import About
 
-# In-Program imports
-from src.utils.tools_program import new_id
 
 class Program:
     def __init__(self):
@@ -48,12 +37,14 @@ class Program:
         # basic program info
         self.name = "Daedalus"
         self.version = "0.4.0-beta"
+        self.copyright = "Copyright (C) 2026 Jakub Kamyk"
 
         # logger
         self.logger = logging.getLogger(self.__class__.__name__)
 
         # Program components
         self.APP = None
+        self.MAIN_WINDOW = None
         self.PROJECT = None
         self.SPLASHSCREEN = None
         self.AIRFOILDESIGNER = None
@@ -232,68 +223,8 @@ class Program:
         return StylePyQt
 
     def showAboutDialog(self):
-        dialog = QDialog()
-        dialog.setWindowTitle("About")
-        dialog.setFixedSize(400, 400)
-
-        # Logo
-        logo_label = QLabel(dialog)
-        #pixmap = QPixmap("src/assets/text_logo.png")
-        #logo_label.setPixmap(pixmap.scaled(200, 200, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        logo_label.setAlignment(Qt.AlignCenter)
-
-        title_label = QLabel('DAEDALUS')
-        title_label.setFont(QFont("Cambria", 36))
-        title_label.setAlignment(Qt.AlignCenter)
-
-        version_label = QLabel(f"Version: {self.version}")
-        version_label.setFont(QFont("Arial", 12))
-        version_label.setAlignment(Qt.AlignCenter)
-
-        copyright_label = QLabel('Copyright (C) 2025 Jakub Kamyk')
-        copyright_label.setFont(QFont("Arial", 8))
-        copyright_label.setAlignment(Qt.AlignCenter)
-
-        # Optional description
-        about_text = ["Program is created using Python: 3.11.8",
-                      "STEP export is done via proprietary script",
-                      "There are some exteral librieries used:",
-                      "PyQt5: https://doc.qt.io/qtforpython-6/", 
-                      "PyOpenGL",
-                      "PyOpenGL_accelerate",
-                      "ezdxf: https://ezdxf.readthedocs.io/en/stable/",
-                      "matplotlib", "scipy", "tqdm", "geomdl", "numpy", "logger","webbrowser", "json", "tempfile", "shutil", "tarfile", "struct", "os", "uuid", "datetime"]
-
-        description_text = QTextEdit()
-        description_text.setReadOnly(True)
-        description_text.setPlainText('\n'.join(about_text))
+        About(self.version, self.copyright)
         
-        description_label = QLabel("DAEDALUS is a program for parametricaly designing airfoils and wings.")
-        description_label.setAlignment(Qt.AlignCenter)
-        description_label.setWordWrap(True)
-
-        # Close button
-        close_button = QPushButton("Close")
-        close_button.clicked.connect(dialog.accept)
-        close_button.setFixedWidth(100)
-
-        # Layout
-        layout = QVBoxLayout()
-        layout.addWidget(logo_label)
-        layout.addWidget(title_label)
-        layout.addWidget(version_label)
-        layout.addWidget(copyright_label)
-        layout.addWidget(description_text)
-
-        bottom_layout = QHBoxLayout()
-        bottom_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
-        bottom_layout.addWidget(close_button)
-        bottom_layout.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
-
-        layout.addLayout(bottom_layout)
-        dialog.setLayout(layout)
-        dialog.exec_()
-    
     def showUserManual(self):
         file_path = os.path.abspath("src/assets/user_manual/user_manual.html")
         webbrowser.open(f"file://{file_path}")
@@ -301,26 +232,13 @@ class Program:
     def showRealiseNotes(self):
         webbrowser.open(f"https://github.com/7k-studio/Daedalus/releases")
 
-    def showPreferences(self):
-        """Open the preferences dialog."""
-        self.logger.info("Open preferences window")
-        from src.program.preferences import PreferencesWindow
-        
-        msg = QMessageBox(None)
-        msg.setWindowTitle("WARNING!")
-        msg.setText(f"If you changed the preferences, you need to restart the application for the changes to take effect.")
-        msg.setIcon(QMessageBox.Information)
-        msg.setStandardButtons(QMessageBox.Ok)
+    def showDedicatedWebpage(self):
+        webbrowser.open(f"https://7k-studio.github.io/")
 
-        msg.exec_()
+    # def showPreferences(self):
+    #     """Open the preferences dialog."""
+    #     self.logger.info("Open preferences window")
+    #     from src.program.preferences import PreferencesWindow
 
-        self.preferences_dialog = PreferencesWindow(self)
-        self.preferences_dialog.show()
-
-    def quit(self):
-        msg = QMessageBox.question(None, "Exit program", "Do you really want to quit a program?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if msg == QMessageBox.Yes:
-            self.logger.info("Exit")
-            QApplication.quit()
-
-# DAEDALUS = Program()  # Create a global instance of Program
+    #     self.preferences_dialog = PreferencesWindow(self)
+    #     self.preferences_dialog.show()

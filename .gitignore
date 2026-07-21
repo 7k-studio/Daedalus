@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+bin/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -206,6 +207,10 @@ cython_debug/
 settings
 toolout.log
 CAD_test_files/
-Logo.ai
+*.ai
 SplashScreen.psd
 'export to exe command.txt'
+.experimental
+src/assets/IconPack/Deadalus_icons.ai
+src/settings
+tests/

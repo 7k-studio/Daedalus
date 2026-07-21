@@ -1,0 +1,641 @@
+'''
+
+Copyright (C) 2025 Jakub Kamyk
+
+This file is part of DAEDALUS.
+
+DAEDALUS is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+DAEDALUS is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
+
+'''
+import logging
+from PyQt6.QtWidgets import (
+    QApplication, QFileDialog)
+from PyQt6.QtCore import Qt, QPoint
+from PyQt6.QtGui import QMouseEvent, QPainter, QFont, QAction
+from PyQt6.QtOpenGLWidgets import QOpenGLWidget
+
+from OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLUT import GLUT_BITMAP_HELVETICA_10
+from OpenGL.GLU import gluOrtho2D, gluProject  # Add this import
+
+import math
+import numpy as np
+
+#from .test_cube import draw_object_from_file  # Import the new function
+from . import construction
+from . import wireframe
+from . import solid
+from . import bckgrd
+from .viewport2D.renderers.text_renderer import FreetypeTextRenderer
+
+import src.opengl.tools_opengl as tools
+
+class ViewportOpenGL(QOpenGLWidget):
+    def __init__(self, program=None, project=None, parent=None):
+        super(ViewportOpenGL, self).__init__(parent)
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.DAEDALUS = program
+        self.PROJECT = project
+        self.zoom = 2.0
+        self.translation = [-0.5, 0, 0]
+        self.lastPos = QPoint()
+        self.airfoil = None
+        self.viewport_settings = self.DAEDALUS.preferences["airfoil_designer"]["viewport"]
+        self.airfoil_settings = self.DAEDALUS.preferences["airfoil_designer"]["airfoil"]
+
+        self.bg_color = self.DAEDALUS.AD_viewport_color[self.DAEDALUS.preferences['airfoil_designer']['viewport'].get('color_scheme', 'Bright')]['background']
+        self.grid_color = self.DAEDALUS.AD_viewport_color[self.DAEDALUS.preferences['airfoil_designer']['viewport'].get('color_scheme', 'Bright')]['grid']
+        self.minor_grid_color = self.DAEDALUS.AD_viewport_color[self.DAEDALUS.preferences['airfoil_designer']['viewport'].get('color_scheme', 'Bright')]['minor_grid']
+        self.ruler_color = self.DAEDALUS.AD_viewport_color[self.DAEDALUS.preferences['airfoil_designer']['viewport'].get('color_scheme', 'Bright')]['ruler']
+        self.text_color = self.DAEDALUS.AD_viewport_color[self.DAEDALUS.preferences['airfoil_designer']['viewport'].get('color_scheme', 'Bright')]['text']
+        
+        # Initialize Freetype text renderer
+        self.text_renderer = FreetypeTextRenderer(font_size=10)
+    
+    def clear(self):
+        self.airfoil = None
+        self.update()
+
+    def set_airfoil_to_display(self, airfoil):
+        self.airfoil = airfoil
+        self.update()
+
+    def initializeGL(self):
+        glutInit()  # Initialize GLUT to enable text rendering
+        glClearColor(self.bg_color[0]/255, self.bg_color[1]/255, self.bg_color[2]/255, 1)
+        glEnable(GL_DEPTH_TEST)
+
+    def resizeGL(self, w, h):
+        glViewport(0, 0, w, h)
+        # glMatrixMode(GL_PROJECTION)
+        # glLoadIdentity()
+        # aspect = w / h if h > 0 else 1
+        # half_width = self.zoom * aspect
+        # half_height = self.zoom
+        # gluOrtho2D(-half_width, half_width, -half_height, half_height)
+        # glMatrixMode(GL_MODELVIEW)
+        
+    def paintGL(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()
+
+        glTranslatef(self.translation[0], self.translation[1], 0)
+
+        #Drawing background elements
+        if self.viewport_settings["grid"]["show"] == True:
+            self.draw_grid()
+
+        if self.airfoil:
+            self.draw_airfoil(self.airfoil)
+            if self.airfoil_settings["control_points"]["show"] == True:
+                self.draw_cp_net(self.airfoil, self.zoom)
+            if self.airfoil_settings["construction"]["show"] == True:
+                self.draw_dashed_line(self.airfoil, 0.01, self.zoom)
+        # for reference in self.PROJECT.reference_airfoils:
+        #     if reference.visible:
+        #         if reference.info['format'] == 'selig':
+        #             self.draw_airfoil_selig_format(reference)
+        #             # self.logger.debug("Drawing selig format airfoil")
+        #         if reference.info['format'] == 'ddls-parametric':
+        #             self.draw_airfoil(reference, color='grey')
+                    # self.logger.debug("Drawing .ddls-parametric reference model")
+            #self.fit_to_airfoil(self.airfoil)
+        
+        # Switch to 2D GUI space (orthographic projection) using widget size
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glOrtho(0, self.width(), self.height(), 0, -1, 1)
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+
+        glDisable(GL_DEPTH_TEST)
+        # Draw GUI elements (independent of 3D transformations)
+        if self.viewport_settings["ruler"]["show"] == True:
+            self.draw_ruler()
+        glEnable(GL_DEPTH_TEST)
+
+        # Restore matrices back to world/viewport projection
+        glMatrixMode(GL_MODELVIEW)
+        glPopMatrix()
+        glMatrixMode(GL_PROJECTION)
+        glPopMatrix()
+        glMatrixMode(GL_MODELVIEW)
+
+    def draw_cor(self, position, size=5):
+        glPointSize(size)
+        glBegin(GL_POINTS)
+        glColor3f(1, 0, 0)  # Red color
+        glVertex3f(*position)
+        glEnd()
+
+    def draw_grid(self):
+        # Draw grid based on world-aligned nice tick spacing (major + minor lines)
+        world_left, world_right, world_bottom, world_top = tools.compute_2D_world_bounds(float(self.width()), float(self.height()), self.zoom, translation_X=self.translation[0], translation_Y=self.translation[1])
+
+        # Determine tick spacing and minor spacing
+        world_span_x = world_right - world_left
+        world_span_y = world_top - world_bottom
+        tick_spacing = tools.nice_tick_spacing(world_span_x, target_ticks=10)
+        minor_spacing = tick_spacing / 5.0
+
+        # Colors: major and minor (minor is subtler)
+        major_col = [c / 255 for c in self.grid_color]
+        minor_col = [c / 255 for c in self.minor_grid_color]
+
+        # Draw minor vertical grid lines (world X = const)
+        glLineWidth(0.8)
+        x = math.floor(world_left / minor_spacing) * minor_spacing
+        while x <= world_right:
+            glColor3f(*minor_col)
+            glBegin(GL_LINES)
+            glVertex2f(x, world_bottom)
+            glVertex2f(x, world_top)
+            glEnd()
+            x += minor_spacing
+
+        # Draw minor horizontal grid lines (world Y = const)
+        y = math.floor(world_bottom / minor_spacing) * minor_spacing
+        while y <= world_top:
+            glColor3f(*minor_col)
+            glBegin(GL_LINES)
+            glVertex2f(world_left, y)
+            glVertex2f(world_right, y)
+            glEnd()
+            y += minor_spacing
+
+        # Draw major vertical grid lines
+        glLineWidth(2.0)
+        x = math.floor(world_left / tick_spacing) * tick_spacing
+        while x <= world_right:
+            glColor3f(*major_col)
+            glBegin(GL_LINES)
+            glVertex2f(x, world_bottom)
+            glVertex2f(x, world_top)
+            glEnd()
+            x += tick_spacing
+
+        # Draw major horizontal grid lines
+        y = math.floor(world_bottom / tick_spacing) * tick_spacing
+        while y <= world_top:
+            glColor3f(*major_col)
+            glBegin(GL_LINES)
+            glVertex2f(world_left, y)
+            glVertex2f(world_right, y)
+            glEnd()
+            y += tick_spacing
+
+    def draw_ruler(self, size=20):
+        """Draws a ruler with tick marks and labels using OpenGL."""
+        # GUI sizing
+        margin = 6
+        gui_w, gui_h = 40, 40
+        width = float(self.width())
+        height = float(self.height())
+        tick_px_height = max(6.0, gui_h * 0.4)
+        tick_px_width = max(6.0, gui_w * 0.4)
+
+        # Draw GUI background rectangles (top horizontal and left vertical)
+        glDisable(GL_DEPTH_TEST)
+        # horizontal bar (top)
+        glBegin(GL_QUADS)
+        glColor3f(self.bg_color[0]/255, self.bg_color[1]/255, self.bg_color[2]/255)
+        glVertex2f(gui_w, height)
+        glVertex2f(gui_w, height - gui_h)
+        glVertex2f(width, height - gui_h)
+        glVertex2f(width, height)
+        glEnd()
+
+        # vertical bar (left)
+        glBegin(GL_QUADS)
+        glColor3f(self.bg_color[0]/255, self.bg_color[1]/255, self.bg_color[2]/255)
+        glVertex2f(0, 0)
+        glVertex2f(0, height - gui_h)
+        glVertex2f(gui_w, height - gui_h)
+        glVertex2f(gui_w, 0)
+        glEnd()
+
+        glColor3f(self.ruler_color[0]/255, self.ruler_color[1]/255, self.ruler_color[2]/255)
+
+        # Compute visible world bounds using projection parameters
+        world_left, world_right, world_bottom, world_top = tools.compute_2D_world_bounds(width, height, self.zoom, translation_X=self.translation[0], translation_Y=self.translation[1])
+
+        # Determine tick spacing based on zoom magnitude
+        world_span_x = world_right - world_left
+        world_span_y = world_top - world_bottom
+
+        tick_spacing = tools.nice_tick_spacing(world_span_x, target_ticks=10)
+        minor_spacing = tick_spacing / 5
+        precision = tools.precision_from_spacing(tick_spacing)
+        label_fmt = f"{{:.{precision}f}}"
+
+        # Helper to map world x->screen x and world y->screen y
+        def worldx_to_screen(wx):
+            return (wx - world_left) / (world_right - world_left) * width if world_right != world_left else 0
+
+        def worldy_to_screen(wy):
+            # screen Y goes from 0 (top) to height (bottom) because ortho set that way
+            return height - ( (wy - world_bottom) / (world_top - world_bottom) * height ) if world_top != world_bottom else height/2
+
+        glLineWidth(1.0)
+
+        # Draw minor ticks
+        mx = math.floor(world_left / minor_spacing) * minor_spacing
+        while mx <= world_right:
+            sx = worldx_to_screen(mx)
+            glBegin(GL_LINES)
+            glVertex2f(sx, height - gui_h)
+            glVertex2f(sx, height - gui_h + tick_px_height * 0.4)
+            glEnd()
+            mx += minor_spacing
+
+        my = math.floor(world_bottom / minor_spacing) * minor_spacing
+        while my <= world_top:
+            sy = worldy_to_screen(my)
+            glBegin(GL_LINES)
+            glVertex2f(gui_w - tick_px_width * 0.4, sy)
+            glVertex2f(gui_w, sy)
+            glEnd()
+            my += minor_spacing
+
+
+        # Draw X major ticks (top horizontal ruler)
+        start_x = math.floor(world_left / tick_spacing) * tick_spacing
+        x = start_x
+        while x <= world_right:
+            sx = worldx_to_screen(x)
+            # draw small vertical tick into the top ruler area
+            glColor3f(self.ruler_color[0]/255, self.ruler_color[1]/255, self.ruler_color[2]/255)  # Set color each iteration
+            glBegin(GL_LINES)
+            glVertex2f(sx, height - gui_h)
+            glVertex2f(sx, height - gui_h + tick_px_height)
+            glEnd()
+            # label below tick inside top bar
+            if abs(x) < tick_spacing * 0.5: # abs(x) > 1e-9:
+                label = 0 # f"{x:.1f}"
+            else:
+                label = label_fmt.format(x) # "0"
+            self.draw_text(label, sx + 0, height - gui_h + tick_px_height + 12, centered=True)
+            x += tick_spacing
+
+        # Draw Y major ticks (left vertical ruler)
+        start_y = math.floor(world_bottom / tick_spacing) * tick_spacing
+        y = start_y
+        while y <= world_top:
+            sy = worldy_to_screen(y)
+            # draw small horizontal tick into the left ruler area
+            glColor3f(self.ruler_color[0]/255, self.ruler_color[1]/255, self.ruler_color[2]/255)  # Set color each iteration
+            glBegin(GL_LINES)
+            glVertex2f(gui_w - tick_px_width, sy)
+            glVertex2f(gui_w, sy)
+            glEnd()
+            if abs(y) < tick_spacing * 0.5:
+                label = 0
+            else:
+                label = label_fmt.format(y)
+            self.draw_text(label, gui_w - tick_px_width - 12, sy+0, angle=90, centered=True) # Add label
+            y += tick_spacing
+        
+        glLineWidth(1.0)  # Reset line width
+
+        # crop overlapping bottom
+        glBegin(GL_QUADS)
+        glColor3f(self.bg_color[0]/255, self.bg_color[1]/255, self.bg_color[2]/255)
+        glVertex2f(0, height)
+        glVertex2f(gui_w, height)
+        glVertex2f(gui_w, height - gui_h)
+        glVertex2f(0, height - gui_h)
+        glEnd()
+
+        # decorative with unit symbol
+        glBegin(GL_LINE_STRIP)
+        glColor3f(self.ruler_color[0]/255, self.ruler_color[1]/255, self.ruler_color[2]/255)
+        glVertex2f(margin, height - gui_h + margin)
+        glVertex2f(gui_w-margin, height - gui_h + margin)
+        glVertex2f(gui_w-margin, height - margin)
+        glVertex2f(margin, height - margin)
+        glVertex2f(margin, height - gui_h + margin)
+        glEnd()
+        self.draw_text(self.DAEDALUS.preferences['general']['units']['length'], 20, self.height()-20, centered=True)
+
+        # decorative cut-off from viewport
+        glBegin(GL_LINE_STRIP)
+        glColor3f(self.grid_color[0]/255, self.grid_color[1]/255, self.grid_color[2]/255)
+        glVertex2f(gui_w, height - gui_h)
+        glVertex2f(width, height - gui_h)
+        glEnd()
+        glBegin(GL_LINE_STRIP)
+        glColor3f(self.grid_color[0]/255, self.grid_color[1]/255, self.grid_color[2]/255)
+        glVertex2f(gui_w, height - gui_h)
+        glVertex2f(gui_w, 0)
+        glEnd()
+        
+        glEnable(GL_DEPTH_TEST)
+
+    def draw_text(self, text, x, y, angle=0, centered=False):
+        """
+        Renders text at the specified (x, y) position using screen-space coordinates.
+        This is suitable for rulers and UI overlays.
+        
+        Args:
+            text: Text string to render
+            x: X coordinate in screen/pixel space
+            y: Y coordinate in screen/pixel space
+            angle: Rotation angle in degrees (0 = normal, 90 = rotated 90 degrees)
+            centered: If True, center text at (x, y)
+        """
+        text = str(text)
+        self.text_renderer.render_text_screen_space(
+            text,
+            x,
+            y,
+            angle=angle,
+            color=self.text_color,
+            centered=centered,
+            viewport_height=self.height()
+        )
+
+    def frange(self, start, stop, step):
+        """Range for floats."""
+        while start < stop:
+            yield start
+            start += step
+
+    def world_to_screen(self, x, y):
+        """Map OpenGL world coords → Qt screen coords for text placement."""
+        model = glGetDoublev(GL_MODELVIEW_MATRIX)
+        proj = glGetDoublev(GL_PROJECTION_MATRIX)
+        viewport = glGetIntegerv(GL_VIEWPORT)
+        winX, winY, winZ = gluProject(x, y, 0.0, model, proj, viewport)
+        return winX, self.height() - winY  # flip Y for Qt
+
+    def mousePressEvent(self, event):
+        self.lastPos = event.position()
+
+    def mouseMoveEvent(self, event):
+        pos = event.position()
+
+        dx = pos.x() - self.lastPos.x()
+        dy = pos.y() - self.lastPos.y()
+
+        if event.buttons() & Qt.MouseButton.LeftButton:
+            self.translation[0] += dx * (self.zoom / 300)
+            self.translation[1] -= dy * (self.zoom / 300)
+
+        self.lastPos = pos
+        self.update()
+
+    def wheelEvent(self, event):
+        delta = event.angleDelta().y()
+        if delta > 0:
+            self.zoom *= 0.9  # zoom in
+        else:
+            self.zoom *= 1.1  # zoom out
+        self.resizeGL(self.width(), self.height())
+        self.update()
+
+    def mouseReleaseEvent(self, event):
+        self.update()
+
+    def toggle_projection(self):
+        """Toggle between perspective and orthogonal views."""
+        self.orthogonal = not self.orthogonal
+        #self.resizeGL(self.width(), self.height())  # Ensure projection matrix is updated
+        self.resizeGL(1200, 800)
+        self.update()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_P:
+            self.toggle_projection()
+        self.update()
+        #return super().keyPressEvent(a0)
+
+    def draw_airfoil(self, Current_Airfoil, line_style="solid", color=None):
+        '''
+        Plots an airfoil based on objects Airfoil stored in obj.arf.py defined by folowing gorup of parameters:
+
+        Base parameters:
+            chord, origin_X, origin_Y
+        Leading Edge parameters:
+            le_thickness, le_depth, le_offset, le_angle
+        Trailing Edge parameters:
+            te_thickness, te_depth, te_offset, te_angle
+        Pressure Side parameters:
+            ps_fwd_angle, ps_rwd_angle, ps_fwd_accel, ps_rwd_accel
+        Suction Side parameters:    
+            ss_fwd_angle, ss_rwd_angle, ss_fwd_accel, ss_rwd_accel
+        '''
+
+        # Extract parameters
+        # Current_Airfoil.update()
+        glDisable(GL_DEPTH_TEST)
+
+        if color == "grey":
+            color ={'le': [0.5,0.5,0.5],
+                    'te': [0.5,0.5,0.5],
+                    'ps': [0.5,0.5,0.5],
+                    'ss': [0.5,0.5,0.5]
+                }
+        else:
+            color = self.airfoil_settings['wireframe']['color']
+
+        for key in ['le', 'te', 'ps', 'ss']:
+            segment = getattr(Current_Airfoil, key.upper())
+
+            vec_length = len(segment.spline.geom[0])
+            if vec_length > 0:
+                points = [(segment.spline.geom[0][i], segment.spline.geom[1][i]) for i in range(vec_length)]
+                if line_style == "solid":
+                    self._draw_solid_line(points, color[key])
+                if line_style == "dashed":
+                    self._draw_dashed_line(points, color[key])
+                if line_style == "dot-dash":
+                    self._draw_dot_dash_line(points, color[key])
+
+    def _draw_solid_line(self, points, color):
+        """Draw a solid line connecting the given points."""
+        glColor3f(*color)
+        glBegin(GL_LINE_STRIP)
+        for point in points:
+            glVertex3f(point[0], point[1], 0.0)  # force z=0
+        glEnd()
+
+    def _draw_dashed_line(self, points, color, dash_length=0.001):
+        """Draws a dashed line connecting the given points."""
+
+        glColor3f(*color)
+        # total_len = sum(
+        # linalg.norm(array(points[i+1]) - array(points[i]))
+        # for i in range(len(points)-1)
+        # )
+        # dash_length = total_len * dash_length_scale
+
+        for i in range(len(points) - 1):
+            p1 = np.array([points[i][0], points[i][1], 0.0])
+            p2 = np.array([points[i + 1][0], points[i + 1][1], 0.0])
+            vec = p2 - p1
+            length = np.linalg.norm(vec)
+            if length == 0:
+                continue
+            dir_vec = vec / length
+
+            num_dashes = max(1, int(length / (2 * dash_length)))
+            for j in range(num_dashes):
+                start = p1 + dir_vec * (2 * j) * dash_length
+                end = p1 + dir_vec * (2 * j + 1) * dash_length
+                glBegin(GL_LINES)
+                glVertex3fv(start)
+                glVertex3fv(end)
+                glEnd()
+
+    def _draw_dot_dash_line(self, points, color, dash_length=0.01, dot_size=3.0):
+        """Draws a dot-dash line connecting the given points."""
+
+        glColor3f(*color)
+        for i in range(len(points) - 1):
+            p1 = np.array([points[i][0], points[i][1], 0.0])
+            p2 = np.array([points[i + 1][0], points[i + 1][1], 0.0])
+            vec = p2 - p1
+            length = np.linalg.norm(vec)
+            dir_vec = vec / length
+
+            num_dashes = int(length / (3 * dash_length))
+            for j in range(num_dashes):
+                # Draw dash
+                start = p1 + dir_vec * (3 * j) * dash_length
+                end = p1 + dir_vec * (3 * j + 1) * dash_length
+                glBegin(GL_LINES)
+                glVertex3fv(start)
+                glVertex3fv(end)
+                glEnd()
+
+                # Draw dot
+                dot = p1 + dir_vec * (3 * j + 2) * dash_length
+                glPointSize(dot_size)
+                glBegin(GL_POINTS)
+                glVertex3fv(dot)
+                glEnd()
+    
+    def fit_to_airfoil(self):
+        if self.airfoil:
+            top = max(self.airfoil.PS.spline.geom[1])
+            down = min(self.airfoil.SS.spline.geom[1])
+            left = min(self.airfoil.LE.spline.geom[0])
+            right = max(self.airfoil.TE.spline.geom[0])
+
+            print( '| top | down | left | right |')
+            print(f"| {top} | {down} | {left} | {right} |")
+
+            width = right - left
+            height = top - down
+            self.zoom = max(width, height) * 0.6
+            self.translation = [-(left + right) / 2, -(top + down) / 2, 0]
+            self.resizeGL(self.width(), self.height())
+        self.update()
+
+    def draw_cp_net(self, Current_Airfoil, zoom):
+        
+        color = self.airfoil_settings['control_points']['color']
+        glPointSize(6.0)
+
+        for key in ['le', 'te', 'ps', 'ss']:
+            segment = getattr(Current_Airfoil, key.upper())
+
+            glColor3f(color[key][0], color[key][1], color[key][2])
+            glBegin(GL_POINTS)
+            points = np.array(segment.spline.control_points).T
+            #print(f"{key}: ", points)
+            for point in points:
+                glVertex3f(point[0], point[1], 0.0)
+            glEnd()
+
+    def draw_dashed_line(self, airfoil, base_dash_length=0.01, zoom=1):
+        """Draw dashed line between points p1 and p2."""
+
+        for key in airfoil.constr:
+            points = np.array(airfoil.constr[key]).T
+            z = 0 if key in ['le', 'ps', 'ss', 'te'] else None
+            for j in range(len(points) - 1):
+                p1 = points[j]
+                #print(p1)
+                p2 = points[j + 1]
+                if z is not None:
+                    p1 = [p1[0], p1[1], z]
+                    p2 = [p2[0], p2[1], z]
+                #print(f"{key}: ", points)
+
+                zoom = abs(zoom) if zoom != 0 else 0.001  # avoid divide-by-zero
+                dash_length = base_dash_length * zoom
+
+                p1 = np.array(p1)
+                p2 = np.array(p2)
+                vec = p2 - p1
+                length = np.linalg.norm(vec)
+                dir_vec = vec / length 
+
+                num_dashes = int(length / (2 * dash_length))
+                for i in range(num_dashes):
+                    start = p1 + dir_vec * (2 * i) * dash_length
+                    end = p1 + dir_vec * (2 * i + 1) * dash_length
+                    glColor3f(0.3, 0.3, 0.3)
+                    glBegin(GL_LINES)
+                    glVertex3fv(start)
+                    glVertex3fv(end)
+                    glEnd()
+
+    def draw_airfoil_selig_format(self, reference_airfoil):
+        '''
+        Plots an airfoil based on objects Airfoil stored in obj.arf.py defined by folowing gorup of parameters:
+
+        Base parameters:
+            chord, origin_X, origin_Y
+        Leading Edge parameters:
+            le_thickness, le_depth, le_offset, le_angle
+        Trailing Edge parameters:
+            te_thickness, te_depth, te_offset, te_angle
+        Pressure Side parameters:
+            ps_fwd_angle, ps_rwd_angle, ps_fwd_accel, ps_rwd_accel
+        Suction Side parameters:    
+            ss_fwd_angle, ss_rwd_angle, ss_fwd_accel, ss_rwd_accel
+        '''
+
+        # Extract parameters
+        #reference_airfoil.update()
+        glDisable(GL_DEPTH_TEST)
+    
+        color = self.airfoil_settings['wireframe']['color']
+
+        vec_length = len(reference_airfoil.top_curve[0])
+        if vec_length > 0:
+            # Draw edges connecting front and back faces
+            glColor3f(0.5,0.5,0.5)
+            glBegin(GL_LINE_STRIP)
+            for i in range(vec_length):
+                x = reference_airfoil.top_curve[0][i]
+                y = reference_airfoil.top_curve[1][i]
+                glVertex3f(x, y, 0.0)  # force z=0
+            glEnd()
+        
+        vec_length = len(reference_airfoil.dwn_curve[0])
+        if vec_length > 0:
+
+            glColor3f(0.5,0.5,0.5)
+            glBegin(GL_LINE_STRIP)
+            for i in range(vec_length):
+                x = reference_airfoil.dwn_curve[0][i]
+                y = reference_airfoil.dwn_curve[1][i]
+                glVertex3f(x, y, 0.0)  # force z=0
+            glEnd()
