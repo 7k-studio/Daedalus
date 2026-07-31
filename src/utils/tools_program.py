@@ -20,6 +20,10 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import math
 import numpy as np
+import logging
+import json
+
+logger = logging.getLogger(__name__)
 
 def normalize(vector):
     length = sum(x ** 2 for x in vector) ** 0.5
@@ -81,6 +85,36 @@ def vec_translate(points, magnitude, angle):
 
     return translated_points
 
+def decode_json(filePath):
+    logger.info(f"Open archive airfoil: {filePath}")
+    # Open the JSON file directly (as saved by saveProject)
+    try:
+        with open(f"{filePath}", "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        logger.error("File not found!")
+        return
+    except json.JSONDecodeError:
+        logger.error("During decoding JSON!")
+        return
+
+    logger.debug("JSON decoded and data loaded to variable")
+    # Convert lists back to numpy arrays if needed
+    return convert_list_to_ndarray(data)
+
+def get_archive_version(data):
+    try:
+        file_version = data["Program"].get("version", "0.0.0")
+    except KeyError as e:
+        try:
+            file_version = data["program version"]
+        except KeyError as e:
+            logger.error(f"Missing key in ARF data - {e}")
+            logger.warning("File may not load properly or is not compatible with DAEDALUS")
+            return
+
+    return file_version.split("-")[0].split(".")
+
 def parse_from_params(params_dict):
     """Helper to dynamically parse Param objects"""
     return {
@@ -104,7 +138,31 @@ def parse_from_attrs(attrs_dict):
         else:
             final_value = val
 
-        param_data = {"value": final_value} 
-        parsed[key] = param_data
+        parsed[key] = {"value": final_value} 
         
     return parsed
+
+def update_params_dict(target_params, json_params_data, units_map):
+    """
+    target_params: np. {'Test': Param('test', 0, M)}
+    json_params_data: np. {'Test': {'value': 0.004, 'unit': 'm'}}
+    """
+    if not json_params_data:
+        return
+
+    for key, param_data in json_params_data.items():
+        if key in target_params:
+            target_params[key].update_from_dict(param_data, units_map)
+
+def update_attrs_dict(target_attrs, json_attrs_data, airfoils_list=None):
+    """
+    target_attrs: np. {'Test': Param('test', "G1", ["G1","G2"])}
+    json_attrs_data: np. {'Test': {'value': "G1"}}
+    """
+    if not json_attrs_data:
+        return
+
+    for key, attr_data in json_attrs_data.items():
+        if key in target_attrs:
+            # Aktualizujemy istniejący obiekt Param
+            target_attrs[key].update_from_dict(attr_data, airfoils_list=airfoils_list)

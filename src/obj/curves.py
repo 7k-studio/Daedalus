@@ -67,14 +67,16 @@ class BSpline:
             return
         
         coords = [np.array(c) for c in self.control_points] # format: [X_array, Y_array, Z_array]
-        print('Control points', self.control_points)
-        print('Coords:', coords)
-        print('Mode:', mode)
+        # self.logger.debug(f"""Processing BSpline...\n
+        #                   Mode: {mode}\n
+        #                   Control points: {self.control_points}
+        #                   Coords: {coords}""")
+        
         l = len(coords[0])  # number of control points
         
         # If we only have 2 points and in approximated mode, create intermediate control points
         if l <= 2 and mode == 'approximated':
-            print(f"Warning: Only {l} control points. Creating intermediate points for better curve.")
+            self.logger.warning(f"Only {l} control points. Creating intermediate points for better curve.")
             coords = self._create_intermediate_control_points(coords, min_intermediate_points)
             l = len(coords[0])
         

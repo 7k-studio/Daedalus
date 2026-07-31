@@ -171,6 +171,7 @@ class WingDesigner:
         self.refresh()
 
     def refresh(self):
+        self.TREE_OBJECT.update()
         self.TEXT_DESCRIPTION.set_description()
     
     def addComponent(self):
@@ -339,25 +340,4 @@ class WingDesigner:
         """Update the menu bar state when a dock widget's visibility changes."""
         if dock_widget == self.dock_widgets.get('logger_console'):
             self.MENU_BAR.update_action_state(self.MENU_BAR.loggerWidgetAction, dock_widget)
-
-    # def initializeOpenGL(self):
-    #     """Initialize OpenGL settings."""
-    #     glEnable(GL_DEPTH_TEST)  # Enable depth testing
-    #     glClearColor(0.01, 0.01, 0.01, 1.0)  # Set background color
-
-    # def resizeGL(self, w, h):
-    #     """Handle OpenGL viewport resizing."""
-    #     if h == 0:
-    #         h = 1  # Prevent division by zero
-    #     glViewport(0, 0, w, h)
-    #     glMatrixMode(GL_PROJECTION)
-    #     glLoadIdentity()
-    #     gluPerspective(45, w / h, 0.1, 50.0)  # Set perspective projection
-    #     glMatrixMode(GL_MODELVIEW)
-
-    # def paintGL(self):
-    #     """Render the OpenGL scene."""
-    #     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    #     glLoadIdentity()
-    #     # Add rendering logic here
 

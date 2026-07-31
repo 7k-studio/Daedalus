@@ -5,69 +5,129 @@ Program consists of two modules:
 1. Airfoil designer - for airfoil operations
 2. Wing Workbench - for wing creation and modification
    
-Daedalus implements a 3D OpenGL viewport embedded in a PyQt5 GUI. The application allows for mouse interaction to translate, rotate, and zoom within the 3D space. It features a structured layout with a tree menu for navigation, a dropdown menu for basic functions, and a table widgets for user interaction.
+Daedalus implements a 3D OpenGL viewport embedded in a PyQt6 GUI. The application allows for mouse interaction to translate, rotate, and zoom within the 3D space. It features a structured layout with a tree menu for navigation, a dropdown menu for basic functions, and a table widgets for user interaction.
 
 ## Project Structure
 
 ```
 Daedalus
-├── main.py                      # Entry point of the application
+├── main.py                                   # Entry point of the application
 ├── src
-│   ├── settings                 # Store for user settings
-|   ├── program
-|   |   ├── preferences.py       # Loads / Saves / Changes settngs
-|   |   ├── program.py           # Main class for Daedalus program
-|   |   ├── project.py           # Project class to store the data
-|   |   ├── splash_screen.py     # Splash screen on file load-up
-|   |   └── widget_log.py        # Console to display file log
-|   |             
-|   ├── arfdes
-|   |   ├── airfoil_designer.py  # Main window layout and setup
-|   |   ├── fit_2_reference.py   # Experimental function for reference matching
-|   |   ├── menu_bar.py          # Dropdown menu for file operations
-|   |   ├── tool_bar.py          # 
-|   |   ├── tools_airfoil.py     # Utility functions and helpers for airfoils
-|   |   ├── tools_refeerence.py  # Utility functions and helpers for reference
-|   |   ├── widget_tabele.py     # Tabele for object properties
-|   |   └── widget_tree.py       # Tree menu for objects store
-|   |
-|   ├── assets                   # Storage for user manual and images
-|   ├── data                     # Storage for reference and established files
+│   ├── settings                              # Store for user settings in JSON based file
+│   |                                         
+|   ├── assets                                # Storage
+|   |   ├── IconPack                      
+|   |   |   └── Classic                       # Default set of icons
+|   |   └── styles                        
+|   |       ├── Daedalus-Dark.css         
+|   |       ├── Daedalus-Light.css       
+|   |       ├── Dark.css                  
+|   |       └── Light.css                     # Default
 |   ├── obj
-|   |   ├── car.py               # Classes for reference
-|   |   ├── draw_construction.py # Helper
-|   |   ├── objects2D.py         # Classes for 2D objects
-|   |   └── objects3D.py         # Classes for 3D objects
+|   |   ├── class_airfoil.py                  # Classes for DDLS Airfoils, v0.3.0 DDLS Airfoils, and cloud-point Airfoils
+|   |   ├── class_component.py                # Class for Component
+|   |   ├── class_segment.py                  # Class for Segment
+|   |   ├── class_skin.py                     # Class for Skin
+|   |   ├── curves.py                         # Collection of 2D objects - Curves
+|   |   ├── param.py                          # Collection of Parameter, Attribute and Unit
+|   |   └── surfaces.py                       # Collection of 3D objects - Surfaces
 |   ├── opengl
-|   |   ├── bckgrd.py            # OpenGL functions for 3D drawings
-|   |   ├── construction.py      # OpenGL functions for 3D drawings
-|   |   ├── solid.py             # OpenGL functions for 3D drawings
-|   |   ├── test_cube.py         # OpenGL functions for 3D drawings
-│   │   ├── viewport2D.py        # OpenGL viewport for Airfoil Designer
-│   │   ├── viewport3D.py        # OpenGL viewport for Wing Designer
-│   │   ├── wireframe.py         # OpenGL functions for 3D drawings
-│   │   └── shaders
-│   │       ├── vertex_shader.glsl   # Vertex shader code
-│   │       └── fragment_shader.glsl # Fragment shader code
-|   ├── splash
-│   │   └── splash_screen.py    # Welcome screen on program init
-|   ├── utils
-|   |   ├── dxf.py              # DXF  export script
-|   |   ├── step.py             # STEP export script
-│   |   └── tools_program.py    # Utility functions and helpers
-│   └── wngwb
-│       ├── console_widget.py   # Command-line-like interface for user input
-│       ├── main_window.py      # Main window layout and setup
-│       ├── menu_bar.py         # Dropdown menu for file operations
-│       ├── menu_context.py     # Future pleaceholder for context menu
-│       ├── tools_wing.py       # Utility functions and helpers
-│       ├── widget_tabele.py    # Tabele for object properties
-│       └── widget_tree.py      # Tree menu for objects store    
+│   │   ├── tools_lines.py                    # Utils for OpenGL specificaly: line drawing
+│   │   ├── tools_opengl.py                   # Utils for OpenGL
+|   |   |
+│   │   ├── shaders
+│   │   |   ├── vertex_shader.glsl            # Vertex shader code
+│   │   |   └── fragment_shader.glsl          # Fragment shader code
+|   |   ├── viewport2D
+│   │   |   ├── camera.py                     # OpenGL viewport for Airfoil Designer
+│   │   |   ├── viewport2D.py                 # OpenGL viewport for Airfoil Designer
+|   |   |   |
+|   |   |   ├── interaction                   # OpenGL 2D viewport interactions
+|   |   |   |   ├── pan_tool.py 
+|   |   |   |   └── zoom_tool.py
+|   |   |   └── renderers                     # OpenGL 2D viewport renderers
+|   |   |       ├── airfoil_renderer.py
+|   |   |       ├── grid_renderer.py
+|   |   |       ├── render_context.py
+|   |   |       ├── ruler_renderer.py
+│   │   |       └── text_renderer.py
+|   |   └── viewport3D
+│   │       ├── camera.py                     # OpenGL viewport for Wing Designer
+│   │       ├── viewport3D.py                 # OpenGL viewport for Wing Designer
+|   |       |
+|   |       ├── interaction                   # OpenGL 3D viewport interactions
+|   |       |   ├── pan_tool.py 
+|   |       |   └── zoom_tool.py
+|   |       └── renderers                     # OpenGL 3D viewport renderers
+|   |           ├── bckgrd.py
+|   |           ├── controlpoints_renderer.py
+|   |           ├── coordinate_renderers.py
+|   |           ├── grid_renderer.py
+|   |           ├── surface_renderer.py
+|   |           ├── test_cube.py
+│   │           └── wireframe_renderer.py
+|   ├── program
+|   |   ├── home_screen.py                    # Splash screen on file load-up
+|   |   ├── main_window.py                    # Splash screen on file load-up
+|   |   ├── preferences.py                    # Loads / Saves / Changes settngs
+|   |   ├── program.py                        # Main class for Daedalus program
+|   |   ├── project.py                        # Project class to store the data
+|   |   |
+|   |   └── modules  
+|   |       ├── arfdes
+|   |       |   ├── airfoil_designer.py       # Main window layout and setup
+|   |       |   ├── fit_2_reference.py        # Experimental function for reference matching
+|   |       |   ├── menu_bar.py               
+|   |       |   ├── tool_bar.py               
+|   |       |   ├── tools_airfoil.py          # Utility functions and helpers for airfoils
+|   |       |   ├── tools_refeerence.py       
+|   |       |   ├── widget_tabele.py          # Tabele for object properties
+|   |       |   └── widget_tree.py            # Tree menu for objects store
+|   |       └── wngwb
+|   |           ├── console_widget.py         # Command-line-like interface for user input
+|   |           ├── main_window.py            # Main window layout and setup
+|   |           ├── menu_bar.py                
+|   |           ├── menu_context.py           # Future pleaceholder for context menu
+|   |           ├── tools_wing.py             # Utility functions and helpers
+|   |           ├── widget_tabele.py          # Tabele for object properties
+|   |           └── widget_tree.py            # Tree menu for objects store    
+|   ├── utils                                 # Utility functions and helpers
+|   |   ├── dxf.py                            # DXF  export script
+|   |   ├── step.py                           # STEP export script
+│   |   ├── tools_airfoil.py            
+│   |   ├── tools_program.py            
+│   |   ├── tools_reference.py          
+│   |   └── tools_wing.py               
+|   └── widgets
+│       ├── about.py                          # Welcome screen on program init
+|       ├── splash_screen.py                  # Splash screen on file load-up
+|       ├── table_parameters.py               # Tabele for object properties
+|       ├── table_statistics.py               # Tabele for object statistics
+|       ├── tool_bar.py                       # Quick access to certain tools
+|       ├── tree_airfoils.py                  # Tree of airfoils in the project
+|       ├── tree_objects.py                   # Tree of comonents in the project 
+|       ├── widget_description.py             # Widget to handle description of project
+|       ├── widget_log.py                     # Display log to keep track of functions outcomes
+|       ├── widget_progress.py                # Widget to track function progress
+|       ├── widget_reference.py               # Widget to handle reference airfoils
+|       |
+|       └── menu_bar                          # Dropdown menu for file operations
+|           ├── menu_bar.py
+|           |
+|           └── utils
+|               ├── menu_edit.py         
+|               ├── menu_file.py         
+|               ├── menu_module.py        
+|               ├── menu_program.py      
+|               ├── menu_reference.py        
+|               ├── menu_view.py         
+|               └── menu_window.py           
+├── data                                      # Storage for reference and established files
 ├── .venv
-├── requirements.txt            # Program dependencies
-├── LICENSE                     # Program licence
-├── logo.ico                    # Program logo
-└── README.md                   # Program documentation
+├── requirements.txt                          # Program dependencies
+├── LICENSE                                   # Program licence
+├── logo.ico                                  # Program logo
+└── README.md                                 # Program documentation
 ```
 
 ## Setup Instructions

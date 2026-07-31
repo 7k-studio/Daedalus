@@ -28,13 +28,13 @@ import datetime
 
 # In-Program imports
 # import src.obj.objects3D as objects3D
-from src.modules.arfdes.tools_airfoils import load_airfoil_from_json, Reference_load
-from src.utils.tools_program import convert_ndarray_to_list, convert_list_to_ndarray, parse_from_params, parse_from_attrs
+from src.utils.tools_airfoil import load_ddls_airfoil, load_ddls_airfoil_030, Reference_load
+from src.utils.tools_program import convert_ndarray_to_list, convert_list_to_ndarray, parse_from_params, parse_from_attrs, decode_json, get_archive_version, update_attrs_dict, update_params_dict
 
 class Project:
     def __init__(self, program=None):
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.DAEDALUS = program
+        self.PROGRAM = program
         self.name = None
         self.creation_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.modification_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -85,139 +85,269 @@ class Project:
 
             self.logger.info(f"Saved file as: {self.name} to location: {self.path}")
 
-    def open(self, fileName):
-        from src.obj.class_airfoil import Airfoil
-        from src.obj.surfaces import Component, Wing, Segment  # Import the templates
+    def open(self, filePath):
         
-        if fileName:
-            warning_count = 0
+        if not filePath:
+            self.logger.error("File path not specified or incorrect!")
+            return
 
-            self.logger.info(f"Open archive project: {fileName}")
-            # Open the JSON file directly (as saved by saveProject)
-            with open(fileName, "r") as f:
-                data = json.load(f)
+        data = decode_json(filePath)
+        file_version = get_archive_version(data)
 
-            # Convert lists back to numpy arrays if needed
-            data = convert_list_to_ndarray(data)
+        try:
+            project_data = data["Project"]
+        except KeyError as e:
+            self.logger.error(f"Missing key in ARF data - {e}")
+            self.logger.warning("File may not load properly or is not compatible with DAEDALUS")
+            return
 
-            if "Program" in data:
-                if data["Program"].get("program version", self.DAEDALUS.version):
-                    file_version = data["Program"].get("program version", self.DAEDALUS.version)
-                    file_version = file_version.split("-")[0].split(".")
-                    program_version = self.DAEDALUS.version
-                    program_version = program_version.split("-")[0].split(".")
-                    if program_version[1] != file_version[1] or program_version[0] != file_version[0]:
-                        self.logger.warning("Current program version is different from the saved version. Some features may not work as expected. \nMissing parameters will take default values.")
-                        warning_count += 1
+        # Check compatibility
+        self.logger.debug("Checking compatibility...")
+        print(int(file_version[0]), int(file_version[1]))
+        print(int(file_version[0]) == 0, int(file_version[1]) < 4)
+        if int(file_version[0]) == 0 and int(file_version[1]) < 4:
+            self.logger.warning("There were critical changes to airfoil definition. Program will try to recreate saved airfoil to latest format. Checing the appending results is advised!")
+            # Load airfoils from in-memory JSON
+            self.logger.info("Loading airfoil using legacy approach...")
+            self._030_project_reader(data, self.PROGRAM, filePath)
+        else:
+            project_data = data["Project"]
+            self._project_reader(project_data)
+            
+        self.logger.debug("Processing the data...")
 
-            # Restore PROJECT info
-            if "Project" in data:
-                self.logger.debug("Loading data")
-                proj = data["Project"]
-                self.name = proj.get("project name", self.name)
-                self.creation_date = proj.get("creation date", self.creation_date)
-                self.description = proj.get("project description", self.description)
-                self.path = proj.get("project path", self.path)
-                self.project_components.clear()
-                self.project_airfoils.clear()
+    def _project_reader(self, project_data):
+        from src.widgets.widget_progress import ProgressDialog
+        from src.obj.param import Param, Attr, M, MM, IN, FT, DEG, RAD
+        from src.obj.class_airfoil import Airfoil
+        from src.obj.class_component import Component
+        from src.obj.class_wing import Wing
+        from src.obj.class_segment import Segment  # Import the templates
 
-                # Load airfoils from in-memory JSON (not from files)
-                self.logger.debug("Loading airfoil entires...")
-                airfoil_entries = proj.get("project airfoils", [])
-                for airfoil_entry in airfoil_entries:
-                    airfoil_data = airfoil_entry["data"]
-                    arf_obj = load_airfoil_from_json(airfoil_data)
-                    self._ensure_unique_name(arf_obj)  # Ensure unique name in case of conflicts
-                    self.project_airfoils.append(arf_obj)
+        # Słownik dostępnych jednostek w Twoim programie
+        UNITS_MAP = {
+            "m": M,
+            "mm": MM,
+            "in": IN,
+            "ft": FT,
+            "deg": DEG,
+            "rad": RAD
+        }
+
+        airf_no = len(project_data.get("airfoils",[]))
+        comp_no = 0
+        wing_no = 0
+        segm_no = 0
+        objects_no = 0
+        
+        components_vec = project_data.get("components",[])
+        for c in components_vec:
+            wings_vec = c.get("wings",[])
+            for w in wings_vec:
+                segment_vec = w.get("segments",[])
+                segm_no += len(segment_vec)
+            wing_no += len(wings_vec)
+        comp_no = len(components_vec)
+
+        objects_no = comp_no + wing_no + segm_no
+
+        self.progressWidget = ProgressDialog(title="Opening Project...")
+        self.progressWidget.show()
+        self.progressWidget.max_value = 2*objects_no+10
+        self.progressWidget.set_progress(0, "Restoring project attributes...")
+
+        # Restore PROJECT info
+        self.name = project_data.get("name", self.name)
+        self.path = project_data.get("path", self.path)
+        self.creation_date = project_data.get("creation date", self.creation_date)
+        self.description = project_data.get("description", self.description)
+        self.components.clear()
+        self.airfoils.clear()
+     
+        # Load airfoils from in-memory JSON
+        self.progressWidget.set_progress(5, "Loading airfoil entires...")
+        self.logger.debug("Loading airfoil entires...")
+        try:
+            airfoil_entries = project_data.get("airfoils", [])
+            print(airfoil_entries)
+            for airfoil_entry in airfoil_entries:
+                arf_obj = load_ddls_airfoil(Airfoil(self.PROGRAM), airfoil_entry)
+                if arf_obj:
                     self.logger.debug(f"Found airfoil: {arf_obj.name}")
+                    # self.PROJECT._ensure_unique_airfoil_name(arf_obj)  # Ensure unique name
+                    self.airfoils.append(arf_obj)
+                    arf_obj.update()
+                    self.progressWidget.increase_progress(1)
 
-                # Load components using templates
-                self.logger.debug("Loading components entires...")
-                for comp_data in proj.get("project components", []):
-                    component = Component()
-                    # Merge infos and params with defaults
-                    component.infos = {**Component().infos, **comp_data.get("infos", {})}
-                    component.params = {**Component().params, **comp_data.get("params", {})}
-                    component.wings = []
-                    for wing_data in comp_data.get("wings", []):
-                        wing = Wing()
-                        wing.infos = {**Wing().infos, **wing_data.get("infos", {})}
-                        wing.params = {**Wing().params, **wing_data.get("params", {})}
-                        wing.segments = []
-                        for seg_data in wing_data.get("segments", []):
-                            segment = Segment()
-                            segment.infos = {**Segment().infos, **seg_data.get("infos", {})}
-                            segment.anchor = seg_data.get("anchor", Segment().anchor)
-                            segment.params = {**Segment().params, **seg_data.get("params", {})}
+        except KeyError as e:
+            self.logger.error(f"Missing key in ARF data - {e}")
+            self.logger.warning("File may not load properly or is not compatible with DAEDALUS")
+            self.progressWidget.close()
+            return
+        
+        self.progressWidget.set_progress(30, "Loading components entires...")
+        # Load components using templates
+        self.logger.debug("Loading components entires...")
+        for comp_data in project_data.get("components", []):
+            component = Component(self.PROGRAM, self)
+            component.name = comp_data.get("name","Component")
+            component.info = {**component.info, **comp_data.get("info", {})}
+            update_attrs_dict(component.attrs, comp_data.get("attrs", {}))
+            update_params_dict(component.params, comp_data.get("params", {}), UNITS_MAP)
+            component.wings = []
+            for wing_data in comp_data.get("wings", []):
+                wing = Wing(self.PROGRAM, self, component)
+                wing.name = wing_data.get("name","Wing")
+                wing.info = {**wing.info, **wing_data.get("info", {})}
+                update_attrs_dict(wing.attrs, wing_data.get("attrs", {}))
+                update_params_dict(wing.params, wing_data.get("params", {}), UNITS_MAP)
+                wing.segments = []
+                for seg_data in wing_data.get("segments", []):
+                    segment = Segment(self.PROGRAM, self, wing)
+                    segment.name = seg_data.get("name","Segment")
+                    segment.info = {**segment.info, **seg_data.get("info", {})}
+                    update_attrs_dict(segment.attrs, seg_data.get("attrs", {}), self.airfoils)
+                    update_params_dict(segment.params, seg_data.get("params", {}), UNITS_MAP)
 
-                            # Set airfoil based on airfoil name
-                            airfoil_ref = seg_data.get("airfoil", "")
-                            segment.airfoil = next((a for a in self.project_airfoils if a.name == airfoil_ref), self.project_airfoils[0] if self.project_airfoils else None)
-                            wing.segments.append(segment)
-                        component.wings.append(wing)
-                    self.project_components.append(component)
+                    wing.segments.append(segment)
+                    self.progressWidget.increase_progress(1, "Loaded segment...")
+                component.wings.append(wing)
+                self.progressWidget.increase_progress(1, "Loaded wing...")
+            self.components.append(component)
+            self.progressWidget.increase_progress(1, "Loaded component...")
 
-            airf_no = 0
-            comp_no = 0
-            wing_no = 0
-            segm_no = 0
-            objects_updated = 0
+        self.logger.info(f"Objects found inside saved file: ALL OBJECTS: {objects_no} | Components: {comp_no}, Wings: {wing_no}, Segments: {segm_no}, Airfoils: {airf_no}"),
 
-            for airfoil in self.project_airfoils:
-                airf_no += 1
-            for component in self.project_components:
-                for wing in component.wings:
-                    for segment in wing.segments:
-                        segm_no += 1
-                    wing_no += 1
-                comp_no += 1
+        self.progressWidget.increase_progress(5, "Rebuilding geometries...")
+        self.logger.info(f"Rebuilidng geometries...")
 
-            objects_to_update = comp_no + wing_no + segm_no + airf_no
-            report = [
-            ("Objects found inside saved file:\n"),
-            (f"----------------------"),
-            (f"|   LOADED OBJECTS   |"),
-            (f"----------------------"),
-            (f"|   Components:   {comp_no}  |"),
-            (f"|   Wings:        {wing_no}  |"),
-            (f"|   Segments:     {segm_no}  |"),
-            (f"|   Airfoils:     {airf_no}  |"),
-            (f"----------------------"),
-            (f"|  ALL OBJECTS:   {objects_to_update}  |"),
-            (f"----------------------")]
+        for airfoil in self.airfoils:
+            airfoil.update()
+            self.progressWidget.increase_progress(1)
+        for c in range(len(self.components)):
+            component = self.components[c]
+            for w in range(len(component.wings)):
+                wing = component.wings[w]
+                for s in range(len(wing.segments)):
+                    segment = wing.segments[s]
+                    segment.update()
+                    self.progressWidget.increase_progress(1, "Updating segment...")
+                wing.update()
+                self.progressWidget.increase_progress(1, "Updating wing...")
+            component.update()
+            self.progressWidget.increase_progress(1, "Updating component...")
 
-            self.logger.info(f"Rebuilidng geometries...")
+        self.progressWidget.set_progress(100, "Update finished!")
+        self.logger.debug("Update finished!")
 
-            for airfoil in self.project_airfoils:
-                airfoil.update()
-                objects_updated += 1
-                self.logger.debug(f"{objects_updated} / {objects_to_update}")
-            for c in range(len(self.project_components)):
-                component = self.project_components[c]
-                for w in range(len(component.wings)):
-                    wing = component.wings[w]
-                    for s in range(len(wing.segments)):
-                        segment = wing.segments[s]
-                        segment.airfoil.update()
-                        segment.update(c, w, s)
-                        objects_updated += 1
-                        self.logger.debug(f"{objects_updated} / {objects_to_update}")
-                    wing.update(c, w, s)
+        self.logger.info(f"Project archive '{self.name}' successfully loaded")
+
+        self.progressWidget.close()
+
+    def _030_project_reader(self, program, project_data):
+        # Restore PROJECT info
+        self.name = project_data.get("project name", self.name)
+        self.path = project_data.get("project path", self.path)
+        self.creation_date = project_data.get("creation date", self.creation_date)
+        self.description = project_data.get("project description", self.description)
+        self.components.clear()
+        self.airfoils.clear()
+
+        # Load airfoils from in-memory JSON
+        self.logger.debug("Loading airfoil entires...")
+        airfoil_entries = project_data.get("project airfoils", [])
+        for airfoil_entry in airfoil_entries:
+            print(airfoil_entry)
+            airfoil_data = airfoil_entry["data"]
+            arf_obj = load_ddls_airfoil_040(airfoil_data)
+            # self._ensure_unique_name(arf_obj)  # Ensure unique name in case of conflicts
+            self.airfoils.append(arf_obj)
+            self.logger.debug(f"Found airfoil: {arf_obj.name}")
+
+        # Load components using templates
+        self.logger.debug("Loading components entires...")
+        for comp_data in project_data.get("project components", []):
+            component = Component()
+            # Merge infos and params with defaults
+            component.infos = {**Component().infos, **comp_data.get("infos", {})}
+            component.params = {**Component().params, **comp_data.get("params", {})}
+            component.wings = []
+            for wing_data in comp_data.get("wings", []):
+                wing = Wing()
+                wing.infos = {**Wing().infos, **wing_data.get("infos", {})}
+                wing.params = {**Wing().params, **wing_data.get("params", {})}
+                wing.segments = []
+                for seg_data in wing_data.get("segments", []):
+                    segment = Segment()
+                    segment.infos = {**Segment().infos, **seg_data.get("infos", {})}
+                    segment.anchor = seg_data.get("anchor", Segment().anchor)
+                    segment.params = {**Segment().params, **seg_data.get("params", {})}
+
+                    # Set airfoil based on airfoil name
+                    airfoil_ref = seg_data.get("airfoil", "")
+                    segment.airfoil = next((a for a in self.airfoils if a.name == airfoil_ref), self.airfoils[0] if self.airfoils else None)
+                    wing.segments.append(segment)
+                component.wings.append(wing)
+            self.components.append(component)
+
+        airf_no = 0
+        comp_no = 0
+        wing_no = 0
+        segm_no = 0
+        objects_updated = 0
+
+        for airfoil in self.airfoils:
+            airf_no += 1
+        for component in self.components:
+            for wing in component.wings:
+                for segment in wing.segments:
+                    segm_no += 1
+                wing_no += 1
+            comp_no += 1
+
+        objects_to_update = comp_no + wing_no + segm_no + airf_no
+        report = [
+        ("Objects found inside saved file:\n"),
+        (f"----------------------"),
+        (f"|   LOADED OBJECTS   |"),
+        (f"----------------------"),
+        (f"|   Components:   {comp_no}  |"),
+        (f"|   Wings:        {wing_no}  |"),
+        (f"|   Segments:     {segm_no}  |"),
+        (f"|   Airfoils:     {airf_no}  |"),
+        (f"----------------------"),
+        (f"|  ALL OBJECTS:   {objects_to_update}  |"),
+        (f"----------------------")]
+
+        self.logger.info(f"Rebuilidng geometries...")
+
+        for airfoil in self.airfoils:
+            airfoil.update()
+            objects_updated += 1
+            self.logger.debug(f"{objects_updated} / {objects_to_update}")
+        for c in range(len(self.components)):
+            component = self.components[c]
+            for w in range(len(component.wings)):
+                wing = component.wings[w]
+                for s in range(len(wing.segments)):
+                    segment = wing.segments[s]
+                    segment.airfoil.update()
+                    segment.update(c, w, s)
                     objects_updated += 1
                     self.logger.debug(f"{objects_updated} / {objects_to_update}")
-                component.update(c, w, s)
+                wing.update(c, w, s)
                 objects_updated += 1
                 self.logger.debug(f"{objects_updated} / {objects_to_update}")
-            self.logger.debug("Update finished!")
+            component.update(c, w, s)
+            objects_updated += 1
+            self.logger.debug(f"{objects_updated} / {objects_to_update}")
+        self.logger.debug("Update finished!")
 
-            if warning_count == 0:
-                report.insert(0, (f"Project archive '{self.name}' successfully loaded")) 
-            else: 
-                report.insert(0, (f"Project archive '{self.name}' loaded with ({warning_count}) warnings, check might be necessary!"))
-                
-            self.logger.info("\n".join(report))
+        report.insert(0, (f"Project archive '{self.name}' successfully loaded")) 
+            
+        self.logger.info("\n".join(report))
 
-            return True
+        return True
         
     def set_description(self, new_text):
         """Update the description of the project."""
@@ -266,8 +396,8 @@ class Project:
         component_entries = self._serialize_components_to_json()
 
         Daedalus = {
-            "program name": self.DAEDALUS.name,
-            "program version": self.DAEDALUS.version,
+            "name": self.PROGRAM.name,
+            "version": self.PROGRAM.version,
         }
 
         Project = {
@@ -296,31 +426,33 @@ class Project:
 
     def _serialize_airfoil_to_json(self, path=None, current_airfoil=None):
         """Save the airfoil data to a JSON format file."""
-        
-        # Get main airfoil params (origin_X, stretch etc.)
-        airfoil_params = parse_from_params(current_airfoil.params)
-        airfoil_attrs = parse_from_attrs(current_airfoil.attrs)
-        airfoil_stats = parse_from_params(current_airfoil.stats)
-
-        # Dynamically check childs of an airfoil (LE, TE, PS, SS)
-        for section_name in ["LE", "TE", "PS", "SS"]:
-            section = getattr(current_airfoil, section_name, None)
-            if section and hasattr(section, "params"):
-                airfoil_params[section_name] = parse_from_params(section.params)
-            elif section and hasattr(section, "attrs"):
-                airfoil_attrs[section_name] = parse_from_params(section.attrs)
 
         # Build main structure
-
         airfoil = {
             "name": str(current_airfoil.name),
             "path": str(path if path else self.path),
             "format": str(current_airfoil.format),
             "info": {key: str(val) for key, val in current_airfoil.info.items()},
-            "attrs": airfoil_attrs,
-            "params": airfoil_params,
-            "stats": airfoil_stats
+            "attrs": parse_from_attrs(getattr(current_airfoil, "attrs", {})),
+            "params": parse_from_params(getattr(current_airfoil, "params", {})),
+            "stats": parse_from_params(getattr(current_airfoil, "stats", {})),
         }
+
+        for section_name in ["LE", "TE", "PS", "SS"]:
+            section = getattr(current_airfoil, section_name, None)
+
+            if section:
+                sec_attrs  = parse_from_attrs(getattr(section, "attrs", {}))
+                sec_params = parse_from_params(getattr(section, "params", {}))
+                sec_stats  = parse_from_params(getattr(section, "stats", {}))
+            else:
+                sec_attrs, sec_params, sec_stats = {}, {}, {}
+
+            airfoil[section_name] = {
+                "attrs":  sec_attrs,
+                "params": sec_params,
+                "stats":  sec_stats
+            }
     
         # json_object = json.dumps(airfoils, indent=1)
 

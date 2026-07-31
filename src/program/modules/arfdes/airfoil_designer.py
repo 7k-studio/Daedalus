@@ -39,9 +39,9 @@ from PyQt6.QtWidgets import (
 import src.utils.dxf as dxf
 
 from src.obj.class_airfoil import Airfoil
-from src.utils.tools_program import convert_ndarray_to_list
-from src.modules.arfdes.tools_airfoils import Reference_load, flip_airfoil_horizontally
-from src.modules.arfdes.tools_reference import load_json_reference, load_selig_reference
+from src.utils.tools_program import convert_list_to_ndarray, convert_ndarray_to_list, decode_json, get_archive_version
+from src.utils.tools_airfoil import Reference_load, flip_airfoil_horizontally, load_ddls_airfoil_030, load_ddls_airfoil
+from src.utils.tools_reference import load_ddls_as_reference, load_xy_points_as_reference, load_ddls_030_as_reference
 from src.widgets.widget_reference import WidgetReference
 
 from src.widgets.widget_log import LogViewer
@@ -159,6 +159,7 @@ class AirfoilDesigner:
         self.TREE_AIRFOIL.selectedAirfoilChanged.connect(self.TABLE_PARAMETERS.display_selected_element)
         self.TREE_AIRFOIL.selectedAirfoilChanged.connect(self.TABLE_STATISTICS.display_selected_element)
         self.TABLE_PARAMETERS.parametersChanged.connect(self.TABLE_STATISTICS.update)
+        # self.TABLE_PARAMETERS.parametersChanged.connect(self.TREE_AIRFOIL.update)
 
         # Initialize with default airfoil if no project airfoils
         if self.PROJECT and not self.PROJECT.airfoils:
@@ -242,17 +243,52 @@ class AirfoilDesigner:
         self.PROJECT.airfoils.append(airfoil_obj)
         self.TREE_AIRFOIL.add_to_tree(airfoil_obj)
 
-    def appendAirfoil(self, fileName):
+    def appendAirfoil(self, filePath):
         """load the airfoil data from a JSON format file."""
-        try:
-            airfoil_obj, _ = tools_arf.load_airfoil_from_json(fileName, self.PROGRAM.version)
-            if airfoil_obj:
-                self.PROJECT._ensure_unique_name(airfoil_obj)  # Ensure unique name
-                self.PROJECT.airfoils.append(airfoil_obj)
-                self.TREE_AIRFOIL.add_to_tree(airfoil_obj)
-                self.logger.info("Appending an airfoil was sucessful!")
-        except TypeError:
-            self.logger.error("Failed to append airfoil!")
+        from  src.obj.class_airfoil import Airfoil
+        
+        if not filePath:
+            self.logger.error("File path not specified or incorrect!")
+            return
+
+        self.logger.info(f"Open archive airfoil: {filePath}")
+        data = decode_json(filePath)
+        file_version = get_archive_version(data)
+
+        # Check compatibility
+        self.logger.debug("Checking compatibility...")
+        program_version = self.PROGRAM.version
+        program_version = program_version.split("-")[0].split(".")
+
+        if int(file_version[0]) == 0 and int(file_version[1]) < 4:
+            self.logger.warning("There were critical changes to airfoil definition. Program will try to recreate saved airfoil to latest format. Checing the appending results is advised!")
+            # Load airfoils from in-memory JSON
+            self.logger.info("Loading airfoil using legacy approach...")
+            arf_obj = load_ddls_airfoil_030(data, self.PROGRAM, filePath)
+
+        else:
+            self.logger.info("Loading airfoil...")
+            
+            try:
+                project_data = data["Project"]
+                airfoil_entries = project_data.get("airfoils", [])
+                print(airfoil_entries)
+                for airfoil_entry in airfoil_entries:
+                    airfoil_data = airfoil_entry["data"]
+                    self.logger.debug("Loading airfoil using 0.4.X version importer...")
+                    arf_obj = load_ddls_airfoil(Airfoil(self.PROGRAM), airfoil_data)
+            except KeyError as e:
+                self.logger.error(f"Missing key in ARF data - {e}")
+                self.logger.warning("File may not load properly or is not compatible with DAEDALUS")
+                return
+            
+        if arf_obj:
+            self.logger.debug(f"Found airfoil: {arf_obj.name}")
+            self.PROJECT._ensure_unique_airfoil_name(arf_obj)  # Ensure unique name
+            self.PROJECT.airfoils.append(arf_obj)
+            arf_obj.update()
+            self.TREE_AIRFOIL.add_to_tree(arf_obj)
+            self.logger.info("Appending '{arf_obj.name}' airfoil was sucessful!")
 
     def deleteAirfoil(self):
         self.logger.info("Deleting selected airfoil...")
@@ -280,66 +316,50 @@ class AirfoilDesigner:
                 self.logger.info(f"Successfully deleted airfoil: {name}")
                 self.refresh()  
 
-    def saveAirfoil(self):
+    def saveAirfoil(self, airfoil, filePath):
         """Save the airfoil data to a JSON format file."""
-        self.logger.info("Saving selected airfoil...")
-        airfoil = self.TREE_AIRFOIL.selected_airfoil
-        if not airfoil:
-            self.logger.error("No valid airfoil selected!")
-            return
+        
+        airfoil.name = os.path.basename(filePath).split('.')[0]
+        airfoil.path = filePath
+        airfoil_data = self.PROJECT._serialize_airfoil_to_json(filePath, airfoil)
 
-        default_name = f"{airfoil.name}.arf" if airfoil.name else f"Untitled.arf"
-        filePath, _ = QFileDialog.getSaveFileName(None, "Save File", default_name, "DAEDALUS Airfoil Format (*.arf);;All Files (*)")
-        if filePath:
-            airfoil.name = os.path.basename(filePath).split('.')[0]
-            airfoil.path = filePath
-            airfoil_data = self.PROJECT._serialize_airfoil_to_json(filePath, airfoil)
+        Daedalus = {
+            "program name": self.PROGRAM.name,
+            "program version": self.PROGRAM.version,
+        }
 
-            Daedalus = {
-                "program name": self.PROGRAM.name,
-                "program version": self.PROGRAM.version,
-            }
+        Project = {
+            "name": self.PROJECT.name if self.PROJECT.name else "Not assigned",
+            "path": filePath,
+            "creation date": self.PROJECT.creation_date,
+            "modification date": self.PROJECT.modification_date,
+            "description": self.PROJECT.description,
+            "airfoils": airfoil_data
+        }
 
-            Project = {
-                "name": self.PROJECT.name if self.PROJECT.name else "Not assigned",
-                "path": filePath,
-                "creation date": self.PROJECT.creation_date,
-                "modification date": self.PROJECT.modification_date,
-                "description": self.PROJECT.description,
-                "airfoils": airfoil_data
-            }
+        data = {
+            "Program": Daedalus,
+            "Project": Project
+        }
 
-            data = {
-                "Program": Daedalus,
-                "Project": Project
-            }
+        # Convert numpy arrays to lists before saving
+        data = convert_ndarray_to_list(data)
 
-            # Convert numpy arrays to lists before saving
-            data = convert_ndarray_to_list(data)
+        json_object = json.dumps(data, indent=1)
 
-            json_object = json.dumps(data, indent=1)
+        with open(f"{filePath}", "w") as outfile:
+            outfile.write(json_object)
+            self.logger.info(f"Saved airfoil: {filePath}")
 
-            with open(f"{filePath}", "w") as outfile:
-                outfile.write(json_object)
-                self.logger.info(f"Saved airfoil: {filePath}")
+        self.PROJECT._ensure_unique_airfoil_name(airfoil)
+        self.refresh()
 
-            self.PROJECT._ensure_unique_airfoil_name(airfoil)
-            self.refresh()
-
-    def exportAirfoil(self):
+    def exportAirfoil(self, airfoil, filePath):
         """Export the airfoil data to a DXF format file."""
         self.logger.info("Exporting selected airfoil...")
 
-        airfoil = self.TREE_AIRFOIL.selected_airfoil
-        if not airfoil:
-            self.logger.error("No valid airfoil selected!")
-
-        options = QFileDialog.Options()
-        default_name = f"{airfoil.name}.dxf" if airfoil.name else "Untitled.dxf"
-        fileName, _ = QFileDialog.getSaveFileName(None, "Export File to DXF format", default_name, "DXF Format (*.dxf);;All Files (*)", options=options)
-        if fileName:
-            dxf.export_airfoil_to_dxf(airfoil, fileName)
-            self.logger.info(f"Exported file: {fileName}")
+        dxf.export_airfoil_to_dxf(airfoil, filePath)
+        self.logger.info(f"Exported file: {filePath}")
 
     def renameAirfoil(self):
         """Rename currently selected airfoil."""
@@ -388,29 +408,64 @@ class AirfoilDesigner:
     #                     REFERENCE                    #
     #==================================================#
 
-    def addReference(self, fileName):
+    def addReference(self, filePath):
         """ Appends the reference airfoil from a given filename """
         reference = None
-        ext = fileName.split(".")[-1].lower()
-        if ext == "ddls":
+
+        if not filePath:
+            self.logger.error("File path not specified or incorrect!")
+            return
+
+        if filePath.endswith(".arf.ddls"):
             try:
-                reference = load_json_reference(fileName)
+                data = decode_json(filePath)
+                file_version = get_archive_version(data)
+        
+                # Check compatibility
+                self.logger.debug("Checking compatibility...")
+                program_version = self.PROGRAM.version.split("-")[0].split(".")
+        
+                if int(file_version[0]) == 0 and int(file_version[1]) < 4:
+                    self.logger.warning("There were critical changes to airfoil definition. Program will try to recreate saved airfoil to latest format. Checing the appending results is advised!")
+                    # Load airfoils from in-memory JSON
+                    self.logger.info("Loading airfoil using legacy approach...")
+                    reference = load_ddls_030_as_reference(data, self.PROGRAM, filePath)
+                else:
+                    project_data = data["Project"]
+                    airfoil_data = project_data.get("airfoils", [])
+
+                    reference = load_ddls_as_reference(airfoil_data, self.PROGRAM, filePath)
+
             except Exception as e:
                 self.logger.error(f"Failed to load an airfoil: {e}")
+                return
+
+        elif filePath.endswith(".arf"):
+            try:
+                data = decode_json(filePath)
+        
+                reference = load_ddls_030_as_reference(data, self.PROGRAM, filePath)
+            
+            except Exception as e:
+                self.logger.error(f"Failed to load an airfoil: {e}")
+                return
+
         else:
             try:
-                reference = load_selig_reference(fileName)
+                reference = load_xy_points_as_reference(filePath)
             except Exception as e:
                 self.logger.error(f"Failed to load an airfoil: {e}")
+                return
 
         if reference:
             self.PROJECT.reference_airfoils.append(reference)
-            self.logger.info(f"Loaded reference airfoil from file: '{fileName}'")
+            self.logger.info(f"Loaded reference airfoil from file: '{filePath}'")
 
             if hasattr(self, 'WIDGET_REFERENCE'):
                 self.WIDGET_REFERENCE.refresh_table()
             self.OPEN_GL.update()
             self.main_window.MENU_BAR._rebuild_reference_menu()
+            
     
     def deleteReference(self, airfoils_to_remove):
         """ Deletes a list of reference airfoil objects """
@@ -428,22 +483,6 @@ class AirfoilDesigner:
         """ Updates the visibility of a specific reference airfoil """
         airfoil_obj.visible = is_visible
 
-        # self.OPEN_GL.update()
-
-        # selected_item = self.table.currentItem()
-        # if not selected_item:
-        #     self.logger.warning("First select an airfoil!")
-        #     return  # No airfoil selected
-
-        # # Find the corresponding airfoil object
-        # airfoil_index = self.table.indexOfTopLevelItem(selected_item)
-        # if airfoil_index == -1:
-        #     self.logger.error("No connection between selected airfoil and project airfoil")
-        #     return  # Invalid selection
-
-        # airfoil_obj = self.PROJECT.reference_airfoils[airfoil_index]
-        
-        # airfoil_obj.visible = not airfoil_obj.visible
         self.main_window.MENU_BAR._rebuild_reference_menu()
         if hasattr(self, 'WIDGET_REFERENCE'):
             self.WIDGET_REFERENCE.refresh_table()

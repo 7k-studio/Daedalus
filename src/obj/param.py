@@ -61,7 +61,24 @@ class Param:
 
     def get_si(self):
         """Get value in SI units"""
-        return self.value 
+        return self.value
+
+    def update_from_dict(self, data, units_map):
+        """Update state of param based on data in JSON-ddls"""
+        if not isinstance(data, dict):
+            return
+
+        # Set value and nominal from dictionary
+        if "value" in data:
+            new_val = data["value"]
+            self.value = new_val
+            self.nominal = new_val
+
+        # Set unit based on string
+        if "unit" in data:
+            unit_str = data["unit"]
+            if unit_str in units_map:
+                self.unit = units_map[unit_str]
 
 class Attr:
     def __init__(self, name, value, allowed_values):
@@ -69,3 +86,24 @@ class Attr:
         self.value = value
         self.nominal = value
         self.allowed_values = allowed_values
+    
+    def update_from_dict(self, data, airfoils_list=None):
+        """Update state of attr based on data in JSON-ddls"""
+        if not isinstance(data, dict):
+            return
+
+        raw_val = data["value"]
+
+        # Set value and nominal from dictionary
+        if self.name.lower() == "airfoil" and airfoils_list:
+            # Search airfoil by name
+            matched_airfoil = next(
+                (a for a in airfoils_list if a.name == raw_val),
+                airfoils_list[0] if airfoils_list else None
+            )
+            self.value = matched_airfoil
+            self.nominal = matched_airfoil
+        else:
+            self.value = raw_val
+            self.nominal = raw_val
+        

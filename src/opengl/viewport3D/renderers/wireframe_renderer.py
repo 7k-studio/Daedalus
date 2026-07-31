@@ -63,7 +63,7 @@ def draw_wireframe(PROJECT, component_idx, wing_idx, segment_idx):
     
     for key, geom in spline_data.items():
         if geom is not None and len(geom) > 0 and len(geom[0]) > 0:
-            lines._draw_solid_line(geom, color_map[key])
+            lines.draw_styled_line(geom, color=color_map[key])
 
     try:
         le_ps = wing.LE_PS.geom
@@ -93,7 +93,7 @@ def draw_wireframe(PROJECT, component_idx, wing_idx, segment_idx):
         
         for key, geom in connection_data.items():
             if geom is not None and len(geom) > 0 and len(geom[0]) > 0:
-                lines._draw_solid_line(geom, color_map[key])
+                lines.draw_styled_line(geom, color_map[key])
 
     except AttributeError:
         logger.warning("No connection between segments")
@@ -127,11 +127,7 @@ def draw_airfoil_wireframe(self, component_idx, wing_idx, segment_idx):
             # Draw edges connecting front and back faces
             glColor3f(color[key][0], color[key][1], color[key][2])
             glBegin(GL_LINES)
-            lines._draw_solid_line(segment.geom[key], color[key])
-            # for i in range(len(le[0])-1):
-            #     glVertex3f(segment.geom[key][0][i], segment.geom[key][1][i], segment.geom[key][2][i])
-            #     glVertex3f(segment.geom[key][0][i+1], segment.geom[key][1][i+1], segment.geom[key][2][i+1])
-            # glEnd()
+            lines.draw_styled_line(segment.geom[key], color[key])
 
 
 def draw_connection_wireframe(self, segment):

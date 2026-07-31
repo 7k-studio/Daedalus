@@ -269,3 +269,106 @@ def rotate_airfoil(angle, tmp_le, tmp_ps, tmp_ss, tmp_te, incidence):
     
     return angle, tmp_le, tmp_ps, tmp_ss, tmp_te
 
+def load_ddls_component(data):
+    """load the airfoil data from a JSON format file."""
+    from src.obj.param import Param, Attr, M, DEG
+
+    from src.obj.class_component import Component
+    from src.obj.class_wing import Wing
+    from src.obj.class_segment import Segment
+
+    logger.debug("Loading components entires...")
+    for comp_data in data.get("components", []):
+        component = Component()
+        # Merge infos and params with defaults
+        component.info = {**Component().info, **comp_data.get("info", {})}
+        component.attrs = {**Component().attrs, **comp_data.get("attrs", {})}
+        component.params = {**Component().params, **comp_data.get("params", {})}
+        component.wings = []
+        for wing_data in comp_data.get("wings", []):
+            wing = Wing()
+            wing.info = {**Wing().info, **wing_data.get("info", {})}
+            wing.attrs = {**Wing().attrs, **wing_data.get("attrs", {})}
+            wing.params = {**Wing().params, **wing_data.get("params", {})}
+            wing.segments = []
+            for seg_data in wing_data.get("segments", []):
+                segment = Segment()
+                segment.info = {**Segment().info, **seg_data.get("info", {})}
+                segment.attrs = {**Segment().attrs, **seg_data.get("attrs", {})}
+                segment.params = {**Segment().params, **seg_data.get("params", {})}
+    
+                # Set airfoil based on airfoil name
+                airfoil_ref = seg_data.get("airfoil", "")
+                segment.airfoil = next((a for a in self.airfoils if a.name == airfoil_ref), self.airfoils[0] if self.airfoils else None)
+                wing.segments.append(segment)
+            component.wings.append(wing)
+        self.components.append(component)
+
+    from  src.obj.class_airfoil import Airfoil
+
+    airfoil = Airfoil()
+    logger.info("Loading airfoil using 0.4.X version importer...")
+    
+    if data:
+
+        try:
+            airfoil_data = data["airfoil"]
+            airfoil_params = airfoil_data["params"]
+            airfoil_params_le = airfoil_data["params"]["LE"]
+            airfoil_params_te = airfoil_data["params"]["TE"]
+            airfoil_params_ps = airfoil_data["params"]["PS"]
+            airfoil_params_ss = airfoil_data["params"]["SS"]
+            airfoil_attrs = airfoil_data["attrs"]
+            airfoil_attrs_le = airfoil_data["attrs"]["LE"]
+            airfoil_attrs_te = airfoil_data["attrs"]["TE"]
+            airfoil_attrs_ps = airfoil_data["attrs"]["PS"]
+            airfoil_attrs_ss = airfoil_data["attrs"]["SS"]
+            airfoil_info   = airfoil_data["info"]
+            
+        except KeyError as e:
+            logger.error(f"Missing key in ARF data - {e}")
+            logger.warning("File may not load properly or is not compatible with DAEDALUS")
+            return None
+
+        try:
+            airfoil.name = airfoil_data['name']
+            airfoil.path = filePath
+
+            airfoil.info = {
+                "creation_date":     airfoil_info["creation_date"],
+                "modification_date": airfoil_info["modification_date"],
+                "description":       airfoil_info["description"]
+            }
+
+            # Set parameters in Airfoil.attrs dictionary
+            for key in []:
+                airfoil.params[key].value = float(airfoil_attrs[key])
+
+            for key in ["type"]:
+                airfoil.LE.attrs[key].value = float(airfoil_attrs_le[key])
+                airfoil.TE.attrs[key].value = float(airfoil_attrs_te[key])
+                airfoil.PS.attrs[key].value = float(airfoil_attrs_ps[key])
+                airfoil.SS.attrs[key].value = float(airfoil_attrs_ss[key])
+
+            # Set parameters in Airfoil.params dictionary
+            for key in ["origin_X", "origin_Y", "stretch", "incline", "LE_thickness", "LE_angle", "TE_thickness", "TE_angle"]:
+                airfoil.params[key].value = float(airfoil_params[key])
+
+            for key in ["ps_tan", "ps_slope", "ps_curv", "ss_tan", "ss_slope", "ss_curv"]:
+                airfoil.LE.params[key].value = float(airfoil_params_le[key])
+                airfoil.TE.params[key].value = float(airfoil_params_te[key])
+
+            for key in ["fwd_wedge", "fwd_tan", "fwd_slope", "fwd_curv", "rwd_wedge", "rwd_tan", "rwd_slope", "rwd_curv"]:
+                segment.params[key].value = float(segment_params[key])
+                airfoil.SS.params[key].value = float(airfoil_params_ss[key])
+            
+        except KeyError as e:
+            logger.error(f"Missing key in ARF data - {e}")
+            return None
+        
+        else:
+            logger.info(f"Airfoil '{airfoil.name}' loaded successfully!")
+
+        airfoil.update()
+
+        return airfoil

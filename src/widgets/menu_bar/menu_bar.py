@@ -104,11 +104,11 @@ class MenuBar(QMenuBar):
             self.edit_menu.addAction(deleteAirfoilAction)
 
             saveAirfoilAction = QAction('Save Airfoil', self)
-            saveAirfoilAction.triggered.connect(lambda: self.main_window.AIRFOIL_MODULE.saveAirfoil() if self.main_window.AIRFOIL_MODULE else None)
+            saveAirfoilAction.triggered.connect(lambda: utils_edit.save_airfoil(self))
             self.edit_menu.addAction(saveAirfoilAction)
 
             exportAirfoilAction = QAction('Export Airfoil', self)
-            exportAirfoilAction.triggered.connect(lambda: self.main_window.AIRFOIL_MODULE.exportAirfoil() if self.main_window.AIRFOIL_MODULE else None)
+            exportAirfoilAction.triggered.connect(lambda: utils_edit.export_airfoil(self))
             self.edit_menu.addAction(exportAirfoilAction)
 
             flipAirfoilAction = QAction('Flip Airfoil', self)
@@ -244,9 +244,18 @@ class MenuBar(QMenuBar):
                 self.window_menu.removeAction(action)
         
         # Add toggle actions for docks
-        if self.main_window.dock_widgets:
+        if self.current_module == 'airfoil' and self.main_window.AIRFOIL_MODULE.dock_widgets:
             self.window_menu.addSeparator()
-            for dock_name, dock_widget in self.main_window.dock_widgets.items():
+            for dock_name, dock_widget in self.main_window.AIRFOIL_MODULE.dock_widgets.items():
+                action = QAction(dock_name.replace('_', ' ').title(), self)
+                action.setCheckable(True)
+                action.setChecked(dock_widget.isVisible())
+                action.triggered.connect(lambda checked, d=dock_widget: d.setVisible(checked))
+                self.window_menu.addAction(action)
+
+        if self.current_module == 'wing' and self.main_window.WING_MODULE.dock_widgets:
+            self.window_menu.addSeparator()
+            for dock_name, dock_widget in self.main_window.WING_MODULE.dock_widgets.items():
                 action = QAction(dock_name.replace('_', ' ').title(), self)
                 action.setCheckable(True)
                 action.setChecked(dock_widget.isVisible())

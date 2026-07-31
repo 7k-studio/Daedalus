@@ -5,6 +5,9 @@ for realease of ***v0.4.0-beta*** version
 ## Airfoil Designer
 ---
 
+### File Save
+To save LE/TE/PS/SS as instances in airfoil not subsections in params/attrs
+
 ### Reference
 A reference can now be handled using both bar menu and specified widget. Both allow to add, delete, show and hide a reference airfoil
 **ToDo:**

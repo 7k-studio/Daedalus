@@ -20,13 +20,13 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QApplication, QFrame
+    QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout, QApplication, QFrame, QFileDialog
     )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QIcon
 
-from src.modules.arfdes.airfoil_designer import AirfoilDesigner  # Import the AirfoilDesigner class from the correct module
-from src.modules.wngdes.wing_designer import WingDesigner
+from src.program.modules.arfdes.airfoil_designer import AirfoilDesigner  # Import the AirfoilDesigner class from the correct module
+from src.program.modules.wngdes.wing_designer import WingDesigner
 import src.program.project as project
 
 import logging
@@ -260,17 +260,18 @@ class HomeScreen(QWidget):
         """Load DAEDALUS project and open the Wing Designer module."""
         self.logger.info("Opening existing project")
         self.PROJECT = project.Project(self.DAEDALUS)
-        self.PROJECT.open()
-        
+
         # Create Airfoil Designer module
-        self.DAEDALUS.AIRFOILDESIGNER = AirfoilDesigner(self.DAEDALUS, project=self.PROJECT)
-        
+        self.DAEDALUS.AIRFOILDESIGNER = AirfoilDesigner(parent=self.DAEDALUS.MAIN_WINDOW, program=self.DAEDALUS, project=self.PROJECT)
         # Create Wing Designer module
-        self.DAEDALUS.WINGDESIGNER = WingDesigner(self.DAEDALUS, project=self.PROJECT)
-        
-        # Add modules to main window
+        self.DAEDALUS.WINGDESIGNER = WingDesigner(parent=self.DAEDALUS.MAIN_WINDOW, program=self.DAEDALUS, project=self.PROJECT)
+
         self.DAEDALUS.MAIN_WINDOW.add_module('airfoil', self.DAEDALUS.AIRFOILDESIGNER)
         self.DAEDALUS.MAIN_WINDOW.add_module('wing', self.DAEDALUS.WINGDESIGNER)
+
+        filePath, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Daedalus Database Files (*.ddls);; All Files (*)")
+        if filePath:
+            self.PROJECT.open(filePath)
         
         # Set project in main window before switching modules
         self.DAEDALUS.MAIN_WINDOW.set_project(self.PROJECT)

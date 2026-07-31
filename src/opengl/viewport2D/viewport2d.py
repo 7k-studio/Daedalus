@@ -97,7 +97,7 @@ class ViewportOpenGL(QOpenGLWidget):
         if self.PROJECT.reference_airfoils:
             for reference in self.PROJECT.reference_airfoils:
                 if reference.visible:
-                    airfoil_renderer.draw_airfoil_selig_format(self, reference)
+                    airfoil_renderer.draw_reference(self, reference)
 
         self._prepare_overlay_projection()
 

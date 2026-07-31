@@ -4,7 +4,7 @@ DaedalusStyle
     LoggerDebug: #00c3ff;
     LoggerWarning: #eeff00;
     LoggerError: #ff0000;
-    pathToIcons: "src/assets/IconPack/Daedalus";
+    pathToIcons: "src/assets/IconPack/Classic";
 }
 
 QFrame[CardFrame="true"] {

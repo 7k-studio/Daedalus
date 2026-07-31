@@ -43,7 +43,7 @@ def find_point_at_length(points, target_length):
         length += segment_length
     return Vec3(points[-1])
 
-def export_airfoil_to_dxf(airfoil, file_name=None, ):
+def export_airfoil_to_dxf(airfoil, file_name=None):
 
     Z = 0
     
@@ -52,48 +52,32 @@ def export_airfoil_to_dxf(airfoil, file_name=None, ):
 
     #for idx, airfoil in enumerate(export_airfoil):
 
-    if airfoil is not None and hasattr(airfoil, 'constr') and airfoil.constr['le'] is not None and len(airfoil.constr['le']) > 0:
+    if not airfoil:
+        logger.error("Airfoil incorrect or not selected")
+        return
+
+    spline_keys = ['LE','TE','PS','SS']
+    for key in spline_keys:
+        if not hasattr(airfoil, key):
+            logger.error(f"Airfoil is missing {key} attribute, cannot proceed")
+            return
+        
+        airfoil_segment = getattr(airfoil, key)
+
+        if not hasattr(airfoil_segment, 'spline') and len(airfoil_segment.spline.control_points) == 0:
+            logger.error(f"Airfoil {airfoil.name} and segment {key} has an empty or insufficient control points array.")
+            return
+
         logger.info(f"Exporting airfoil {airfoil.name} to DXF...")
-
+        # is not None and hasattr(airfoil, 'constr') and airfoil.constr['le'] is not None and len(airfoil.constr['le']) > 0:
+        
         # Sprawdzenie, czy wszystkie tablice mają wystarczającą ilość danych
-        if len(airfoil.constr['le'][0]) > 0 and len(airfoil.constr['le'][1]) > 0:
-            exp_le = airfoil.constr['le']
-        else:
-            logger.error(f"Airfoil {airfoil.name} has an empty or insufficient LE array.")
+        # if len(airfoil.constr['le'][0]) > 0 and len(airfoil.constr['le'][1]) > 0:
+        exp_array = airfoil_segment.spline.control_points
 
-        if len(airfoil.constr['ps'][0]) > 0 and len(airfoil.constr['ps'][1]) > 0:
-            exp_ps = airfoil.constr['ps']
-        else:
-            logger.error(f"Airfoil {airfoil.name} has an empty or insufficient PS array.")
-
-        if len(airfoil.constr['ss'][0]) > 0 and len(airfoil.constr['ss'][1]) > 0:
-            exp_ss = airfoil.constr['ss']
-        else:
-            logger.error(f"Airfoil {airfoil.name} has an empty or insufficient SS array.")
-
-        if len(airfoil.constr['te'][0]) > 0 and len(airfoil.constr['te'][1]) > 0:
-            exp_te = airfoil.constr['te']
-        else:
-            logger.error(f"Airfoil {airfoil.name} has an empty or insufficient TE array.")
-
-    ps_Z_row = np.full((1, exp_ps.shape[1]), Z)
-    ps = np.vstack((exp_ps, ps_Z_row)).T
-    #ps_spline = msp.add_spline(ps)
-    ps_spline = msp.add_open_spline(ps)
-    
-    ss_Z_row = np.full((1, exp_ss.shape[1]), Z)
-    ss = np.vstack((exp_ss, ss_Z_row)).T
-    #ss_spline = msp.add_spline(ss)
-    ss_spline = msp.add_open_spline(ss)
-
-    le_Z_row = np.full((1, exp_le.shape[1]), Z)
-    le = np.vstack((exp_le, le_Z_row)).T
-    #le_spline = msp.add_spline(le)
-    le_spline = msp.add_open_spline(le)
-
-    te_Z_row = np.full((1, exp_te.shape[1]), Z)
-    te = np.vstack((exp_te, te_Z_row)).T
-    #te_spline = msp.add_spline(te)
-    te_spline = msp.add_open_spline(te)
+        Z_row = np.full((1, exp_array.shape[1]), Z)
+        _array = np.vstack((exp_array, Z_row)).T
+        #ps_spline = msp.add_spline(ps)
+        dxf_spline = msp.add_open_spline(_array)
 
     doc.saveas("{}".format(file_name))

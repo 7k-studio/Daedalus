@@ -35,6 +35,7 @@ def draw_cp_net(object, zoom):
     glColor3f(1, 1, 0)  # Yellow points
     glBegin(GL_POINTS)
 
+    # Draw points
     for i in range(len(object.segments)):
         for key in object.segments[i].control_points:
             points = np.array(object.segments[i].control_points[key]).T
@@ -43,7 +44,7 @@ def draw_cp_net(object, zoom):
                 glVertex3f(point[0], point[1], point[2])
     glEnd()
 
-    # Now draw dashed lines
+    # Draw dashed lines
     for i in range(len(object.segments)):
         for key in object.segments[i].control_points:
             points = np.array(object.segments[i].control_points[key]).T

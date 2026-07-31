@@ -129,30 +129,30 @@ class TreeAirfoil(QTreeWidget):
 
         if airfoil_obj.LE:
             name = 'Leading Edge'
-            type = airfoil_obj.LE.type.value
+            type = airfoil_obj.LE.attrs['type'].value
             le_item = QTreeWidgetItem([str(name), str(type)])
             le_item.setTextAlignment(1, Qt.AlignmentFlag.AlignCenter)
             tree_item.addChild(le_item)
         if airfoil_obj.TE:
             name = 'Trailing Edge'
-            type = airfoil_obj.TE.type.value
+            type = airfoil_obj.TE.attrs['type'].value
             te_item = QTreeWidgetItem([str(name), str(type)])
             te_item.setTextAlignment(1, Qt.AlignmentFlag.AlignCenter)
             tree_item.addChild(te_item)
         if airfoil_obj.PS:
             name = 'Pressure Side'
-            type = airfoil_obj.PS.type.value
+            type = airfoil_obj.PS.attrs['type'].value
             ps_item = QTreeWidgetItem([str(name), str(type)])
             ps_item.setTextAlignment(1, Qt.AlignmentFlag.AlignCenter)
             tree_item.addChild(ps_item)
         if airfoil_obj.SS:
             name = 'Suction Side'
-            type = airfoil_obj.SS.type.value
+            type = airfoil_obj.SS.attrs['type'].value
             ss_item = QTreeWidgetItem([str(name), str(type)])
             ss_item.setTextAlignment(1, Qt.AlignmentFlag.AlignCenter)
             tree_item.addChild(ss_item)
 
-        self.logger.info(f"Airfoil '{name}' added to the tree")
+        self.logger.info(f"Airfoil '{airfoil_obj.name}' added to the tree")
     
     def remove_from_tree(self, name):
         try:

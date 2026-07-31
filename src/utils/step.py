@@ -22,7 +22,6 @@ import logging
 import sys
 import os
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import src.globals as globals
 import numpy as np
 import datetime
 import src.utils.tools_program as tools
@@ -255,7 +254,6 @@ class BsplineWithKnots:
         
         return length
 
-    
     def export(self):
         knots = ', '.join([f'#{obj.idx}' for obj in self.points])
         return f"#{self.idx} = B_SPLINE_CURVE_WITH_KNOTS ( '{self.desc}', {self.degree}, ( {knots} ), {self.spec1}, {self.orientation_flag_1}, {self.orientation_flag_2}, ( {self.uv_grid_points_number[0]}, {self.uv_grid_points_number[1]} ), ( 0, {self.length} ), {self.spec6} ) ;"

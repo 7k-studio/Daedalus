@@ -22,7 +22,7 @@ import logging
 import numpy as np
 
 from src.obj.class_skin import Skin
-from src.obj.class_param import Param, Attr, M, DEG
+from src.obj.param import Param, Attr, M, DEG
 from src.obj.curves import BSpline
 
 class Segment:

@@ -61,71 +61,8 @@ def draw_airfoil(self, Current_Airfoil, line_style="solid", color=None):
     for key in ['le', 'te', 'ps', 'ss']:
         segment = getattr(Current_Airfoil, key.upper())
 
-        vec_length = len(segment.spline.geom[0])
-        if vec_length > 0:
-            points = [(segment.spline.geom[0][i], segment.spline.geom[1][i]) for i in range(vec_length)]
-            if line_style == "solid":
-                lines._draw_solid_line(points, color[key])
-            if line_style == "dashed":
-                _draw_dashed_line(points, color[key])
-            if line_style == "dot-dash":
-                _draw_dot_dash_line(points, color[key])
+        lines.draw_styled_line(segment.spline.geom, style=line_style, color=color[key])
 
-def _draw_dashed_line(points, color, dash_length=0.001):
-    """Draws a dashed line connecting the given points."""
-
-    glColor3f(*color)
-    # total_len = sum(
-    # linalg.norm(array(points[i+1]) - array(points[i]))
-    # for i in range(len(points)-1)
-    # )
-    # dash_length = total_len * dash_length_scale
-
-    for i in range(len(points) - 1):
-        p1 = np.array([points[i][0], points[i][1], 0.0])
-        p2 = np.array([points[i + 1][0], points[i + 1][1], 0.0])
-        vec = p2 - p1
-        length = np.linalg.norm(vec)
-        if length == 0:
-            continue
-        dir_vec = vec / length
-
-        num_dashes = max(1, int(length / (2 * dash_length)))
-        for j in range(num_dashes):
-            start = p1 + dir_vec * (2 * j) * dash_length
-            end = p1 + dir_vec * (2 * j + 1) * dash_length
-            glBegin(GL_LINES)
-            glVertex3fv(start)
-            glVertex3fv(end)
-            glEnd()
-
-def _draw_dot_dash_line(points, color, dash_length=0.01, dot_size=3.0):
-    """Draws a dot-dash line connecting the given points."""
-
-    glColor3f(*color)
-    for i in range(len(points) - 1):
-        p1 = np.array([points[i][0], points[i][1], 0.0])
-        p2 = np.array([points[i + 1][0], points[i + 1][1], 0.0])
-        vec = p2 - p1
-        length = np.linalg.norm(vec)
-        dir_vec = vec / length
-
-        num_dashes = int(length / (3 * dash_length))
-        for j in range(num_dashes):
-            # Draw dash
-            start = p1 + dir_vec * (3 * j) * dash_length
-            end = p1 + dir_vec * (3 * j + 1) * dash_length
-            glBegin(GL_LINES)
-            glVertex3fv(start)
-            glVertex3fv(end)
-            glEnd()
-
-            # Draw dot
-            dot = p1 + dir_vec * (3 * j + 2) * dash_length
-            glPointSize(dot_size)
-            glBegin(GL_POINTS)
-            glVertex3fv(dot)
-            glEnd()
 
 def draw_cp_net(self, Current_Airfoil, zoom):
     
@@ -143,41 +80,7 @@ def draw_cp_net(self, Current_Airfoil, zoom):
             glVertex3f(point[0], point[1], 0.0)
         glEnd()
 
-def draw_dashed_line(airfoil, base_dash_length=0.01, zoom=1):
-    """Draw dashed line between points p1 and p2."""
-
-    for key in airfoil.constr:
-        points = np.array(airfoil.constr[key]).T
-        z = 0 if key in ['le', 'ps', 'ss', 'te'] else None
-        for j in range(len(points) - 1):
-            p1 = points[j]
-            #print(p1)
-            p2 = points[j + 1]
-            if z is not None:
-                p1 = [p1[0], p1[1], z]
-                p2 = [p2[0], p2[1], z]
-            #print(f"{key}: ", points)
-
-            zoom = abs(zoom) if zoom != 0 else 0.001  # avoid divide-by-zero
-            dash_length = base_dash_length * zoom
-
-            p1 = np.array(p1)
-            p2 = np.array(p2)
-            vec = p2 - p1
-            length = np.linalg.norm(vec)
-            dir_vec = vec / length 
-
-            num_dashes = int(length / (2 * dash_length))
-            for i in range(num_dashes):
-                start = p1 + dir_vec * (2 * i) * dash_length
-                end = p1 + dir_vec * (2 * i + 1) * dash_length
-                glColor3f(0.3, 0.3, 0.3)
-                glBegin(GL_LINES)
-                glVertex3fv(start)
-                glVertex3fv(end)
-                glEnd()
-
-def draw_airfoil_selig_format(self, reference_airfoil):
+def draw_reference(self, reference_airfoil):
     '''
     Plots an airfoil based on objects Airfoil stored in obj.arf.py defined by folowing gorup of parameters:
 
@@ -196,26 +99,17 @@ def draw_airfoil_selig_format(self, reference_airfoil):
     # Extract parameters
     glDisable(GL_DEPTH_TEST)
 
-    color = self.airfoil_settings['wireframe']['color']
+    color = [0.5,0.5,0.5] # self.airfoil_settings['wireframe']['color']
 
-    vec_length = len(reference_airfoil.top_curve[0])
-    if vec_length > 0:
-        # Draw edges connecting front and back faces
-        glColor3f(0.5,0.5,0.5)
-        glBegin(GL_LINE_STRIP)
-        for i in range(vec_length):
-            x = reference_airfoil.top_curve[0][i]
-            y = reference_airfoil.top_curve[1][i]
-            glVertex3f(x, y, 0.0)  # force z=0
-        glEnd()
-    
-    vec_length = len(reference_airfoil.dwn_curve[0])
-    if vec_length > 0:
+    if reference_airfoil.format in ["XY-points"]:
 
-        glColor3f(0.5,0.5,0.5)
-        glBegin(GL_LINE_STRIP)
-        for i in range(vec_length):
-            x = reference_airfoil.dwn_curve[0][i]
-            y = reference_airfoil.dwn_curve[1][i]
-            glVertex3f(x, y, 0.0)  # force z=0
-        glEnd()
+        lines.draw_styled_line(reference_airfoil.curve, color)
+
+    if reference_airfoil.format in ["030-ddls-parametric"]:
+        for key in ['le_spline', 'te_spline', 'ps_spline', 'ss_spline']:
+            segment = getattr(reference_airfoil, key)
+            color = self.airfoil_settings['wireframe']['color']
+            lines.draw_styled_line(segment.geom, style="dashed", color=color.get(key.replace("_spline",""), [0.5,0.5,0.5]))
+
+    if reference_airfoil.format in ["ddls-parametric"]:
+        draw_airfoil(self, reference_airfoil, line_style="dashed", color=color)

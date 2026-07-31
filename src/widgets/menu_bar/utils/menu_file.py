@@ -45,9 +45,12 @@ def open_project(self):
         fileName, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Daedalus Database Files (*.ddls);; All Files (*)")
         if fileName:
             self.main_window.PROJECT.open(fileName)
+            if self.current_module == 'airfoil' and self.main_window.AIRFOIL_MODULE:
+                if hasattr(self.main_window.AIRFOIL_MODULE, 'refresh'):
+                    self.main_window.AIRFOIL_MODULE.refresh()
             if self.current_module == 'wing' and self.main_window.WING_MODULE:
-                if hasattr(self.main_window.WING_MODULE, 'init_tree'):
-                    self.main_window.WING_MODULE.init_tree()
+                if hasattr(self.main_window.WING_MODULE, 'refresh'):
+                    self.main_window.WING_MODULE.refresh()
             self.logger.info(f"Opened file: {fileName}")
 
 def save_project(self):

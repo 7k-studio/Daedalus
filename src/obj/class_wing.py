@@ -23,7 +23,7 @@ import numpy as np
 from geomdl import BSpline, utilities
 
 from src.obj.curves import BSpline
-from src.obj.class_param import Param, Attr, M, DEG
+from src.obj.param import Param, Attr, M, DEG
 from src.obj.class_skin import Skin
 
 logger = logging.getLogger(__name__)
@@ -79,28 +79,28 @@ class Wing:
                 tmp_te_ss.append(np.array(self.segments[i].ss_spline.control_points)[:,-1])
 
             if tmp_le_ps: 
-                print("tmp_le_ps: ", tmp_le_ps)
+                # print("tmp_le_ps: ", tmp_le_ps)
                 self.LE_PS = BSpline(self.DAEDALUS)
                 self.LE_PS.control_points = np.array(tmp_le_ps).T
                 #self.segments[i].skin.PS.u_fwd.control_points = np.array(tmp_le_ps).T
                 #self.segments[i].skin.LE.u_rwd.control_points = np.array(tmp_le_ps).T
             
             if tmp_te_ps:
-                print("tmp_te_ps:", tmp_te_ps)
+                # print("tmp_te_ps:", tmp_te_ps)
                 self.TE_PS = BSpline(self.DAEDALUS)
                 self.TE_PS.control_points = np.array(tmp_te_ps).T
                 # self.segments[i].skin.PS.u_rwd.control_points = np.array(tmp_le_ps).T
                 # self.segments[i].skin.TE.u_fwd.control_points = np.array(tmp_le_ps).T
 
             if tmp_le_ss:
-                print("tmp_le_ss:", tmp_le_ss)
+                # print("tmp_le_ss:", tmp_le_ss)
                 self.LE_SS = BSpline(self.DAEDALUS)
                 self.LE_SS.control_points = np.array(tmp_le_ss).T
                 # self.segments[i].skin.SS.u_rwd.control_points = np.array(tmp_le_ps).T
                 # self.segments[i].skin.LE.u_fwd.control_points = np.array(tmp_le_ps).T
 
             if tmp_te_ss:
-                print("tmp_te_ss:", tmp_te_ss)
+                # print("tmp_te_ss:", tmp_te_ss)
                 self.TE_SS = BSpline(self.DAEDALUS)
                 self.TE_SS.control_points = np.array(tmp_te_ss).T
                 # self.segments[i].skin.SS.u_fwd.control_points = np.array(tmp_le_ps).T

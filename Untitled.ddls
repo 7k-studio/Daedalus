@@ -1,0 +1,7322 @@
+{
+  "Program": {
+    "name": "Daedalus",
+    "version": "0.4.0-beta"
+  },
+  "Project": {
+    "name": "Untitled",
+    "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+    "creation date": "2026-07-30 00:01:46",
+    "modification date": "2026-07-31 23:05:11",
+    "description": "Project description",
+    "components": [
+      {
+        "name": "Component",
+        "info": {
+          "creation_date": "2026-07-30",
+          "modification_date": "2026-07-30"
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Z": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "stats": {
+          "Test": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "wings": [
+          {
+            "name": "Wing",
+            "info": {
+              "creation_date": "2026-07-30",
+              "modification_date": "2026-07-30"
+            },
+            "attrs": {
+              "direction": {
+                "value": "Z+"
+              },
+              "connection": {
+                "value": "Approximated"
+              }
+            },
+            "params": {},
+            "stats": {
+              "Test": {
+                "value": 0,
+                "unit": "m"
+              }
+            },
+            "segments": [
+              {
+                "name": "Segment",
+                "info": {
+                  "creation_date": "2026-07-30",
+                  "modification_date": "2026-07-30"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "E168"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.0,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.001",
+                "info": {
+                  "creation_date": "2026-07-30",
+                  "modification_date": "2026-07-30"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "E168"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.2,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.002",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.020"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.4,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.003",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.021"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.6000000000000001,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.004",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.022"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.8,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.005",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.023"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0.0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 1.0,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "Wing.001",
+            "info": {
+              "creation_date": "2026-07-31",
+              "modification_date": "2026-07-31"
+            },
+            "attrs": {
+              "direction": {
+                "value": "Z+"
+              },
+              "connection": {
+                "value": "Approximated"
+              }
+            },
+            "params": {},
+            "stats": {
+              "Test": {
+                "value": 0,
+                "unit": "m"
+              }
+            },
+            "segments": [
+              {
+                "name": "Segment.006",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.024"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.0,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.007",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.025"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.2,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.008",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.026"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.4,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Component.001",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31"
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Z": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "stats": {
+          "Test": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "wings": [
+          {
+            "name": "Wing.002",
+            "info": {
+              "creation_date": "2026-07-31",
+              "modification_date": "2026-07-31"
+            },
+            "attrs": {
+              "direction": {
+                "value": "Z+"
+              },
+              "connection": {
+                "value": "Approximated"
+              }
+            },
+            "params": {},
+            "stats": {
+              "Test": {
+                "value": 0,
+                "unit": "m"
+              }
+            },
+            "segments": [
+              {
+                "name": "Segment.009",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.027"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.0,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.010",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.028"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.2,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              },
+              {
+                "name": "Segment.011",
+                "info": {
+                  "creation_date": "2026-07-31",
+                  "modification_date": "2026-07-31"
+                },
+                "attrs": {
+                  "airfoil": {
+                    "value": "Airfoil.029"
+                  }
+                },
+                "params": {
+                  "position_X": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "position_Y": {
+                    "value": 0,
+                    "unit": "m"
+                  },
+                  "span": {
+                    "value": 0.4,
+                    "unit": "m"
+                  }
+                },
+                "stats": {
+                  "Test": {
+                    "value": 0,
+                    "unit": "m"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "airfoils": [
+      {
+        "name": "Airfoil",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-30",
+          "modification_date": "2026-07-30",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.001",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-30",
+          "modification_date": "2026-07-30",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.002",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-30",
+          "modification_date": "2026-07-30",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "E168",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2025-07-09",
+          "modification_date": "2025-07-09",
+          "description": "Eppler E168 low Reynolds number airfoil Max thickness 12.4% at 26.7% chord Max camber 0% at 0% chord"
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0.024800000000000003,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0.0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 0.9610000000000001,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.05,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0001,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.002,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0001,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 0.9845938469882811,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0.0022834069973063638,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -3.929886842378785e-08,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0.9868772539855867,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 1.8801628928885247e-09,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G1"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.035,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30.0,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.0175,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.035,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": 30.0,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.0175,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G1"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.0015,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30.0,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.00075,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.0015,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": 30.0,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.00075,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G1"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 26.8,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.19,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0.0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 4.85,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.453,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0.0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G1"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 26.8,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.19,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0.0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 4.85,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.453,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0.0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.003",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.004",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.005",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.006",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.007",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.008",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.009",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.010",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.011",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.012",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.013",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.014",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.015",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.016",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.017",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.018",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.019",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": 0,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.020",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.021",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.022",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.023",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.024",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.025",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.026",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.027",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.028",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      },
+      {
+        "name": "Airfoil.029",
+        "path": "D:/Programy/7kStudio/Daedalus/Untitled.ddls",
+        "format": "ddls-parametric",
+        "info": {
+          "creation_date": "2026-07-31",
+          "modification_date": "2026-07-31",
+          "description": ""
+        },
+        "attrs": {},
+        "params": {
+          "origin_X": {
+            "value": 0,
+            "unit": "m"
+          },
+          "origin_Y": {
+            "value": 0,
+            "unit": "m"
+          },
+          "stretch": {
+            "value": 1,
+            "unit": "m"
+          },
+          "incline": {
+            "value": 0,
+            "unit": "deg"
+          },
+          "LE_thickness": {
+            "value": 0.1,
+            "unit": "m"
+          },
+          "LE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          },
+          "TE_thickness": {
+            "value": 0.01,
+            "unit": "m"
+          },
+          "TE_angle": {
+            "value": 0.0,
+            "unit": "deg"
+          }
+        },
+        "stats": {
+          "Chord": {
+            "value": 1.0968919274114566,
+            "unit": "m"
+          },
+          "Position LE X": {
+            "value": -0.08983532845300596,
+            "unit": "m"
+          },
+          "Position LE Y": {
+            "value": -1.951563910473908e-18,
+            "unit": "m"
+          },
+          "Position TE X": {
+            "value": 1.0070565989584506,
+            "unit": "m"
+          },
+          "Position TE Y": {
+            "value": -1.6263032587282567e-19,
+            "unit": "m"
+          }
+        },
+        "LE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -20,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.05,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "TE": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "ps_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ps_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ps_curv": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_tan": {
+              "value": 0.004,
+              "unit": "m"
+            },
+            "ss_slope": {
+              "value": -30,
+              "unit": "deg"
+            },
+            "ss_curv": {
+              "value": 0.004,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "PS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        },
+        "SS": {
+          "attrs": {
+            "type": {
+              "value": "G2"
+            }
+          },
+          "params": {
+            "fwd_wedge": {
+              "value": 10,
+              "unit": "deg"
+            },
+            "fwd_tan": {
+              "value": 0.05,
+              "unit": "m"
+            },
+            "fwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "fwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_wedge": {
+              "value": 5,
+              "unit": "deg"
+            },
+            "rwd_tan": {
+              "value": 0.1,
+              "unit": "m"
+            },
+            "rwd_slope": {
+              "value": 0,
+              "unit": "deg"
+            },
+            "rwd_curv": {
+              "value": 0.1,
+              "unit": "m"
+            }
+          },
+          "stats": {}
+        }
+      }
+    ]
+  }
+}

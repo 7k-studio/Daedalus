@@ -20,7 +20,7 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 '''
 import logging
 
-from src.obj.class_param import Param, M, DEG
+from src.obj.param import Param, M, DEG
 
 class Component:
     def __init__(self, program=None, project=None):
@@ -58,7 +58,7 @@ class Component:
 
         return tmp_X, tmp_Y, tmp_Z
     
-    def update(self, dummy1, dummy2, dummy3):
+    def update(self):
         self.logger.info("Updating COMPONENT...")
         self.logger.debug("   This function is pointless :( ")
         #self.params['origin_X'] = 0
