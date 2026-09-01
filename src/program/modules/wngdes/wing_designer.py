@@ -118,7 +118,7 @@ class WingDesigner:
         dock_statistics.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetMovable | QDockWidget.DockWidgetFeature.DockWidgetFloatable | QDockWidget.DockWidgetFeature.DockWidgetClosable)
         self.dock_widgets['wing_statistics_table'] = dock_statistics
 
-        # Log Viewer Widget
+        # Bottom logger console for this module only
         self.LOG_VIEWER = LogViewer(log_file="toolout.log", parent=None, program=self.DAEDALUS)
         dock_logger = QDockWidget("Logger Console", None)
         dock_logger.setWidget(self.LOG_VIEWER)
@@ -173,7 +173,11 @@ class WingDesigner:
     def refresh(self):
         self.TREE_OBJECT.update()
         self.TEXT_DESCRIPTION.set_description()
-    
+
+    ###############################
+    # COMPONENT RELATED FUNCTIONS #
+    ###############################
+
     def addComponent(self):
         """Add a new component to the tree menu."""
         component_obj = src.obj.class_component.Component(self.DAEDALUS, self.PROJECT)
@@ -184,6 +188,26 @@ class WingDesigner:
         self.PROJECT.components.append(component_obj)
         self.TREE_OBJECT.add_component_to_tree(component_obj)
         self.OPEN_GL.update()
+
+    def deleteComponent(self):
+        """Delete the selected component."""
+        selected_item = self.TREE_OBJECT.currentItem()
+        if selected_item:
+            index = self.TREE_OBJECT.indexOfTopLevelItem(selected_item)
+            if index != -1:
+                self.TREE_OBJECT.takeTopLevelItem(index)
+                del self.PROJECT.components[index]
+                self.logger.info(f"Deleted component at index {index}.")
+                self.TREE_OBJECT.update()
+                self.OPEN_GL.update()
+            else:
+                self.logger.error("Invalid selection.")
+        else:
+            self.logger.error("Component NOT selected!")
+
+    ##########################
+    # WING RELATED FUNCTIONS #
+    ##########################
 
     def addWing(self):
         """Add a new wing to the selected component."""
@@ -210,6 +234,30 @@ class WingDesigner:
                 self.logger.error("Cannot set wing to selected item!")
         else:
             self.logger.error("Component NOT selected!")
+
+    def deleteWing(self):
+        """Delete the selected wing."""
+        selected_item = self.TREE_OBJECT.currentItem()
+        if selected_item:
+            parent_item = selected_item.parent()
+            if parent_item:
+                wing_index = parent_item.indexOfChild(selected_item)
+                component_index = self.TREE_OBJECT.indexOfTopLevelItem(parent_item)
+                if wing_index != -1 and component_index != -1:
+                    del self.PROJECT.components[component_index].wings[wing_index]
+                    self.logger.info(f"Deleted wing at index {component_index}:{wing_index}.")
+                    self.TREE_OBJECT.update()
+                    self.OPEN_GL.update()
+                else:
+                    self.logger.error("Cannot delete selected wing!")
+            else:
+                self.logger.error("Wing NOT selected!")
+        else:
+            self.logger.error("Component NOT found!")
+
+    #############################
+    # SEGMENT RELATED FUNCTIONS #
+    #############################
 
     def addSegment(self):
         """Add a new Segment to the selected wing."""
@@ -267,42 +315,6 @@ class WingDesigner:
 
         self.TREE_OBJECT.add_segment_to_tree(segment_obj)
         self.OPEN_GL.update()
-    
-    def deleteComponent(self):
-        """Delete the selected component."""
-        selected_item = self.TREE_OBJECT.currentItem()
-        if selected_item:
-            index = self.TREE_OBJECT.indexOfTopLevelItem(selected_item)
-            if index != -1:
-                self.TREE_OBJECT.takeTopLevelItem(index)
-                del self.PROJECT.components[index]
-                self.logger.info(f"Deleted component at index {index}.")
-                self.TREE_OBJECT.update()
-                self.OPEN_GL.update()
-            else:
-                self.logger.error("Invalid selection.")
-        else:
-            self.logger.error("Component NOT selected!")
-
-    def deleteWing(self):
-        """Delete the selected wing."""
-        selected_item = self.TREE_OBJECT.currentItem()
-        if selected_item:
-            parent_item = selected_item.parent()
-            if parent_item:
-                wing_index = parent_item.indexOfChild(selected_item)
-                component_index = self.TREE_OBJECT.indexOfTopLevelItem(parent_item)
-                if wing_index != -1 and component_index != -1:
-                    del self.PROJECT.components[component_index].wings[wing_index]
-                    self.logger.info(f"Deleted wing at index {component_index}:{wing_index}.")
-                    self.TREE_OBJECT.update()
-                    self.OPEN_GL.update()
-                else:
-                    self.logger.error("Cannot delete selected wing!")
-            else:
-                self.logger.error("Wing NOT selected!")
-        else:
-            self.logger.error("Component NOT found!")
 
     def deleteSegment(self):
         """Delete the selected segment."""
@@ -318,6 +330,7 @@ class WingDesigner:
                     component_index = self.TREE_OBJECT.indexOfTopLevelItem(grandparent_item)
                     del self.PROJECT.components[component_index].wings[wing_index].segments[segment_index]
                     self.logger.info(f"Deleted segment at index {component_index}:{wing_index}:{segment_index}.")
+                    self.PROJECT.components[component_index].wings[wing_index].update()
                     self.TREE_OBJECT.update()
                     self.OPEN_GL.update()
                 else:
@@ -328,16 +341,15 @@ class WingDesigner:
             self.logger.error("Component NOT found!")
     
     def toggle_logger(self):
-        """Toggle the logger widget."""
-        dock_logger = self.dock_widgets.get('logger_console')
+        """Toggle the module logger widget."""
+        dock_logger = self.dock_widgets.get('wing_logger_console')
         if dock_logger:
-            if dock_logger.isVisible():
-                dock_logger.close()  # Close the dock widget
-            else:
-                dock_logger.show()  # Show the dock widget
-            
+            dock_logger.setVisible(not dock_logger.isVisible())
+        if self.main_window and hasattr(self.main_window, 'MENU_BAR'):
+            self.main_window.MENU_BAR._sync_window_menu_states()
+
     def update_menu_bar_state(self, dock_widget):
         """Update the menu bar state when a dock widget's visibility changes."""
-        if dock_widget == self.dock_widgets.get('logger_console'):
-            self.MENU_BAR.update_action_state(self.MENU_BAR.loggerWidgetAction, dock_widget)
+        if dock_widget == self.dock_widgets.get('wing_logger_console') and self.main_window and hasattr(self.main_window, 'MENU_BAR'):
+            self.main_window.MENU_BAR._sync_window_menu_states()
 

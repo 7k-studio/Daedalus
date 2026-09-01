@@ -32,6 +32,7 @@ from OpenGL.GLU import *
 from .renderers import controlpoints_renderer, grid_renderer, coordinate_renderer, wireframe_renderer, surface_renderer
 from .camera import Camera3D
 from .interaction.pan_tool import PanTool
+from .interaction.rotate_tool import RotateTool
 from .interaction.zoom_tool import ZoomTool
 
 
@@ -66,14 +67,13 @@ class Viewport3D(QOpenGLWidget):
 
         self.camera = Camera3D()
         self.pan_tool = PanTool(self)
+        self.rotate_tool = RotateTool(self)
         self.zoom_tool = ZoomTool(self)
 
-        # Interaction
-        self._last_pos = None
+        # Interaction state is kept in the tool objects; the viewport only
+        # forwards mouse events to the active interaction tool.
         self._active_button = None
-
-        # Pan offsets are stored by moving the target in world space
-        # but we compute deltas in view space and transform to world
+        self._active_tool = None
 
     # -------- OpenGL setup --------
     def initializeGL(self):
@@ -137,11 +137,9 @@ class Viewport3D(QOpenGLWidget):
                 #controlpoints_renderer.draw_cp_net(PROJECT.components[i].wings[j], self.camera.distance)
                 
                 for k, segment in enumerate(wing.segments):
-                    self.logger.debug(f"Drawing objects from Component idx: {i}, Wing idx: {j}, Segment idx {k}")
+                    # self.logger.debug(f"Drawing objects from Component idx: {i}, Wing idx: {j}, Segment idx {k}")
                     try:
-                        
                         if self.wing_settings["wireframe"]["show"]:
-                            self.logger.debug(f"Drawing wireframe")
                             wireframe_renderer.draw_wireframe(self.PROJECT, i, j, k)
                     except Exception as e:
                         self.logger.error(f"An error occured during wireframe drawing: {e}")
@@ -154,16 +152,18 @@ class Viewport3D(QOpenGLWidget):
                         if self.wing_settings["grid"]["show"]:
                             for key in patch_keys:
                                 patch = getattr(wing.skin, key, None)
-                                if patch and getattr(patch, 'control_grid', None):
+                                control_grid = getattr(patch, 'control_grid', None)
+                                if patch is not None and control_grid is not None:
                                     try:
-                                        controlpoints_renderer.draw_cp_grid(patch.control_grid)
+                                        controlpoints_renderer.draw_cp_grid(control_grid)
                                     except Exception as e:
                                         self.logger.error(f"An error occured during CP Grid drawing: {e}")
 
                         if self.wing_settings["solid"]["show"]:
                             for key in patch_keys:
                                 patch = getattr(wing.skin, key, None)
-                                if patch and getattr(patch, 'geom', None):
+                                geom = getattr(patch, 'geom', None)
+                                if patch is not None and geom is not None:
                                     try:
                                         surface_renderer.draw_patch_fill(patch)
                                     except Exception as e:
@@ -177,51 +177,45 @@ class Viewport3D(QOpenGLWidget):
     # -------- Interaction --------
     def mousePressEvent(self, event):
         self._active_button = event.button()
-        if self._active_button == QtCore.Qt.MouseButton.MiddleButton:
-            self.pan_tool.mouse_press(event)
-        else:
-            self._last_pos = event.position()
-            self.setCursor(QtCore.Qt.CursorShape.ClosedHandCursor)
+        modifiers = QApplication.queryKeyboardModifiers()
+        self._active_tool = None
 
-    def mouseReleaseEvent(self, event):
-        self._active_button = None
-        self._last_pos = None
-        if event.button() == QtCore.Qt.MouseButton.MiddleButton:
-            self.pan_tool.mouse_release(event)
-        else:
-            self.unsetCursor()
+        if self._active_button == QtCore.Qt.MouseButton.MiddleButton:
+            if modifiers & QtCore.Qt.KeyboardModifier.ShiftModifier:
+                self._active_tool = 'zoom'
+                self.zoom_tool.mouse_press(event)
+            if modifiers & QtCore.Qt.KeyboardModifier.ControlModifier:
+                self._active_tool = 'pan'
+                self.pan_tool.mouse_press(event)
+            else:
+                self._active_tool = 'rotate'
+                self.rotate_tool.mouse_press(event)
 
     def mouseDoubleClickEvent(self, event):
-        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+        if event.button() == QtCore.Qt.MouseButton.MiddleButton:
             self.reset_view()
 
     def mouseMoveEvent(self, event):
-        pos = event.position()
-
-        if self._last_pos is None and self._active_button != QtCore.Qt.MouseButton.MiddleButton:
-            return
-
-        if self._active_button == QtCore.Qt.MouseButton.LeftButton:
-            dx = pos.x() - self._last_pos.x()
-            dy = pos.y() - self._last_pos.y()
-            self.camera.yaw -= dx * 0.4
-            self.camera.pitch += dy * 0.3
-            self.camera.pitch = max(-89.5, min(89.5, self.camera.pitch))
-            self._last_pos = pos
-            self.update()
-
-        elif self._active_button == QtCore.Qt.MouseButton.MiddleButton:
+        if self._active_tool == 'zoom':
+            self.zoom_tool.mouse_move(event)
+        elif self._active_tool == 'pan':
             self.pan_tool.mouse_move(event)
-
-        elif self._active_button == QtCore.Qt.MouseButton.RightButton:
-            dx = pos.x() - self._last_pos.x()
-            dy = pos.y() - self._last_pos.y()
-            self._dolly(dy)
-            self._last_pos = pos
-            self.update()
+        elif self._active_tool == 'rotate':
+            self.rotate_tool.mouse_move(event)
 
     def wheelEvent(self, event):
         self.zoom_tool.wheel(event)
+
+    def mouseReleaseEvent(self, event):
+        if self._active_tool == 'zoom':
+            self.zoom_tool.mouse_release(event)
+        elif self._active_tool == 'pan':
+            self.pan_tool.mouse_release(event)
+        elif self._active_tool == 'rotate':
+            self.rotate_tool.mouse_release(event)
+
+        self._active_tool = None
+        self._active_button = None
 
     def reset_view(self):
         self.camera.reset()

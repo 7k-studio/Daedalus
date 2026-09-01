@@ -37,24 +37,44 @@ class Skin:
     
     def build(self):
         """
-        Generuje pojedynczą, ciągłą i gładką powierzchnię dla całego skrzydła.
+        Generates a continuous skin surface for the wing while preserving 
+        boundary BSpline references on each Patch.
         """
         self.logger.info("Building wing skin...")
         wing = self.parent
         if not wing or not wing.segments:
-            self.logger.warning("Brak segmentów do zbudowania poszycia skrzydła")
+            self.logger.error("No segments available to build wing skin.")
             return
 
-        for key in ['le', 'ps', 'ss', 'te']:
-            spline_attr = f"{key.lower()}_spline"
-            
-            # Zbiór krzywych z segmentów
-            curves = [
-                getattr(seg, spline_attr).geom 
+        # Determine mode ('approximated' or 'interpolated') from wing attributes
+        connection_mode = 'approximated'
+        if hasattr(wing, 'attrs') and 'connection' in wing.attrs:
+            attr_val = wing.attrs['connection'].value.lower()
+            if 'interpolated' in attr_val:
+                connection_mode = 'interpolated'
+            elif 'approximated' in attr_val:
+                connection_mode = 'approximated'
+
+        # Mapping: patch_key -> (profile_attr, u_fwd_spline, u_rwd_spline)
+        patch_mapping = {
+            'PS': ('ps_spline', wing.LE_PS, wing.TE_PS),
+            'SS': ('ss_spline', wing.LE_SS, wing.TE_SS),
+            'LE': ('le_spline', wing.LE_SS, wing.LE_PS),
+            'TE': ('te_spline', wing.TE_PS, wing.TE_SS),
+        }
+
+        for patch_key, (spline_attr, u_fwd_spline, u_rwd_spline) in patch_mapping.items():
+            # Collect profile BSpline objects along span
+            profile_splines = [
+                getattr(seg, spline_attr)
                 for seg in wing.segments 
-                if hasattr(getattr(seg, spline_attr, None), 'geom')
+                if hasattr(seg, spline_attr) and getattr(seg, spline_attr) is not None
             ]
 
-            # Każdy patch w Skin po prostu buduje się swoją metodą loft!
-            patch_obj = getattr(self, key.upper())
-            patch_obj.build_loft(curves)
+            patch_obj = getattr(self, patch_key)
+            patch_obj.build_loft(
+                spline_objects=profile_splines,
+                u_fwd=u_fwd_spline,
+                u_rwd=u_rwd_spline,
+                mode_v=connection_mode
+            )

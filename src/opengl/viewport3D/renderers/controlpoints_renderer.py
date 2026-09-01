@@ -57,7 +57,11 @@ def draw_cp_net(object, zoom):
                     p1 = [p1[0], p1[1], p1[2]]
                     p2 = [p2[0], p2[1], p2[2]]
                 logger.debug(f"{key}: ", points)
-                draw_dashed_line(p1, p2, zoom=zoom)
+                lines.draw_styled_line(
+                    [p1, p2],
+                    color=(0.3, 0.3, 0.3),
+                    style='dashed'
+                )
 
 def draw_cp_grid(control_points, point_size=8):
     control_points = np.array(control_points)  # Convert to NumPy array
@@ -74,31 +78,18 @@ def draw_cp_grid(control_points, point_size=8):
     glColor3f(1.0, 1.0, 0.0)
     for u in range(control_points.shape[0]):
         for v in range(control_points.shape[1] - 1):
-            draw_dashed_line(control_points[u, v], control_points[u, v + 1])
+            lines.draw_styled_line(
+                [control_points[u, v], control_points[u, v + 1]],
+                color=(0.3, 0.3, 0.3),
+                style='dashed'
+            )
 
     # Draw dashed lines in v direction (along u)
     for v in range(control_points.shape[1]):
         for u in range(control_points.shape[0] - 1):
-            draw_dashed_line(control_points[u, v], control_points[u + 1, v])
+            lines.draw_styled_line(
+                [control_points[u, v], control_points[u + 1, v]],
+                color=(0.3, 0.3, 0.3),
+                style='dashed'
+            )
 
-def draw_dashed_line(p1, p2, base_dash_length=0.01, zoom=1):
-    """Draw dashed line between points p1 and p2."""
-
-    zoom = abs(zoom) if zoom != 0 else 0.001  # avoid divide-by-zero
-    dash_length = base_dash_length * zoom
-
-    p1 = array(p1)
-    p2 = array(p2)
-    vec = p2 - p1
-    length = linalg.norm(vec)
-    dir_vec = vec / length 
-
-    num_dashes = int(length / (2 * dash_length))
-    for i in range(num_dashes):
-        start = p1 + dir_vec * (2 * i) * dash_length
-        end = p1 + dir_vec * (2 * i + 1) * dash_length
-        glColor3f(0.3, 0.3, 0.3)
-        glBegin(GL_LINES)
-        glVertex3fv(start)
-        glVertex3fv(end)
-        glEnd()

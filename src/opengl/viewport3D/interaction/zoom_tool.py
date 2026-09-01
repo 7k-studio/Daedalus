@@ -21,12 +21,35 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
 
+from PyQt6 import QtCore
+
 
 class ZoomTool:
     """Zoom interaction for the 3D viewport."""
 
     def __init__(self, viewport):
         self.viewport = viewport
+        self._last_pos = None
+
+    def mouse_press(self, event):
+        self._last_pos = event.position()
+        self.viewport.setCursor(QtCore.Qt.CursorShape.SizeVerCursor)
+
+    def mouse_move(self, event):
+        if self._last_pos is None:
+            return
+
+        pos = event.position()
+        dy = pos.y() - self._last_pos.y()
+
+        self.viewport.camera.dolly(dy)
+        self._last_pos = pos
+        self.viewport.update()
+
+    def mouse_release(self, event):
+        self._last_pos = None
+        self.viewport.unsetCursor()
+        self.viewport.update()
 
     def wheel(self, event):
         delta_steps = event.angleDelta().y() / 120.0

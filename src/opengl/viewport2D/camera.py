@@ -19,6 +19,8 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 
+import math
+
 import numpy as np
 
 
@@ -26,6 +28,11 @@ class Camera2D:
     def __init__(self):
         self.center = np.array([0.0, 0.0], dtype=float)
         self.zoom = 2.0
+
+    def dolly(self, dy):
+        """Adjust zoom based on vertical mouse drag."""
+        factor = math.pow(1.01, -dy)
+        self.zoom = max(0.01, self.zoom * factor)
 
     @property
     def aspect(self, width, height):

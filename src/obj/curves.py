@@ -41,6 +41,7 @@ class BSpline:
         self.control_points = []
         self.geom = []
         self.mode = 'approximated'  # 'approximated' or 'interpolated'
+        self.length = 0.0
         self.logger = logging.getLogger(self.__class__.__name__)
     
     def create(self, degree=None, resolution=None, mode='approximated', min_intermediate_points=3):
@@ -91,6 +92,8 @@ class BSpline:
         else:
             # Approximated mode: use control points directly
             self.geom = self._create_approximated_spline(coords, degree, resolution)
+
+        self.length = self.calc_length()
     
     def _create_intermediate_control_points(self, coords, min_count=3):
         """Create intermediate control points between two endpoints for better curve."""
@@ -161,3 +164,13 @@ class BSpline:
 
         u_new = np.linspace(0, 1, int(max(l * f / 100, f)), endpoint=True)
         return interpolate.splev(u_new, tck)
+
+    def calc_length(self):
+        """Calculates the cumulative arc length from evaluated geometry points."""
+        if not self.geom or len(self.geom[0]) < 2:
+            return 0.0
+        
+        # self.geom format is [X_array, Y_array, Z_array]
+        pts = np.column_stack(self.geom)  # Shape: (N, 3)
+        distances = np.linalg.norm(np.diff(pts, axis=0), axis=1)
+        return float(np.sum(distances))

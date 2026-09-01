@@ -842,3 +842,7 @@ I would prioritize the work in this order:
 7. **Move to a scene graph with drawable objects and render layers**, making it straightforward to add dimensions, annotations, reference airfoils, multiple models, and future CAD features.
 
 Following that sequence will transform this viewport from a capable OpenGL widget into a scalable CAD-style rendering engine without requiring a disruptive rewrite.
+
+# Error when 6 element spline meets 4 element spline
+2026-08-06 20:22:08,891 INFO: Patch: build_loft: Building loft (mode: approximated)...
+2026-08-06 20:22:08,891 ERROR: Patch: build_loft: Error generating Loft: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (6,) + inhomogeneous part.

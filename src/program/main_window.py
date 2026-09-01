@@ -166,7 +166,7 @@ class MainWindow(QMainWindow):
                                                   append_airfoil_callback=lambda: utils_edit.append_airfoil(self.MENU_BAR), 
                                                   delete_airfoil_callback=self.AIRFOIL_MODULE.deleteAirfoil, 
                                                   flip_airfoil_callback=self.AIRFOIL_MODULE.flipAirfoil, 
-                                                  save_airfoil_callback=self.AIRFOIL_MODULE.saveAirfoil)
+                                                  save_airfoil_callback=lambda: utils_edit.save_airfoil(self.MENU_BAR))
             self.addToolBar(self.MODULE_TOOL_BAR)
             
             # Module indicator
@@ -213,25 +213,32 @@ class MainWindow(QMainWindow):
         if module_name not in self.module_docks:
             return
 
-        # Show module-specific docks
         for dock_name in self.module_docks[module_name]:
-            if dock_name in self.dock_widgets:
-                dock = self.dock_widgets[dock_name]
-                dock.show()
+            if dock_name not in self.dock_widgets:
+                continue
 
-                # Set default positions based on dock name
-                name_lower = dock_name.lower()
-                if 'tree' in name_lower or 'object' in name_lower or 'reference' in name_lower:
-                    self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
-                elif 'parameters' in name_lower or 'table' in name_lower:
-                    self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock)
-                elif 'description' in name_lower or 'statistics' in name_lower:
-                    self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, dock)
-                elif 'log' in name_lower:
-                    self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, dock)
-                else:
-                    # Default to left if no explicit category matches
-                    self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dock)
+            dock = self.dock_widgets[dock_name]
+            dock.show()
+
+            name_lower = dock_name.lower()
+            if 'tree' in name_lower or 'object' in name_lower or 'reference' in name_lower:
+                area = Qt.DockWidgetArea.LeftDockWidgetArea
+            elif 'parameters' in name_lower or 'table' in name_lower:
+                area = Qt.DockWidgetArea.RightDockWidgetArea
+            elif 'description' in name_lower or 'statistics' in name_lower:
+                area = Qt.DockWidgetArea.RightDockWidgetArea
+            elif 'log' in name_lower:
+                area = Qt.DockWidgetArea.BottomDockWidgetArea
+            else:
+                area = Qt.DockWidgetArea.LeftDockWidgetArea
+
+            # Avoid re-adding an already docked widget; this was the source of the
+            # "all widgets except logger not docked" issue.
+            if self.dockWidgetArea(dock) == Qt.DockWidgetArea.NoDockWidgetArea:
+                self.addDockWidget(area, dock)
+
+        if self.MENU_BAR is not None:
+            self.MENU_BAR._sync_window_menu_states()
 
     def set_project(self, project):
         """Set the project for the current and all modules.

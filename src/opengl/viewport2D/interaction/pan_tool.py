@@ -26,25 +26,31 @@ class PanTool:
 
     def __init__(self, viewport):
         self.viewport = viewport
+        self._last_pos = None
 
     def mouse_press(self, event):
-        self.viewport.lastPos = event.position()
+        self._last_pos = event.position()
+        self.viewport.setCursor(Qt.CursorShape.ClosedHandCursor)
 
     def mouse_move(self, event):
+        if self._last_pos is None:
+            return
+        
         pos = event.position()
-        dx = pos.x() - self.viewport.lastPos.x()
-        dy = pos.y() - self.viewport.lastPos.y()
+        dx = pos.x() - self._last_pos.x()
+        dy = pos.y() - self._last_pos.y()
 
-        if event.buttons() & Qt.MouseButton.LeftButton:
-            aspect = self.viewport.width() / max(1, self.viewport.height())
-            world_width = 2 * self.viewport.camera.zoom * aspect
-            world_height = 2 * self.viewport.camera.zoom
+        aspect = self.viewport.width() / max(1, self.viewport.height())
+        world_width = 2 * self.viewport.camera.zoom * aspect
+        world_height = 2 * self.viewport.camera.zoom
 
-            self.viewport.camera.center[0] -= dx * world_width / self.viewport.width()
-            self.viewport.camera.center[1] += dy * world_height / self.viewport.height()
+        self.viewport.camera.center[0] -= dx * world_width / self.viewport.width()
+        self.viewport.camera.center[1] += dy * world_height / self.viewport.height()
 
-        self.viewport.lastPos = pos
+        self._last_pos = pos
         self.viewport.update()
 
     def mouse_release(self, event):
+        self._last_pos = None
+        self.viewport.unsetCursor()
         self.viewport.update()

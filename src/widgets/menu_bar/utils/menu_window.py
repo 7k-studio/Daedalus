@@ -19,37 +19,54 @@ along with PROGRAM.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 
-def update_action_state(menu_obj, action, dock_widget):
+def update_action_state(action, dock_widget):
     """Update the state of the given action based on the dock widget's visibility."""
+    if action is None or dock_widget is None:
+        return
     action.setChecked(dock_widget.isVisible())
+
 
 def toggle_airfoil(menu_obj):
     """Toggle the description widget."""
-    if menu_obj.parent():
+    if isinstance(menu_obj, bool):
+        return
+    if hasattr(menu_obj, 'parent') and menu_obj.parent():
         menu_obj.parent().toggle_airfoil()  # Call the correct method in AirfoilDesigner
+
 
 def toggle_parameters(menu_obj):
     """Toggle the description widget."""
-    if menu_obj.parent():
+    if isinstance(menu_obj, bool):
+        return
+    if hasattr(menu_obj, 'parent') and menu_obj.parent():
         menu_obj.parent().toggle_parameters()  # Call the correct method in AirfoilDesigner
+
 
 def toggle_statistics(menu_obj):
     """Toggle the description widget."""
-    if menu_obj.parent():
+    if isinstance(menu_obj, bool):
+        return
+    if hasattr(menu_obj, 'parent') and menu_obj.parent():
         menu_obj.parent().toggle_statistics()  # Call the correct method in AirfoilDesigner
+
 
 def toggle_reference(menu_obj):
     """Toggle the description widget."""
-    if menu_obj.parent():
+    if isinstance(menu_obj, bool):
+        return
+    if hasattr(menu_obj, 'parent') and menu_obj.parent():
         menu_obj.parent().toggle_reference()  # Call the correct method in AirfoilDesigner
+
 
 def toggle_description(menu_obj):
     """Toggle the description widget."""
-    if menu_obj.parent():
+    if isinstance(menu_obj, bool):
+        return
+    if hasattr(menu_obj, 'parent') and menu_obj.parent():
         menu_obj.parent().toggle_description()  # Call the correct method in AirfoilDesigner
 
-def toggle_logger(menu_obj):
-    """Toggle the description widget."""
-    if menu_obj.parent():
-        menu_obj.parent().toggle_logger()  # Call the correct method in AirfoilDesigner
+
+def toggle_logger(*args):
+    """Logger toggling is handled by the module-owned dock widget itself."""
+    return
         

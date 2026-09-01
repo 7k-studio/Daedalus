@@ -19,7 +19,7 @@ along with PROGRAM.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 import os
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QMessageBox
 
 def fit2ref(menu_obj):
     """Fit the currently selected airfoil in airfoils_menu to the reference_airfoil by optimizing its parameters."""
@@ -69,7 +69,7 @@ def save_airfoil(menu_obj):
 
         if not filePath.endswith(".arf.ddls"):
             filePath += ".arf.ddls"
-        print(filePath)
+
         menu_obj.main_window.AIRFOIL_MODULE.saveAirfoil(airfoil, filePath)
 
 def append_airfoil(menu_obj):
@@ -95,4 +95,23 @@ def export_airfoil(menu_obj):
     else:
         menu_obj.logger.error("No valid file path provided")
         return
-        
+
+def delete_airfoil(menu_obj):
+    msg = QMessageBox.question(None, "Delete Airfoil", "Are you sure you want to delete the airfoil? Current version of the program does not have an Undo button!", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
+    if msg == QMessageBox.StandardButton.Yes:
+        menu_obj.main_window.AIRFOIL_MODULE.deleteAirfoil()
+
+def delete_component(menu_obj):
+    msg = QMessageBox.question(None, "Delete Component", "Are you sure you want to delete the component? Current version of the program does not have an Undo button!", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
+    if msg == QMessageBox.StandardButton.Yes:
+        menu_obj.main_window.WING_MODULE.deleteComponent()
+
+def delete_wing(menu_obj):
+    msg = QMessageBox.question(None, "Delete Wing", "Are you sure you want to delete the wing? Current version of the program does not have an Undo button!", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
+    if msg == QMessageBox.StandardButton.Yes:
+        menu_obj.main_window.WING_MODULE.deleteWing()
+
+def delete_segment(menu_obj):
+    msg = QMessageBox.question(None, "Delete Segment", "Are you sure you want to delete the segment? Current version of the program does not have an Undo button!", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
+    if msg == QMessageBox.StandardButton.Yes:
+        menu_obj.main_window.WING_MODULE.deleteSegment()

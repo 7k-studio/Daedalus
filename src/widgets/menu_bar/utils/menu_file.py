@@ -36,8 +36,7 @@ def new_project(self):
             if self.current_module == 'airfoil' and self.main_window.AIRFOIL_MODULE:
                 self.main_window.AIRFOIL_MODULE.refresh()
             elif self.current_module == 'wing' and self.main_window.WING_MODULE:
-                if hasattr(self.main_window.WING_MODULE, 'init_tree'):
-                    self.main_window.WING_MODULE.init_tree()
+                self.main_window.WING_MODULE.refresh()
 
 def open_project(self):
     if self.main_window.PROJECT:
@@ -94,17 +93,23 @@ def edit_description_project(self):
     else: 
         self.logger.error("No PROJECT asigned!")
 
-def export_project(self):
-    if self.main_window.PROJECT:
-        fileName, _ = QFileDialog.getSaveFileName(self, "Export File", "", "STEP AP203 (*.step;*.stp);")
-        if fileName:
-            import src.utils.step as step
-            base_name = os.path.basename(fileName)
-            step.export_3d_segment_wing(fileName, base_name)
-            self.logger.info(f"Exported file: {fileName}")
+def export_project(menu_obj):
+    if menu_obj.main_window.PROJECT:
+        project = menu_obj.main_window.PROJECT
 
-def exit_program(self):
+        default_name = f"{project.name}.step" if project.name else "Untitled.step"
+        filePath, _ = QFileDialog.getSaveFileName(None, "Export File to STEP format", default_name, "STEP AP203 (*.step;*.stp);")
+
+        if filePath:
+            from src.utils.step import Daedalus2Step
+            base_name = os.path.basename(filePath)
+            D2Step = Daedalus2Step(menu_obj.main_window.PROGRAM, menu_obj.main_window.PROJECT, base_name)
+            D2Step.export_surfaces(filePath)
+            # step.export_3d_segment_wing(fileName, base_name)
+            menu_obj.logger.info(f"Exported file: {filePath}")
+
+def exit_program(menu_obj):
     msg = QMessageBox.question(None, "Exit program", "Do you really want to quit a program?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)
     if msg == QMessageBox.StandardButton.Yes:
-        self.logger.info("Exit")
+        menu_obj.logger.info("Exit")
         QApplication.quit()

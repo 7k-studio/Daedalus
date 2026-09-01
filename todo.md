@@ -14,7 +14,8 @@ A reference can now be handled using both bar menu and specified widget. Both al
 - [x] **Add** button works properly for selig format airfoils
 - [x] **Delete** button works properly for selig format airfoils
 - [x] **Show/Hide** button works properly for selig format airfoils
-- [ ] To be able to load ddls files as reference
+- [x] To be able to load archive ddls files as reference
+- [ ] To be able to load current ddls files as reference
 - [ ] Secondary: **postponed to version v4.1**
     - [ ] ~~To allow to modify the reference~~
     - [ ] ~~To allow to flip the reference~~
@@ -31,52 +32,54 @@ New element added to GUI to quickly navigate the functions of the program. For n
 - [x] To assign functions to each button
 - [x] To enlarge the Toolbar with other Essentail Tools
 
-### Menu Bar / Basic functions
+### Menu Bar
 Has a lot to investiagte
 **Checked/Partially Checked:**
 - File Menu:
-    - [x] New ← works and refreshes the widgets of tree airfoil and reference
-    - [ ] Open ← works as a button but **function should be checked after clarification of new airfoil definition**
-    - [x] Save ← works and the export was adapted to the new hierarchy of airfoil object
-    - [x] Save As ← works and the export was adapted to the new hierarchy of airfoil object
-    - [x] Edit Project Description ← works as intended, updates between widgets and modules
-    - [x] Exit ← works as intended
+    - [x] **New** ← works and refreshes the widgets of tree airfoil and reference (checked 1.09.2026)
+    - [x] **Open** ← works (checked 1.09.2026)
+    - [x] **Save** ← works and the export was adapted to the new hierarchy of airfoil object (checked 1.09.2026)
+    - [x] **Save As** ← works and the export was adapted to the new hierarchy of airfoil object (checked 1.09.2026)
+    - [x] **Edit Project Description** ← works as intended, updates between widgets and modules (checked 1.09.2026)
+    - [x] **Exit** ← works and asks for clarification before quit (checked 1.09.2026)
 
 - Program Menu:
-    - [x] User Manual ← works as intended, opens user manual in web browser
-    - [x] About ← works as intended, opens about window as pop-up window
-    - [x] Preferences ← works as intended, opens window as pop-up window, allows to save or abort, still requires reboot in some functions.
+    - [x] **User Manual** ← works as intended, opens user manual in web browser (checked 1.09.2026)
+    - [x] **About** ← works as intended, opens about window as pop-up window (checked 1.09.2026)
+    - [x] **Preferences** ← works as intended, opens window as pop-up window, allows to save or abort, still requires reboot in some functions. (checked 1.09.2026)
 
 **ToDo:**
 - Airfoil -- **Check if functions are working with new airfoil definition:**    
-    - [x] Create ← works, added to toolbar
-    - [ ] Append
-    - [ ] Delete ← **doesn't work**
-    - [x] Flip ← flips the airfoil but does not change the position of PS and SS. Should it?
-    - [x] Save ← Saves an airfoil to .arf.ddls format based on json
-    - [ ] Export
-    - [x] Rename ← renames an airfoil and assures the unique name
-    - [ ] ~~Edit description~~ *no longer applicable*
+    - [x] **Create** ← works, added to toolbar
+    - [x] **Append** ← works
+    - [x] **Delete** ← works
+    - [x] **Flip** ← flips the airfoil and changes the position of PS and SS
+    - [x] **Save** ← Saves an airfoil to .arf.ddls format based on json
+    - [x] **Export** ← works with new airfoil definition
+    - [x] **Rename** ← renames an airfoil and assures the unique name
+    - [ ] ~~Edit description~~ *functionality removed, option no longer available*
     - [ ] ~~Fit2Reference~~ **postponed to version v4.1**
 - Reference
-    - [ ] Add ← adds the reference to project
-    - [ ] Delete ← deletes selected reference (maybe add warning)
-    - [ ] Show ← changes the visibility state, resulting in object appearing ad dissappearing in the viewport
+    - [x] **Add** ← adds the reference to project
+    - [x] **Manage** ← opens the pop-out widget which allows to modify the references
     - [ ] ~~Edit~~ **postponed to version v4.1**
     - [ ] ~~Flip~~ **postponed to version v4.1**
 - View
-    - [x] Fit view ← **works!**
+    - [x] **Fit view** ← works
     - [ ] ~~Show Curvature comb~~ **postponed to version v4.1**
     - [ ] ~~Show camberline~~ **postponed to version v4.1**
-- Window -- **NO TICK UPDATE IN MENU BAR**
-    - [x] Airfoil Tree
-    - [x] Reference Tree
-    - [x] Parameter Table
-    - [x] Logger Console
-    - [x] Description TextArea
-    - [x] Statistics Table
+- Window
+    Each module populates necessary widgets witch are required to work within the module.
+    - [x] Ticks in sync with widgets status
+    Some of available Widgets:
+        - [x] Airfoil Tree
+        - [x] Reference Tree
+        - [x] Parameter Table
+        - [x] Logger Console
+        - [x] Description TextArea
+        - [x] Statistics Table
 - Module
-    - [x] Wing Module ← **changes the module correctly**
+    - [x] **Wing Module** ← changes the module
 
 
 ## Wing Designer
@@ -86,22 +89,23 @@ Has a lot to investiagte
 - [x] Adding wings ← **works**
 - [x] Adding segments ← **works**
     - [x] Adding segments causes parent airfoil do be added to tree ← **works**
-- [ ] Deleting components
-- [ ] Deleting wings
-- [ ] Deleting segments
-    - [ ] Deleting segments causes parent airfoil do be added to tree
+- [x] Deleting components
+- [x] Deleting wings
+- [x] Deleting segments
+    - [x] Deleting segments causes parent airfoil do be added to tree
 
 ## Wing Creation
 - [x] Segment Wireframe is created
 - [x] Connection wireframe is created
-- [ ] Surface is created:
-    - [ ] Creating Skin instance
-    - [ ] Creating Surface patches and assigning exisiting wireframe to it
-    - [ ] All handled by OpenGL
+- [x] Surface is created:
+    - [x] Creating Skin instance
+    - [x] Creating Surface patches and assigning exisiting wireframe to it
+    - [x] All handled by OpenGL
 
 ### STEP export
-- [ ] adapt STEP classes to new objects and methods in DAEDALUS 0.4
-- [ ] modify export algorythm
+- [x] adapt STEP classes to new objects and methods in DAEDALUS 0.4
+- [x] modify export algorythm
+
 ---
  
 ### Airfoil tree --> Finished and tested for AD
@@ -120,13 +124,13 @@ A table was adjusted to new airfoil format. It now updates and populates the tab
 
 ### Description Editing --> Finished and tested for AD / WD
 Description Widget in Airfoil Designer shows the description of an airfoil in the widget or in the dialog. Clicking Edit button allows to edit the text. To edit an airfoil user must first select an airfoil in the airfoil tree. If an airfoil is deleted the default message is being displayed.
-*ToDo:*
+**ToDo:**
 - [x] To populate the text area with description of selected airfoil
 - [x] To save/reject the changes on user's request
 - [x] Bullet proof the widget for possible unwanted events
 - [x] To clear out after deleding an airfoil
 
-### Statistics Table --> Finiseh and tested for AD
+### Statistics Table --> Finished and tested for AD
 New widget added to display statistics of the selected airfoil.
 **ToDo:**
 - [x] To ensure the Table Widget Can work in AirfoilDesigner and in WingDesigner
@@ -141,9 +145,9 @@ Correct buttons and styling
 - [x] ensure proper buttons functions
 
 # Changelog notes
-
 A new airfoil definition was introduced in the 0.4 version. LE, TE, PS and SS are now separated objects, creating whole airofil.
 This led to new Tree Layout where Airfoil is created out of respective objects as parents and childrens.
+
 ## Program class
 
 ## Project

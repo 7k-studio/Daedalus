@@ -147,7 +147,7 @@ class AirfoilDesigner:
         dock_statistics.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetMovable | QDockWidget.DockWidgetFeature.DockWidgetFloatable | QDockWidget.DockWidgetFeature.DockWidgetClosable)
         self.dock_widgets['airfoil_statistics_table'] = dock_statistics
 
-        # Log Viewer Widget
+        # Bottom logger console for this module only
         self.LOG_VIEWER = LogViewer(log_file="toolout.log", parent=None, program=self.PROGRAM)
         dock_logger = QDockWidget("Logger Console", None)
         dock_logger.setWidget(self.LOG_VIEWER)
@@ -168,6 +168,16 @@ class AirfoilDesigner:
     def _create_toolbars(self):
         """Create toolbars for this module."""
         pass
+
+    def toggle_logger(self):
+        """No module-specific logger exists; the shared logger is managed by the main window."""
+        if self.main_window and hasattr(self.main_window, 'MENU_BAR'):
+            self.main_window.MENU_BAR._sync_window_menu_states()
+
+    def update_menu_bar_state(self, dock_widget):
+        """No module-specific logger exists; the shared logger is managed by the main window."""
+        if self.main_window and hasattr(self.main_window, 'MENU_BAR'):
+            self.main_window.MENU_BAR._sync_window_menu_states()
 
     def handleReferenceToggle(self, state, filename):
         """Handle reference airfoil toggle."""

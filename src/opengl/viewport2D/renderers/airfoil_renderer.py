@@ -64,6 +64,19 @@ def draw_airfoil(self, Current_Airfoil, line_style="solid", color=None):
         lines.draw_styled_line(segment.spline.geom, style=line_style, color=color[key])
 
 
+def draw_dashed_line(self, Current_Airfoil, line_width=0.01, zoom=1.0):
+    """Draw dashed control polygons for the airfoil splines."""
+    for key in ['le', 'te', 'ps', 'ss']:
+        segment = getattr(Current_Airfoil, key.upper())
+        points = np.array(segment.spline.control_points).T
+
+        lines.draw_styled_line(
+            points,
+            color=(0.3, 0.3, 0.3),
+            style='dashed'
+        )
+
+
 def draw_cp_net(self, Current_Airfoil, zoom):
     
     color = self.airfoil_settings['control_points']['color']

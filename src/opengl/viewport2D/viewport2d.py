@@ -19,7 +19,8 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 import logging
-from PyQt6.QtCore import QPoint
+from PyQt6 import QtCore
+from PyQt6.QtWidgets import QApplication
 from PyQt6.QtOpenGLWidgets import QOpenGLWidget
 
 from OpenGL.GL import *
@@ -45,7 +46,7 @@ class ViewportOpenGL(QOpenGLWidget):
         self.camera = Camera2D()
 
         self.translation = [-0.5, 0, 0]
-        self.lastPos = QPoint()
+        self.lastPos = QtCore.QPoint()
         self.airfoil = None
         self.viewport_settings = self.DAEDALUS.preferences["airfoil_designer"]["viewport"]
         self.airfoil_settings = self.DAEDALUS.preferences["airfoil_designer"]["airfoil"]
@@ -60,6 +61,7 @@ class ViewportOpenGL(QOpenGLWidget):
         self.text_renderer = FreetypeTextRenderer(font_size=10)
         self.pan_tool = PanTool(self)
         self.zoom_tool = ZoomTool(self)
+        self._active_tool = None
     
     def clear(self):
         self.airfoil = None
@@ -143,17 +145,37 @@ class ViewportOpenGL(QOpenGLWidget):
         winX, winY, winZ = gluProject(x, y, 0.0, model, proj, viewport)
         return winX, self.height() - winY  # flip Y for Qt
 
+    # -------- Interaction --------
     def mousePressEvent(self, event):
-        self.pan_tool.mouse_press(event)
+        self._active_button = event.button()
+        modifiers = QApplication.queryKeyboardModifiers()
+        self._active_tool = None
+
+        if self._active_button == QtCore.Qt.MouseButton.MiddleButton:
+            if modifiers & QtCore.Qt.KeyboardModifier.ShiftModifier:
+                self._active_tool = 'zoom'
+                self.zoom_tool.mouse_press(event)
+            else:
+                self._active_tool = 'pan'
+                self.pan_tool.mouse_press(event)
 
     def mouseMoveEvent(self, event):
-        self.pan_tool.mouse_move(event)
+        if self._active_tool == 'zoom':
+            self.zoom_tool.mouse_move(event)
+        elif self._active_tool == 'pan':
+            self.pan_tool.mouse_move(event)
 
     def wheelEvent(self, event):
         self.zoom_tool.wheel(event)
 
     def mouseReleaseEvent(self, event):
-        self.pan_tool.mouse_release(event)
+        if self._active_tool == 'zoom':
+            self.zoom_tool.mouse_release(event)
+        elif self._active_tool == 'pan':
+            self.pan_tool.mouse_release(event)
+
+        self._active_tool = None
+        self._active_button = None
 
     def toggle_projection(self):
         """Toggle between perspective and orthogonal views."""

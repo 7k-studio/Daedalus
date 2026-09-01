@@ -174,8 +174,6 @@ class PreferencesWindow(QDialog):
         self.airfoil_show_control_points.setChecked(self.DAEDALUS.preferences['airfoil_designer']['airfoil']['control_points']['show'])
         self.airfoil_show_construction = QCheckBox("Show construction")
         self.airfoil_show_construction.setChecked(self.DAEDALUS.preferences['airfoil_designer']['airfoil']['construction']['show'])
-        self.airfoil_show_wireframe = QCheckBox("Show wireframe")
-        self.airfoil_show_wireframe.setChecked(self.DAEDALUS.preferences['airfoil_designer']['airfoil']['wireframe']['show'])
 
         color_layout.addWidget(color_text)
         color_layout.addWidget(self.a_color_combo_box)
@@ -188,7 +186,6 @@ class PreferencesWindow(QDialog):
         layout.addWidget(airfoil_text)
         layout.addWidget(self.airfoil_show_control_points)
         layout.addWidget(self.airfoil_show_construction)
-        layout.addWidget(self.airfoil_show_wireframe)
 
         layout.addStretch()
         self.airfoil_tab.setLayout(layout)
@@ -246,7 +243,6 @@ class PreferencesWindow(QDialog):
 
         self.DAEDALUS.preferences['airfoil_designer']["airfoil"]["control_points"]['show'] = self.airfoil_show_control_points.isChecked()
         self.DAEDALUS.preferences['airfoil_designer']["airfoil"]["construction"]['show'] = self.airfoil_show_construction.isChecked()
-        self.DAEDALUS.preferences['airfoil_designer']["airfoil"]["wireframe"]['show'] = self.airfoil_show_wireframe.isChecked()
 
         # --- WING DESIGNER TAB --- #
         self.DAEDALUS.preferences['wing_designer']["viewport"]["grid"]['show'] = self.w_viewport_show_grid.isChecked()
@@ -288,10 +284,6 @@ class PreferencesWindow(QDialog):
                 "construction": {
                     "show": self.DAEDALUS.preferences['airfoil_designer']['airfoil']['construction'].get("show", True),
                     "color": self.DAEDALUS.preferences['airfoil_designer']['airfoil']['construction'].get("color", True)
-                    },
-                "wireframe": {
-                    "show": self.DAEDALUS.preferences['airfoil_designer']['airfoil']['wireframe'].get("show", True),
-                    "color": self.DAEDALUS.preferences['airfoil_designer']['airfoil']['wireframe'].get("color", True)
                     }
             }
         }

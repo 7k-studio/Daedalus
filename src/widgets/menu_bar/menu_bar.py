@@ -96,11 +96,11 @@ class MenuBar(QMenuBar):
             self.edit_menu.addAction(newAirfoilAction)
 
             appendAirfoilAction = QAction('Append Airfoil', self)
-            appendAirfoilAction.triggered.connect(lambda: utils_edit.append_airfoil(self)) # this one need QFileDialog
+            appendAirfoilAction.triggered.connect(lambda: utils_edit.append_airfoil(self)) # this one needs QFileDialog
             self.edit_menu.addAction(appendAirfoilAction)
 
             deleteAirfoilAction = QAction('Delete Airfoil', self)
-            deleteAirfoilAction.triggered.connect(lambda: self.main_window.AIRFOIL_MODULE.deleteAirfoil() if self.main_window.AIRFOIL_MODULE else None)
+            deleteAirfoilAction.triggered.connect(lambda: utils_edit.delete_airfoil(self)) # this one needs QMessageBox
             self.edit_menu.addAction(deleteAirfoilAction)
 
             saveAirfoilAction = QAction('Save Airfoil', self)
@@ -130,7 +130,7 @@ class MenuBar(QMenuBar):
             self.edit_menu.addAction(addComponentAction)
 
             deleteComponentAction = QAction('Delete Component', self)
-            deleteComponentAction.triggered.connect(lambda: self.main_window.WING_MODULE.deleteComponent() if self.main_window.WING_MODULE else None)
+            deleteComponentAction.triggered.connect(lambda: utils_edit.delete_component(self))
             self.edit_menu.addAction(deleteComponentAction)
 
             self.edit_menu.addSeparator()
@@ -140,7 +140,7 @@ class MenuBar(QMenuBar):
             self.edit_menu.addAction(addWingAction)
 
             deleteWingAction = QAction('Delete Wing', self)
-            deleteWingAction.triggered.connect(lambda: self.main_window.WING_MODULE.deleteWing() if self.main_window.WING_MODULE else None)
+            deleteWingAction.triggered.connect(lambda: utils_edit.delete_wing(self))
             self.edit_menu.addAction(deleteWingAction)
 
             self.edit_menu.addSeparator()
@@ -150,7 +150,7 @@ class MenuBar(QMenuBar):
             self.edit_menu.addAction(addSegmentAction)
 
             deleteSegmentAction = QAction('Delete Segment', self)
-            deleteSegmentAction.triggered.connect(lambda: self.main_window.WING_MODULE.deleteSegment() if self.main_window.WING_MODULE else None)
+            deleteSegmentAction.triggered.connect(lambda: utils_edit.delete_segment(self))
             self.edit_menu.addAction(deleteSegmentAction)
 
     def _rebuild_reference_menu(self):
@@ -158,11 +158,11 @@ class MenuBar(QMenuBar):
 
         if self.current_module == 'airfoil':
             newReferenceAction = QAction('Add Reference', self)
-            newReferenceAction.triggered.connect(utils_reference.add_reference)
+            newReferenceAction.triggered.connect(lambda: utils_reference.add_reference(self))
             self.reference_menu.addAction(newReferenceAction)
 
             manageReferenceAction = QAction('Manage Reference', self)
-            manageReferenceAction.triggered.connect(utils_reference.manage_reference)
+            manageReferenceAction.triggered.connect(lambda: utils_reference.manage_reference(self))
             self.reference_menu.addAction(manageReferenceAction)
 
             # Ensure you are using the correct variable name here!
@@ -225,43 +225,69 @@ class MenuBar(QMenuBar):
             viewZdownAction.triggered.connect(lambda: self.main_window.WING_MODULE.OPEN_GL.position_view(0.0, 180.0) if self.main_window.WING_MODULE else None)
             self.view_menu.addAction(viewZdownAction)
 
+    def update_action_state(self, action, dock_widget):
+        """Keep the menu checkboxes in sync with the dock widget visibility."""
+        utils_window.update_action_state(action, dock_widget)
+
+    def _toggle_logger_action(self, checked):
+        """Logger toggling is handled by each module's own dock widget."""
+        return
+
+    def _sync_window_menu_states(self):
+        """Synchronize the menu checkboxes with the current dock visibility."""
+        module = None
+        if self.current_module == 'airfoil' and self.main_window.AIRFOIL_MODULE:
+            module = self.main_window.AIRFOIL_MODULE
+        elif self.current_module == 'wing' and self.main_window.WING_MODULE:
+            module = self.main_window.WING_MODULE
+
+        if module is None:
+            return
+
+        for dock_name, dock_widget in module.dock_widgets.items():
+            action = getattr(self, '_window_dock_actions', {}).get(dock_name)
+            if action is not None:
+                action.setChecked(dock_widget.isVisible())
+
     def _createWindowMenu(self):
-        self.loggerWidgetAction = QAction('Logger Console', self)
-        self.loggerWidgetAction.setCheckable(True)
-        self.loggerWidgetAction.setChecked(True)
-        self.loggerWidgetAction.triggered.connect(utils_window.toggle_logger)
-        self.window_menu.addAction(self.loggerWidgetAction)
-        
-        # Call rebuild to add dock toggles
+        self._window_dock_actions = {}
+
+        # Only module-owned dock widgets should appear here; no global Logger Console action.
         self._rebuild_window_menu()
-    
+
     def _rebuild_window_menu(self):
         """Rebuild window menu with current dock widgets."""
-        # Clear everything after Logger Console
-        actions = self.window_menu.actions()
-        if len(actions) > 1:
-            for action in actions[1:]:
-                self.window_menu.removeAction(action)
-        
+        self._window_dock_actions = {}
+
+        # Remove all previous items except any standard menu entries created elsewhere.
+        for action in list(self.window_menu.actions()):
+            self.window_menu.removeAction(action)
+
         # Add toggle actions for docks
-        if self.current_module == 'airfoil' and self.main_window.AIRFOIL_MODULE.dock_widgets:
+        if self.current_module == 'airfoil' and self.main_window.AIRFOIL_MODULE and self.main_window.AIRFOIL_MODULE.dock_widgets:
             self.window_menu.addSeparator()
             for dock_name, dock_widget in self.main_window.AIRFOIL_MODULE.dock_widgets.items():
                 action = QAction(dock_name.replace('_', ' ').title(), self)
                 action.setCheckable(True)
                 action.setChecked(dock_widget.isVisible())
                 action.triggered.connect(lambda checked, d=dock_widget: d.setVisible(checked))
+                dock_widget.visibilityChanged.connect(lambda visible, a=action: a.setChecked(visible))
                 self.window_menu.addAction(action)
+                self._window_dock_actions[dock_name] = action
 
-        if self.current_module == 'wing' and self.main_window.WING_MODULE.dock_widgets:
+        if self.current_module == 'wing' and self.main_window.WING_MODULE and self.main_window.WING_MODULE.dock_widgets:
             self.window_menu.addSeparator()
             for dock_name, dock_widget in self.main_window.WING_MODULE.dock_widgets.items():
                 action = QAction(dock_name.replace('_', ' ').title(), self)
                 action.setCheckable(True)
                 action.setChecked(dock_widget.isVisible())
                 action.triggered.connect(lambda checked, d=dock_widget: d.setVisible(checked))
+                dock_widget.visibilityChanged.connect(lambda visible, a=action: a.setChecked(visible))
                 self.window_menu.addAction(action)
-        
+                self._window_dock_actions[dock_name] = action
+
+        self._sync_window_menu_states()
+
         # Reset layout
         self.window_menu.addSeparator()
         reset_action = QAction('Reset Layout', self)
