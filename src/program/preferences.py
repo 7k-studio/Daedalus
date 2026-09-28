@@ -284,6 +284,10 @@ class PreferencesWindow(QDialog):
                 "construction": {
                     "show": self.DAEDALUS.preferences['airfoil_designer']['airfoil']['construction'].get("show", True),
                     "color": self.DAEDALUS.preferences['airfoil_designer']['airfoil']['construction'].get("color", True)
+                    },
+                "wireframe": {
+                    "show": self.DAEDALUS.preferences['airfoil_designer']['airfoil']['wireframe'].get("show", True),
+                    "color": self.DAEDALUS.preferences['airfoil_designer']['airfoil']['wireframe'].get("color", True)
                     }
             }
         }

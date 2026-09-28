@@ -4,8 +4,8 @@
    "length": "m",
    "angle": "rad"
   },
-  "performance": 45,
-  "color_scheme": "Light",
+  "performance": 50,
+  "color_scheme": "Daedalus-Light",
   "beta_features": false
  },
  "airfoil_designer": {
@@ -45,7 +45,7 @@
     }
    },
    "construction": {
-    "show": false,
+    "show": true,
     "color": {
      "le": [
       0.0,

@@ -104,7 +104,8 @@ def decode_json(filePath):
 
 def get_archive_version(data):
     try:
-        file_version = data["Program"].get("version", "0.0.0")
+        program_data = data["Program"]
+        file_version = program_data.get("version") or program_data.get("program version", "0.0.0")
     except KeyError as e:
         try:
             file_version = data["program version"]

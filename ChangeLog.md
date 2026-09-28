@@ -1,4 +1,60 @@
-# ToDo
+# Change Log
+
+## v0.4.0-beta status - 2026-09-01
+
+This release migrates the Daedalus to v0.4 object definition model, in which:
+- An airfoil is composed of separate Leading Edge (LE), Trailing Edge (TE), Pressure Side (PS), and Suction Side (SS) spline objects
+- The Wing surface is crated using Surface Patch creating a loft between the Segments
+
+### Completed
+
+- Airfoil files can be saved using the new LE/TE/PS/SS object hierarchy.
+- File **New**, **Open**, **Save**, and **Save As** operations were adapted to
+    the new airfoil structure. **Edit Project Description** and **Exit** are
+    also working, including widget updates and exit confirmation.
+- Airfoil actions now work with the new definition: create, append, delete,
+    flip, save, export, and rename. Rename preserves unique airfoil names.
+- The airfoil tree now displays spline type information, stores selected
+    object data, and handles refreshes when type information is missing.
+- The parameter table updates from selected airfoils, clears after deletion,
+    and preserves nominal values until project opening or refresh.
+- Description editing supports viewing, editing, accepting or rejecting
+    changes, and clearing the widget after an airfoil is deleted.
+- The statistics table works in both Airfoil Designer and Wing Designer and
+    reacts to parameter-table changes.
+- Reference airfoils can be added, deleted, shown, and hidden through the
+    reference widget and menu. The menu also provides a management pop-up.
+- The toolbar provides airfoil actions and keyboard shortcuts:
+    `Shift+N` (new), `Shift+A` (append), `Shift+X` (delete), `Shift+F` (flip),
+    and `Shift+S` (save).
+- View fitting, synchronized window actions, the Wing module switch, and the
+    User Manual, About, and Preferences dialogs are available.
+- Wing Designer supports adding and deleting components, wings, and segments.
+    Segment creation also updates the parent airfoil in the object tree.
+- Wing wireframes, connection wireframes, surfaces, skin instances, and
+    surface patches are handled by OpenGL. STEP export was adapted to the v0.4
+    object model.
+- The application was migrated to PyQt6. Window color schemes and the 2D
+    viewport modes Bright, Dark, Blueprint, and Greenprint are available.
+
+### Known limitations and postponed work
+
+- Current `.ddls` airfoils and archived `.ddls` files cannot yet be loaded as
+    reference airfoils. Selig `.txt` and `.dat` references are supported.
+- Reference editing and flipping are postponed to v4.1.
+- Fit2Reference, curvature comb, camberline, and spline control-type editing
+    are postponed to v4.1.
+- Some preference changes still require an application restart.
+- Further investigation of the statistics provided by the application is
+    postponed to v4.1.
+
+### Compatibility note
+
+Projects and exporters must account for the v0.4 hierarchy: LE, TE, PS, and
+SS are independent objects rather than subsections stored only in the
+airfoil parameter or attribute dictionaries.
+
+# Previous ToDo
 
 ### Airfoil Tree
 An airfoil tree was adjusted to match new convention

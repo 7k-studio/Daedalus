@@ -167,13 +167,19 @@ class Program:
     
     def readPreferences(self):
         """Read preferences from a JSON file."""
+        def merge_preferences(defaults, loaded):
+            for key, value in loaded.items():
+                if isinstance(value, dict) and isinstance(defaults.get(key), dict):
+                    merge_preferences(defaults[key], value)
+                else:
+                    defaults[key] = value
+
         try:
             with open("src/settings", "r") as infile:
                 loaded = json.load(infile)
-                # Only update keys that exist in the default preferences
                 for section in self.preferences:
                     if section in loaded and isinstance(loaded[section], dict):
-                        self.preferences[section].update(loaded[section])
+                        merge_preferences(self.preferences[section], loaded[section])
                 self.logger.info("Preferences loaded successfully.")
         except FileNotFoundError:
             self.logger.warning("Preferences file not found. Using default settings.")
@@ -235,10 +241,10 @@ class Program:
     def showDedicatedWebpage(self):
         webbrowser.open(f"https://7k-studio.github.io/")
 
-    # def showPreferences(self):
-    #     """Open the preferences dialog."""
-    #     self.logger.info("Open preferences window")
-    #     from src.program.preferences import PreferencesWindow
+    def showPreferences(self):
+        """Open the preferences dialog."""
+        self.logger.info("Open preferences window")
+        from src.program.preferences import PreferencesWindow
 
-    #     self.preferences_dialog = PreferencesWindow(self)
-    #     self.preferences_dialog.show()
+        self.preferences_dialog = PreferencesWindow(self)
+        self.preferences_dialog.show()

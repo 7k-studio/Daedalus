@@ -85,8 +85,8 @@ class WidgetReference(QWidget):
         options_buttons.addWidget(delButton)
         options_buttons.addStretch()
         
-        if self.PROGRAM.preferences['general'].get('beta_features', False):
-            options_buttons.addWidget(ediButton)
+        # if self.PROGRAM.preferences['general'].get('beta_features', False):
+        #     options_buttons.addWidget(ediButton)
 
         self.layout.addLayout(options_buttons)
         self.refresh_table()
@@ -94,10 +94,7 @@ class WidgetReference(QWidget):
     # --- UI Triggers to bridge to Controller ---
 
     def trigger_add(self):
-        fileName, _ = QFileDialog.getOpenFileName(
-            self, "Open File", "", 
-            "Accepted file formats (*.ddls; *.txt; *.dat);; Daedalus Database Files (*.ddls);; Selig Format (*.txt);; All Files (*)"
-        )
+        fileName, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Accepted file formats (*.arf.ddls; *arf; *.txt; *.dat);; Daedalus Airfoil Format (*.arf.ddls);; Daedalus v0.3 Airfoil Format (*.arf);; Cloud of points Files (*.txt; *.dat);; All Files (*)")
         if fileName:
             self.AIRFOIL_MODULE.addReference(fileName)
             self.refresh_table()

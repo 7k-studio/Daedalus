@@ -26,7 +26,7 @@ from PyQt6.QtWidgets import (
 from src.widgets.widget_reference import WidgetReference
 
 def add_reference(menu_obj):
-    fileName, _ = QFileDialog.getOpenFileName(menu_obj, "Open File", "", "Accepted file formats (*.ddls; *.arf.ddls; *arf; *.txt; *.dat);; Daedalus Database Files (*.ddls);; Daedalus Airfoil Format (*.arf.ddls);; Daedalus v0.3 Airfoil Format (*.arf);; Cloud of points Files (*.txt; *.dat);; All Files (*)")
+    fileName, _ = QFileDialog.getOpenFileName(menu_obj, "Open File", "", "Accepted file formats (*.arf.ddls; *arf; *.txt; *.dat);; Daedalus Airfoil Format (*.arf.ddls);; Daedalus v0.3 Airfoil Format (*.arf);; Cloud of points Files (*.txt; *.dat);; All Files (*)")
     if fileName:
         menu_obj.main_window.AIRFOIL_MODULE.addReference(fileName)
     else:

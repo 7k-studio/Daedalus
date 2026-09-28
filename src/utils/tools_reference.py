@@ -167,55 +167,6 @@ def load_ddls_as_reference(data, Program, filePath=""):
         airfoil.update()
 
         return airfoil
-
-def load_from_ddls_010(data, filePath=""):
-    """load the airfoil data from a JSON format file."""
-    is_version_different =  False
-    error_count = 0
-
-    Airfoil = objects2D.Airfoil()
-
-    if data:
-
-        try:
-            # Set parameters in Airfoil.params dictionary
-            Airfoil.params = {
-                "chord": objects2D["chord"],
-                "origin_X": objects2D["origin_X"],
-                "origin_Y": objects2D["origin_Y"],
-                "le_thickness": objects2D["le_thickness"],
-                "le_depth": objects2D["le_depth"],
-                "le_offset": objects2D["le_offset"],
-                "le_angle": objects2D["le_angle"],
-                "te_thickness": objects2D["te_thickness"],
-                "te_depth": objects2D["te_depth"],
-                "te_offset": objects2D["te_offset"],
-                "te_angle": objects2D["te_angle"],
-                "ps_fwd_angle": objects2D["ps_fwd_angle"],
-                "ps_rwd_angle": objects2D["ps_rwd_angle"],
-                "ps_fwd_accel": objects2D["ps_fwd_accel"],
-                "ps_rwd_accel": objects2D["ps_rwd_accel"],
-                "ss_fwd_angle": objects2D["ss_fwd_angle"],
-                "ss_rwd_angle": objects2D["ss_rwd_angle"],
-                "ss_fwd_accel": objects2D["ss_fwd_accel"],
-                "ss_rwd_accel": objects2D["ss_rwd_accel"]
-            }
-            Airfoil.infos = {
-                "name": objects2D["infos"]["name"],
-                "creation_date": objects2D["infos"]["creation_date"],
-                "modification_date": objects2D["infos"]["modification_date"],
-                "description": objects2D["infos"]["description"]
-            }
-        except KeyError as e:
-            logger.error(f"ERROR: Missing key in ARF data - {e}")
-            return None
-
-        Airfoil.update()
-
-        logger.debug(Airfoil)
-        logger.info(f"Airfoil '{Airfoil.infos['name']}' loaded successfully!")
-
-        return Airfoil, error_count
     
 def load_ddls_030_as_reference(data, Program, filePath=""):
     """load the airfoil data from a JSON format file."""

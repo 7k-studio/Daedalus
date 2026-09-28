@@ -119,10 +119,10 @@ class MenuBar(QMenuBar):
             renameAirfoilAction.triggered.connect(lambda: self.main_window.AIRFOIL_MODULE.renameAirfoil() if self.main_window.AIRFOIL_MODULE else None)
             self.edit_menu.addAction(renameAirfoilAction)
 
-            if self.main_window.PROGRAM.preferences['general']['beta_features']:
-                fit2refAction = QAction('Fit2Reference', self)
-                fit2refAction.triggered.connect(self.fit2ref)
-                self.edit_menu.addAction(fit2refAction)
+            # if self.main_window.PROGRAM.preferences['general']['beta_features']:
+            #     fit2refAction = QAction('Fit2Reference', self)
+            #     fit2refAction.triggered.connect(self.fit2ref)
+            #     self.edit_menu.addAction(fit2refAction)
 
         elif self.current_module == 'wing':
             addComponentAction = QAction('Add Component', self)
@@ -187,18 +187,18 @@ class MenuBar(QMenuBar):
             fitViewAction.triggered.connect(lambda: self.main_window.AIRFOIL_MODULE.OPEN_GL.fit_to_airfoil() if self.main_window.AIRFOIL_MODULE else None)
             self.view_menu.addAction(fitViewAction)
 
-            if self.main_window.PROGRAM.preferences['general']['beta_features']:
-                self.showCurvCombAction = QAction('Show curvature comb', self)
-                self.showCurvCombAction.setCheckable(True)
-                self.showCurvCombAction.setChecked(False)
-                self.showCurvCombAction.triggered.connect(utils_view.showCurvComb)
-                self.view_menu.addAction(self.showCurvCombAction)
+            # if self.main_window.PROGRAM.preferences['general']['beta_features']:
+            #     self.showCurvCombAction = QAction('Show curvature comb', self)
+            #     self.showCurvCombAction.setCheckable(True)
+            #     self.showCurvCombAction.setChecked(False)
+            #     self.showCurvCombAction.triggered.connect(utils_view.showCurvComb)
+            #     self.view_menu.addAction(self.showCurvCombAction)
 
-                self.showCamberlineAction = QAction('Show camberline', self)
-                self.showCamberlineAction.setCheckable(True)
-                self.showCamberlineAction.setChecked(False)
-                self.showCamberlineAction.triggered.connect(utils_view.showCamberline)
-                self.view_menu.addAction(self.showCamberlineAction)
+            #     self.showCamberlineAction = QAction('Show camberline', self)
+            #     self.showCamberlineAction.setCheckable(True)
+            #     self.showCamberlineAction.setChecked(False)
+            #     self.showCamberlineAction.triggered.connect(utils_view.showCamberline)
+            #     self.view_menu.addAction(self.showCamberlineAction)
 
         elif self.current_module == 'wing':
             viewXupAction = QAction('X +', self)

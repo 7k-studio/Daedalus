@@ -122,7 +122,7 @@ Daedalus
 |               ├── menu_reference.py        
 |               ├── menu_view.py         
 |               └── menu_window.py           
-├── data                                      # Storage for reference and established files
+├── demo                                      # Storage for reference and established files
 ├── .venv
 ├── requirements.txt                          # Program dependencies
 ├── LICENSE                                   # Program licence
@@ -166,6 +166,9 @@ Daedalus
   - Zoom
 - Tree menu for easy navigation of application components.
 - Dropdown menu with basic file operations (New, Save, etc.).
+- Export of objects:
+  - for 2D airfoils to DXF file
+  - for 3D wings to STEP file
 
 ## Usage
 

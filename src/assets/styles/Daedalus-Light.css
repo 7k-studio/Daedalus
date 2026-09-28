@@ -14,7 +14,7 @@ QFrame[CardFrame="true"] {
 }
 QWidget[CardFrame="true"]
 {
-	background-color: transparent;
+	background-color: #c0d6e2;
 	color: #000000;
 }
 
