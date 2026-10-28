@@ -25,6 +25,7 @@ import sys
 from datetime import date
 import logging
 import json
+from copy import deepcopy
 
 #PyQt5 imports
 from PyQt6.QtCore import Qt
@@ -38,7 +39,7 @@ from PyQt6.QtWidgets import (
 #Self imports
 import src.utils.dxf as dxf
 
-from src.obj.class_airfoil import Airfoil
+from src.obj.class_airfoil import Airfoil, SeligAirfoil
 from src.utils.tools_program import convert_list_to_ndarray, convert_ndarray_to_list, decode_json, get_archive_version
 from src.utils.tools_airfoil import Reference_load, flip_airfoil_horizontally, load_ddls_airfoil_030, load_ddls_airfoil
 from src.utils.tools_reference import load_ddls_as_reference, load_xy_points_as_reference, load_ddls_030_as_reference
@@ -241,17 +242,90 @@ class AirfoilDesigner:
             self.logger.error("Cannot add airfoil: PROJECT is not set")
             return
         
-        self.logger.info("Creating new airfoil...")
-
         airfoil_obj = Airfoil(self.PROGRAM)
         airfoil_obj.name = "Airfoil"  # Ensure the name is set
         airfoil_obj.info['creation_date'] = self.time
         airfoil_obj.info['modification_date'] = self.time
 
-        self.PROJECT._ensure_unique_airfoil_name(airfoil_obj)
+        self.PROJECT._ensure_unique_name(airfoil_obj)
 
         self.PROJECT.airfoils.append(airfoil_obj)
         self.TREE_AIRFOIL.add_to_tree(airfoil_obj)
+
+        self.logger.info(f"Created new airfoil - {airfoil_obj.name}")
+
+    def duplicateAirfoil(self):
+        """Create an independent copy of the selected airfoil's design data."""
+        if self.PROJECT is None:
+            self.logger.error("Cannot add airfoil: PROJECT is not set")
+            return
+
+        if self.TREE_AIRFOIL:
+            source = self.TREE_AIRFOIL.selected_airfoil
+            if source is None:
+                self.logger.error('No valid airfoil selected!')
+                return
+
+            name_old = source.name
+            airfoil_copy = Airfoil(self.PROGRAM, parent=source.parent)
+            airfoil_copy.name = source.name
+            airfoil_copy.path = source.path
+            airfoil_copy.format = source.format
+            airfoil_copy._is_pressure_side_up = source._is_pressure_side_up
+            airfoil_copy.visible = source.visible
+
+            def copy_params(params):
+                copied_params = {}
+                for key, param in params.items():
+                    copied_param = type(param)(param.name, deepcopy(param.value), param.unit)
+                    copied_param.nominal = deepcopy(param.nominal)
+                    copied_params[key] = copied_param
+                return copied_params
+
+            def copy_attrs(attrs):
+                copied_attrs = {}
+                for key, attr in attrs.items():
+                    copied_attr = type(attr)(
+                        attr.name, deepcopy(attr.value), deepcopy(attr.allowed_values)
+                    )
+                    copied_attr.nominal = deepcopy(attr.nominal)
+                    copied_attrs[key] = copied_attr
+                return copied_attrs
+
+            for source_obj, target_obj in (
+                (source, airfoil_copy),
+                (source.LE, airfoil_copy.LE),
+                (source.TE, airfoil_copy.TE),
+                (source.PS, airfoil_copy.PS),
+                (source.SS, airfoil_copy.SS),
+            ):
+                target_obj.params = copy_params(source_obj.params)
+                target_obj.attrs = copy_attrs(source_obj.attrs)
+
+            airfoil_copy._link_wedge_parameters()
+            airfoil_copy.stats = copy_params(source.stats)
+
+            for component_name in ("LE", "TE", "PS", "SS"):
+                source_spline = getattr(source, component_name).spline
+                target_spline = getattr(airfoil_copy, component_name).spline
+                target_spline.control_points = deepcopy(source_spline.control_points)
+                target_spline.geom = deepcopy(source_spline.geom)
+                target_spline.mode = source_spline.mode
+                target_spline.length = source_spline.length
+                if hasattr(source_spline, "degree"):
+                    target_spline.degree = source_spline.degree
+
+            airfoil_copy.info = deepcopy(source.info)
+
+            airfoil_copy.info['creation_date'] = self.time
+            airfoil_copy.info['modification_date'] = self.time
+
+            self.PROJECT._ensure_unique_name(airfoil_copy)
+
+            self.PROJECT.airfoils.append(airfoil_copy)
+            self.TREE_AIRFOIL.add_to_tree(airfoil_copy)
+
+            self.logger.info(f"Duplicated airfoil - {name_old}")
 
     def appendAirfoil(self, filePath):
         """load the airfoil data from a JSON format file."""
@@ -264,6 +338,9 @@ class AirfoilDesigner:
         self.logger.info(f"Open archive airfoil: {filePath}")
         data = decode_json(filePath)
         file_version = get_archive_version(data)
+        if not file_version or len(file_version) < 2:
+            self.logger.error(f"Could not determine archive version for: {filePath}")
+            return
 
         # Check compatibility
         self.logger.debug("Checking compatibility...")
@@ -275,30 +352,54 @@ class AirfoilDesigner:
             # Load airfoils from in-memory JSON
             self.logger.info("Loading airfoil using legacy approach...")
             arf_obj = load_ddls_airfoil_030(data, self.PROGRAM, filePath)
+            airfoils_to_append = [arf_obj] if arf_obj else []
 
         else:
-            self.logger.info("Loading airfoil...")
-            
             try:
                 project_data = data["Project"]
                 airfoil_entries = project_data.get("airfoils", [])
-                print(airfoil_entries)
+                if isinstance(airfoil_entries, dict):
+                    airfoil_entries = [airfoil_entries]
+                if not isinstance(airfoil_entries, list):
+                    raise TypeError(
+                        "Project airfoils must be an airfoil object or a list of airfoils."
+                    )
+
+                airfoils_to_append = []
                 for airfoil_entry in airfoil_entries:
-                    airfoil_data = airfoil_entry["data"]
+                    if not isinstance(airfoil_entry, dict):
+                        raise TypeError("Each project airfoil entry must be an object.")
+                    airfoil_data = airfoil_entry.get("data", airfoil_entry)
                     self.logger.debug("Loading airfoil using 0.4.X version importer...")
-                    arf_obj = load_ddls_airfoil(Airfoil(self.PROGRAM), airfoil_data)
+                    arf_obj = load_ddls_airfoil(
+                        Airfoil(self.PROGRAM),
+                        airfoil_data,
+                        filePath,
+                    )
+                    if arf_obj is None:
+                        self.logger.error(
+                            f"Could not load airfoil entry from: {filePath}"
+                        )
+                        return
+                    airfoils_to_append.append(arf_obj)
             except KeyError as e:
                 self.logger.error(f"Missing key in ARF data - {e}")
                 self.logger.warning("File may not load properly or is not compatible with DAEDALUS")
                 return
+            except (TypeError, ValueError) as e:
+                self.logger.error(f"Invalid airfoil data in {filePath}: {e}")
+                return
             
-        if arf_obj:
-            self.logger.debug(f"Found airfoil: {arf_obj.name}")
-            self.PROJECT._ensure_unique_airfoil_name(arf_obj)  # Ensure unique name
-            self.PROJECT.airfoils.append(arf_obj)
-            arf_obj.update()
-            self.TREE_AIRFOIL.add_to_tree(arf_obj)
-            self.logger.info("Appending '{arf_obj.name}' airfoil was sucessful!")
+        if airfoils_to_append:
+            for arf_obj in airfoils_to_append:
+                if arf_obj is None:
+                    continue
+                self.logger.debug(f"Found airfoil: {arf_obj.name}")
+                self.PROJECT._ensure_unique_name(arf_obj)  # Ensure unique name
+                self.PROJECT.airfoils.append(arf_obj)
+                arf_obj.update()
+                self.TREE_AIRFOIL.add_to_tree(arf_obj)
+                self.logger.info(f"'{arf_obj.name}' airfoil appended sucessfully!")
 
     def deleteAirfoil(self):
         self.logger.info("Deleting selected airfoil...")
@@ -361,7 +462,7 @@ class AirfoilDesigner:
             outfile.write(json_object)
             self.logger.info(f"Saved airfoil: {filePath}")
 
-        self.PROJECT._ensure_unique_airfoil_name(airfoil)
+        self.PROJECT._ensure_unique_name(airfoil)
         self.refresh()
 
     def exportAirfoil(self, airfoil, filePath):
@@ -384,7 +485,7 @@ class AirfoilDesigner:
                 self.le.setText(str(text))
             if text:
                 selected_airfoil.name = text
-                self.PROJECT._ensure_unique_airfoil_name(selected_airfoil)
+                self.PROJECT._ensure_unique_name(selected_airfoil)
                 selected_airfoil.name = selected_airfoil.name
                 selected_airfoil.info['modification_date'] = date.today().strftime("%Y-%m-%d")
 
@@ -412,6 +513,26 @@ class AirfoilDesigner:
             self.TABLE_STATISTICS.update()
         else:
             self.logger.error("Something went wrong, airfoil not flipped!")
+
+    def fit2Reference(self, current_airfoil=None):
+        """Fit an airfoil to a selected project reference."""
+        current_airfoil = current_airfoil or self.TREE_AIRFOIL.selected_airfoil
+        if current_airfoil is None:
+            self.logger.warning("No airfoil selected for reference fitting.")
+            return
+
+        from src.program.modules.arfdes.fit_2_reference import Fit2RefWindow
+
+        dialog = Fit2RefWindow(
+            parent=self.main_window,
+            current_airfoil=current_airfoil,
+            airfoil_designer=self,
+        )
+        if dialog.exec():
+            self.OPEN_GL.set_airfoil_to_display(current_airfoil)
+            self.OPEN_GL.update()
+            self.TABLE_PARAMETERS.update()
+            self.TABLE_STATISTICS.update()
 
     #==================================================#
     #              AIRFOIL DESIGNER ACTIONS            #    
@@ -498,8 +619,38 @@ class AirfoilDesigner:
             self.WIDGET_REFERENCE.refresh_table()
         self.OPEN_GL.update()
     
-    def editReference():
-        pass
+    def editReference(self, reference_obj):
+        """Edit the scale of an XY reference without accumulating transformations."""
+        if not isinstance(reference_obj, SeligAirfoil):
+            self.logger.warning("Only XY-format reference airfoils can be edited!")
+            return
+
+        scale_param = reference_obj.params["scale"]
+        scale, accepted = QInputDialog.getDouble(
+            self.main_window,
+            "Edit Reference",
+            "Scale:",
+            value=scale_param.value,
+            min=0.0,
+            max=1_000_000.0,
+            decimals=6,
+        )
+        if not accepted:
+            return
+
+        if reference_obj.source_curve is None:
+            reference_obj.source_curve = deepcopy(reference_obj.curve)
+
+        scale_param.set(scale)
+        reference_obj.curve = [
+            [x * scale_param.value, y * scale_param.value]
+            for x, y in reference_obj.source_curve
+        ]
+
+        if hasattr(self, "WIDGET_REFERENCE"):
+            self.WIDGET_REFERENCE.refresh_table()
+        self.OPEN_GL.update()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -58,11 +58,11 @@ Has a lot to investiagte
     - [x] **Export** ← works with new airfoil definition
     - [x] **Rename** ← renames an airfoil and assures the unique name
     - [ ] ~~Edit description~~ *functionality removed, option no longer available*
-    - [ ] ~~Fit2Reference~~ **postponed to version v4.1**
+    - [x] **Fit2Reference** ← adapted to the new airfoil definition format
 - Reference
     - [x] **Add** ← adds the reference to project
     - [x] **Manage** ← opens the pop-out widget which allows to modify the references
-    - [ ] ~~Edit~~ **postponed to version v4.1**
+    - [x] **Edit** ← introduced simple scaling of an imported XY-points airfoil
     - [ ] ~~Flip~~ **postponed to version v4.1**
 - View
     - [x] **Fit view** ← works

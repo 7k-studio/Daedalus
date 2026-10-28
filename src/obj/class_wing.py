@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import logging
+import logging, math
 import numpy as np
 from geomdl import BSpline, utilities
 
@@ -47,7 +47,9 @@ class Wing:
         }
 
         self.stats = {
-            'Test': Param('test', 0, M)
+            'Segmets number': Param('Segments number', 0, M),
+            "Span": Param('Span', 0, M),
+            "Incline": Param("Incline", 0, DEG)
         }
 
         self.segments = []
@@ -59,8 +61,12 @@ class Wing:
     
     def update(self):
         self.logger.info("Updating WING geometry...")
-        self.build_connection()
-        self.build_surface()
+        if len(self.segments) > 2:
+            self.build_connection()
+            self.build_surface()
+        self.stats['Segmets number'].set(self.calc_segments_no())
+        self.stats['Span'].set(self.calc_span())
+        self.stats['Incline'].set(self.calc_incline())
 
     def build_connection(self):
         self.logger.info("Building connection...")
@@ -131,4 +137,46 @@ class Wing:
 
         self.logger.debug(f'WNGWB > Wing > build_connection > Connection between two segments established')
 
+    def calc_segments_no(self):
+        return len(self.segments)
 
+    def calc_span(self):
+        if len(self.segments) > 1:
+            root = self.segments[0]
+            tip = self.segments[-1]
+
+            return root.stats["Position LE X"].value - tip.stats["Position LE X"].value
+
+    def calc_incline(self):
+        if len(self.segments) > 1:
+            root = self.segments[0]
+            tip = self.segments[-1]
+
+            x = root.stats["Position LE X"].value - tip.stats["Position LE X"].value
+            y = root.stats["Position LE Y"].value - tip.stats["Position LE Y"].value
+
+            try:
+                incline = math.atan(x/y)
+            except ZeroDivisionError:
+                incline = float(0)
+
+            return incline
+
+    def calc_LE_position(self):
+        if len(self.segments) > 1:
+                root = self.segments[0]
+                tip = self.segments[-1]
+        
+        index_min = min(range(len(self.le_spline.geom[0])), key=self.le_spline.geom[0].__getitem__)
+        pos_X = self.le_spline.geom[0][index_min]
+        pos_Y = self.le_spline.geom[1][index_min]
+
+        return pos_X, pos_Y
+
+    def calc_TE_position(self):
+        
+        index_min = min(range(len(self.le_spline.geom[0])), key=self.le_spline.geom[0].__getitem__)
+        pos_X = self.le_spline.geom[0][index_min]
+        pos_Y = self.le_spline.geom[1][index_min]
+
+        return pos_X, pos_Y

@@ -146,7 +146,8 @@ QToolButton
 	color: #000000;
 	border: 1px solid transparent;
 	border-radius: 3px;
-	padding: 3px;
+    padding: 2px;
+	margin: 2px;
 }
 
 QToolButton::disabled
@@ -421,6 +422,7 @@ QTableView
     color: #000000;
     gridline-color: #e0e0e0;
     outline: 0;
+    margin: 4px;
 }
 
 QTableView::disabled
@@ -669,4 +671,14 @@ QProgressBar
 QProgressBar::chunk
 {
     background-color: #0078d7;
+}
+
+QTreeView
+{
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    color: #000000;
+    gridline-color: #e0e0e0;
+    outline: 0;
+    margin: 4px;
 }

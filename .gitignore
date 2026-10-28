@@ -53,11 +53,6 @@ coverage.xml
 cover/
 .vscode/
 
-# Development files
-CAD_test_files/
-Logo.ai
-SplashScreen.psd
-
 # Translations
 *.mo
 *.pot
@@ -206,7 +201,6 @@ cython_debug/
 # Custom ignores
 settings
 toolout.log
-CAD_test_files/
 *.ai
 SplashScreen.psd
 'export to exe command.txt'
@@ -214,3 +208,9 @@ SplashScreen.psd
 src/assets/IconPack/Deadalus_icons.ai
 src/settings
 tests/
+data/
+
+# Development files
+CAD_test_files/
+Logo.ai
+SplashScreen.psd

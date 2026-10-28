@@ -21,7 +21,9 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 from PyQt6.QtWidgets import QTextEdit
 from PyQt6.QtCore import QTimer, QFileSystemWatcher
-from PyQt6.QtGui import QTextCursor, QColor, QTextCharFormat, QFont
+from PyQt6.QtGui import QTextCursor, QColor, QTextCharFormat
+import codecs
+import locale
 import os
 
 class LogViewer(QTextEdit):
@@ -31,7 +33,12 @@ class LogViewer(QTextEdit):
         self.DAEDALUS = program  # Separate the program reference from the widget parent
         self.setReadOnly(True)
         self.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
-        self.last_position = 0  # Track the last read position in the file
+        self.last_position = 0
+        self._file_identity = None
+        self._file_mtime_ns = None
+        self._lines_read = 0
+        self._pending_text = ""
+        self._decoder = self._new_decoder()
 
         # Set monospaced font
         # font = QFont("Courier New")
@@ -61,28 +68,57 @@ class LogViewer(QTextEdit):
 
     def update_log(self):
         if not os.path.exists(self.log_file):
-            self.setPlainText("Log file not found.")
+            self._reset_file_state(clear_widget=False)
+            if self.toPlainText() != "Log file not found.":
+                self.setPlainText("Log file not found.")
             return
 
         try:
-            with open(self.log_file, 'r') as file:
-                lines = file.readlines()
+            watch_path = os.path.abspath(self.log_file)
+            if watch_path not in self.watcher.files():
+                self.watcher.addPath(watch_path)
 
-                # Skip the first 11 lines and filter out DEBUG messages
-                filtered_lines = [line for line in lines[11:] if "DEBUG" not in line]
-                new_content = ''.join(filtered_lines)
+            with open(self.log_file, "rb") as file:
+                stat = os.fstat(file.fileno())
+                identity = (stat.st_dev, stat.st_ino)
+                rewritten_at_same_size = (
+                    self._file_mtime_ns is not None
+                    and stat.st_size == self.last_position
+                    and stat.st_mtime_ns != self._file_mtime_ns
+                )
+                if (
+                    identity != self._file_identity
+                    or stat.st_size < self.last_position
+                    or rewritten_at_same_size
+                ):
+                    self._reset_file_state()
+                    self._file_identity = identity
 
-                # Update only if the content has changed
-                if self.toPlainText() != new_content:
-                    self.setPlainText("")  # Clear the console
-                    for line in filtered_lines:
-                        self.append_colored_line(line.strip())
-        except Exception as e:
+                file.seek(self.last_position)
+                new_bytes = file.read()
+                self.last_position = file.tell()
+                self._file_mtime_ns = os.fstat(file.fileno()).st_mtime_ns
+
+            text = self._pending_text + self._decoder.decode(new_bytes)
+            lines = text.split("\n")
+            self._pending_text = lines.pop()
+
+            visible_lines = []
+            for line in lines:
+                if self._lines_read >= 11 and "DEBUG" not in line:
+                    visible_lines.append(line)
+                self._lines_read += 1
+
+            if visible_lines:
+                self.append_colored_lines(visible_lines)
+        except OSError as e:
+            self._reset_file_state(clear_widget=False)
             self.setPlainText(f"Error reading log file: {e}")
 
     def append_colored_line(self, line):
-        format = QTextCharFormat()
-        
+        self.append_colored_lines([line])
+
+    def append_colored_lines(self, lines):
         # Default color scheme if program doesn't have one
         default_colors = {
             'LoggerError': '#FF6B6B',
@@ -95,22 +131,46 @@ class LogViewer(QTextEdit):
             color_scheme = self.DAEDALUS.color_scheme if self.DAEDALUS else default_colors
         except (AttributeError, TypeError):
             color_scheme = default_colors
-        
-        if "ERROR" in line:
-            format.setForeground(QColor(color_scheme.get('LoggerError', default_colors['LoggerError'])))
-        elif "WARNING" in line:
-            format.setForeground(QColor(color_scheme.get('LoggerWarning', default_colors['LoggerWarning'])))
-        elif "DEBUG" in line:
-            format.setForeground(QColor(color_scheme.get('LoggerDebug', default_colors['LoggerDebug'])))
-        else:
-            format.setForeground(QColor(color_scheme.get('LoggerMain', default_colors['LoggerMain'])))
 
         cursor = self.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
 
-        cursor.insertText(line + '\n', format)
+        color_formats = {}
+        for line in lines:
+            if "ERROR" in line:
+                color_key = 'LoggerError'
+            elif "WARNING" in line:
+                color_key = 'LoggerWarning'
+            elif "DEBUG" in line:
+                color_key = 'LoggerDebug'
+            else:
+                color_key = 'LoggerMain'
+
+            if color_key not in color_formats:
+                text_format = QTextCharFormat()
+                text_format.setForeground(
+                    QColor(color_scheme.get(color_key, default_colors[color_key]))
+                )
+                color_formats[color_key] = text_format
+
+            cursor.insertText(line.strip() + '\n', color_formats[color_key])
+
         self.setTextCursor(cursor)
-        self.ensureCursorVisible()
+        if lines:
+            self.ensureCursorVisible()
+
+    def _new_decoder(self):
+        return codecs.getincrementaldecoder(locale.getpreferredencoding(False))(errors="replace")
+
+    def _reset_file_state(self, clear_widget=True):
+        self.last_position = 0
+        self._file_identity = None
+        self._file_mtime_ns = None
+        self._lines_read = 0
+        self._pending_text = ""
+        self._decoder = self._new_decoder()
+        if clear_widget:
+            self.setPlainText("")
 
     def __del__(self):
         """Cleanup file watcher and timer when widget is destroyed"""

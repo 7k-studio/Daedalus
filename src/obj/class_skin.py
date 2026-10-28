@@ -59,7 +59,7 @@ class Skin:
         patch_mapping = {
             'PS': ('ps_spline', wing.LE_PS, wing.TE_PS),
             'SS': ('ss_spline', wing.LE_SS, wing.TE_SS),
-            'LE': ('le_spline', wing.LE_SS, wing.LE_PS),
+            'LE': ('le_spline', wing.LE_PS, wing.LE_SS),
             'TE': ('te_spline', wing.TE_PS, wing.TE_SS),
         }
 

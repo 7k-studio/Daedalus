@@ -20,7 +20,7 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QProgressBar
-from PyQt6.QtCore import Qt, QCoreApplication
+from PyQt6.QtCore import Qt
 
 class ProgressDialog(QDialog):
     def __init__(self, title="Loading Project...", parent=None):
@@ -48,20 +48,14 @@ class ProgressDialog(QDialog):
         layout.addWidget(self.progressBar)
 
     def set_progress(self, value: int, message: str = None):
-        """Aktualizuje pasek postępu i wymusza odświeżenie interfejsu (UI)."""
+        """Update the progress display from the GUI thread."""
         self.progressBar.setValue(value)
         if message:
             self.task_label.setText(message)
-        
-        # Kluczowe! Odświeża UI w trakcie trwania pętli w Pythonie
-        QCoreApplication.processEvents()
 
     def increase_progress(self, increasement: int, message: str = None):
-        """Aktualizuje pasek postępu i wymusza odświeżenie interfejsu (UI)."""
+        """Increment the progress display from the GUI thread."""
         self.value = self.value+increasement
         self.progressBar.setValue(self.value)
         if message:
             self.task_label.setText(message)
-                
-        # Kluczowe! Odświeża UI w trakcie trwania pętli w Pythonie
-        QCoreApplication.processEvents()

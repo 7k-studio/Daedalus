@@ -110,9 +110,13 @@ def get_archive_version(data):
         try:
             file_version = data["program version"]
         except KeyError as e:
-            logger.error(f"Missing key in ARF data - {e}")
-            logger.warning("File may not load properly or is not compatible with DAEDALUS")
+            logger.error("File corrupted or not compatible with DAEDALUS")
+            logger.debug(f"Missing key in ARF data - {e}")
             return
+    except TypeError as e:
+        logger.error("File corrupted or not supported! Cannot load")
+        logger.debug(f"TypeError: {e}")
+        return
 
     return file_version.split("-")[0].split(".")
 

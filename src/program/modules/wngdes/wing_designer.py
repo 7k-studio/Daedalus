@@ -19,6 +19,7 @@ along with DAEDALUS.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 import logging
+from copy import deepcopy
 
 from PyQt6.QtCore import Qt
 
@@ -29,8 +30,10 @@ import src.obj.class_segment
 
 
 from PyQt6.QtWidgets import (
-    QVBoxLayout, QWidget, QDockWidget
-)
+    QVBoxLayout, QWidget, QLabel, 
+    QDockWidget, QWidget, 
+    QLabel, QInputDialog
+    )
 
 from src.opengl.viewport3D.viewport3d import Viewport3D
 
@@ -129,6 +132,7 @@ class WingDesigner:
         # Connect signals
         self.TREE_OBJECT.selectedObjectChanged.connect(self.TABLE_PARAMETERS.display_selected_element)
         self.TREE_OBJECT.selectedObjectChanged.connect(self.TABLE_STATISTICS.display_selected_element)
+        self.TABLE_PARAMETERS.parametersChanged.connect(self.TABLE_STATISTICS.update)
 
 
         # Initialize with default component if no project components (moved to _populate_ui)
@@ -145,6 +149,9 @@ class WingDesigner:
         self.OPEN_GL.PROJECT = self.OPEN_GL.project = self.PROJECT
         self.TREE_OBJECT.PROJECT = self.TREE_OBJECT.project = self.PROJECT
         self.TABLE_PARAMETERS.PROJECT = self.TABLE_PARAMETERS.project = self.PROJECT
+        self.TABLE_STATISTICS.PROJECT = self.TABLE_STATISTICS.project = self.PROJECT
+        self.TABLE_STATISTICS.current_element = None
+        self.TABLE_STATISTICS.setRowCount(0)
         # self.MENU_BAR.PROJECT = self.MENU_BAR.project = self.PROJECT
 
         if self.TREE_OBJECT:
@@ -174,6 +181,91 @@ class WingDesigner:
         self.TREE_OBJECT.update()
         self.TEXT_DESCRIPTION.set_description()
 
+    def _copy_params(self, params):
+        copied_params = {}
+        for key, param in params.items():
+            copied_param = type(param)(param.name, deepcopy(param.value), param.unit)
+            copied_param.nominal = deepcopy(param.nominal)
+            copied_params[key] = copied_param
+        return copied_params
+
+    def _copy_attrs(self, attrs):
+        copied_attrs = {}
+        for key, attr in attrs.items():
+            value = attr.value if attr.name.lower() == "airfoil" else deepcopy(attr.value)
+            nominal = attr.nominal if attr.name.lower() == "airfoil" else deepcopy(attr.nominal)
+            copied_attr = type(attr)(attr.name, value, deepcopy(attr.allowed_values))
+            copied_attr.nominal = nominal
+            copied_attrs[key] = copied_attr
+        return copied_attrs
+
+    def _copy_object_data(self, source, target):
+        target.name = source.name
+        target.info = deepcopy(source.info)
+        target.info['creation_date'] = date.today().strftime("%Y-%m-%d")
+        target.info['modification_date'] = date.today().strftime("%Y-%m-%d")
+        target.params = self._copy_params(source.params)
+        target.attrs = self._copy_attrs(source.attrs)
+        target.stats = self._copy_params(source.stats)
+
+    def _copy_segment(self, source, parent, span_offset=0.0):
+        airfoil = source.attrs['airfoil'].value
+        segment = src.obj.class_segment.Segment(
+            self.DAEDALUS, self.PROJECT, parent, airfoil=airfoil
+        )
+        self._copy_object_data(source, segment)
+        segment.params['span'].value += span_offset
+        segment.parent = parent
+        self.PROJECT._ensure_unique_name(segment)
+        parent.segments.append(segment)
+        segment.update()
+
+    def _copy_wing(self, source, parent):
+        wing = src.obj.class_wing.Wing(self.DAEDALUS, self.PROJECT, parent)
+        self._copy_object_data(source, wing)
+        self.PROJECT._ensure_unique_name(wing)
+        parent.wings.append(wing)
+
+        for source_segment in source.segments:
+            self._copy_segment(source_segment, wing)
+
+        if len(wing.segments) > 1:
+            wing.update()
+
+    def _refresh_after_duplication(self):
+        self.TREE_OBJECT.update()
+        self.OPEN_GL.update()
+        self.TEXT_DESCRIPTION.set_description()
+
+    def renameObject(self):
+        """Rename currently selected airfoil."""
+
+        lebel = QLabel()
+
+        try:
+            if self.TREE_OBJECT.selected_airfoil:
+                selected_object = self.TREE_OBJECT.selected_airfoil
+            elif self.TREE_OBJECT.selected_segment:
+                selected_object = self.TREE_OBJECT.selected_segment
+            elif self.TREE_OBJECT.selected_wing:
+                selected_object = self.TREE_OBJECT.selected_wing
+            elif self.TREE_OBJECT.selected_component:
+                selected_object = self.TREE_OBJECT.selected_component
+
+            text, ok = QInputDialog.getText(None, 'Change objects name', 'Enter objects\'s new name:', text=selected_object.name)
+            if ok:
+                lebel.setText(str(text))
+            if text:
+                selected_object.name = text
+                self.PROJECT._ensure_unique_name(selected_object)
+                selected_object.info['modification_date'] = date.today().strftime("%Y-%m-%d")
+
+            self.refresh()
+            self.logger.info(f"Object renamed - {text}")
+
+        except Exception as e:
+            self.logger.error(f"Could not rename object: {e}")
+
     ###############################
     # COMPONENT RELATED FUNCTIONS #
     ###############################
@@ -182,7 +274,7 @@ class WingDesigner:
         """Add a new component to the tree menu."""
         component_obj = src.obj.class_component.Component(self.DAEDALUS, self.PROJECT)
         component_obj.name = 'Component'
-        self.PROJECT._ensure_unique_object_name(component_obj)
+        self.PROJECT._ensure_unique_name(component_obj)
         component_obj.info['creation_date'] = date.today().strftime("%Y-%m-%d")
         component_obj.info['modification_date'] = date.today().strftime("%Y-%m-%d")
         self.PROJECT.components.append(component_obj)
@@ -205,6 +297,29 @@ class WingDesigner:
         else:
             self.logger.error("Component NOT selected!")
 
+    def duplicateComponent(self):
+        """Duplicate the selected component and its wings and segments."""
+        if self.PROJECT is None:
+            self.logger.error("Cannot duplicate component: PROJECT is not set")
+            return
+
+        source = self.TREE_OBJECT.selected_component
+        if source is None:
+            self.logger.error("Component NOT selected!")
+            return
+
+        component = src.obj.class_component.Component(self.DAEDALUS, self.PROJECT)
+        self._copy_object_data(source, component)
+        self.PROJECT._ensure_unique_name(component)
+        self.PROJECT.components.append(component)
+
+        for source_wing in source.wings:
+            self._copy_wing(source_wing, component)
+
+        component.update()
+        self._refresh_after_duplication()
+        self.logger.info(f"Duplicated component - {source.name}")
+
     ##########################
     # WING RELATED FUNCTIONS #
     ##########################
@@ -221,7 +336,7 @@ class WingDesigner:
 
                 wing_obj = src.obj.class_wing.Wing(self.DAEDALUS, self.PROJECT, component_obj)
                 wing_obj.name = 'Wing'
-                self.PROJECT._ensure_unique_object_name(wing_obj)
+                self.PROJECT._ensure_unique_name(wing_obj)
                 wing_obj.info['creation_date'] = date.today().strftime("%Y-%m-%d")
                 wing_obj.info['modification_date'] = date.today().strftime("%Y-%m-%d")
 
@@ -255,6 +370,23 @@ class WingDesigner:
         else:
             self.logger.error("Component NOT found!")
 
+    def duplicateWing(self):
+        """Duplicate the selected wing and its segments, retaining their airfoils."""
+        if self.PROJECT is None:
+            self.logger.error("Cannot duplicate wing: PROJECT is not set")
+            return
+
+        source = self.TREE_OBJECT.selected_wing
+        if source is None or source.parent is None:
+            self.logger.error("Wing NOT selected!")
+            return
+
+        parent = source.parent
+        self._copy_wing(source, parent)
+        parent.update()
+        self._refresh_after_duplication()
+        self.logger.info(f"Duplicated wing - {source.name}")
+
     #############################
     # SEGMENT RELATED FUNCTIONS #
     #############################
@@ -283,7 +415,7 @@ class WingDesigner:
 
         airfoil_obj = src.obj.class_airfoil.Airfoil(self.DAEDALUS, self.PROJECT)
         airfoil_obj.name = "Airfoil"
-        self.PROJECT._ensure_unique_airfoil_name(airfoil_obj)
+        self.PROJECT._ensure_unique_name(airfoil_obj)
         airfoil_obj.info['creation_date'] = date.today().strftime("%Y-%m-%d")
         airfoil_obj.info['modification_date'] = date.today().strftime("%Y-%m-%d")
         airfoil_obj.update()
@@ -291,7 +423,7 @@ class WingDesigner:
         
         segment_obj = src.obj.class_segment.Segment(self.DAEDALUS, self.PROJECT)
         segment_obj.name = "Segment"
-        self.PROJECT._ensure_unique_object_name(segment_obj)
+        self.PROJECT._ensure_unique_name(segment_obj)
         segment_obj.info['creation_date'] = date.today().strftime("%Y-%m-%d")
         segment_obj.info['modification_date'] = date.today().strftime("%Y-%m-%d")
 
@@ -339,6 +471,23 @@ class WingDesigner:
                 self.logger.error("Segment NOT selected!")
         else:
             self.logger.error("Component NOT found!")
+
+    def duplicateSegment(self):
+        """Duplicate the selected segment at a span 0.1 beyond its original."""
+        if self.PROJECT is None:
+            self.logger.error("Cannot duplicate segment: PROJECT is not set")
+            return
+
+        source = self.TREE_OBJECT.selected_segment
+        if source is None or source.parent is None:
+            self.logger.error("Segment NOT selected!")
+            return
+
+        parent = source.parent
+        self._copy_segment(source, parent, span_offset=0.1)
+        parent.update()
+        self._refresh_after_duplication()
+        self.logger.info(f"Duplicated segment - {source.name}")
     
     def toggle_logger(self):
         """Toggle the module logger widget."""
@@ -352,4 +501,3 @@ class WingDesigner:
         """Update the menu bar state when a dock widget's visibility changes."""
         if dock_widget == self.dock_widgets.get('wing_logger_console') and self.main_window and hasattr(self.main_window, 'MENU_BAR'):
             self.main_window.MENU_BAR._sync_window_menu_states()
-

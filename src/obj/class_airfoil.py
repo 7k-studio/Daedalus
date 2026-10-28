@@ -25,6 +25,82 @@ import src.utils.tools_program as tools
 from src.obj.curves import BSpline, Line
 from src.obj.param import Param, Attr, M, DEG
 
+DEFAULT_LE_THICKNESS = 0.1
+DEFAULT_TE_THICKNESS = 0.01
+
+
+def _polyline_self_intersects(points):
+    """Detect non-adjacent intersections in a closed, sampled contour."""
+    points = np.asarray(points, dtype=float)
+    if points.ndim != 2 or points.shape[1] != 2 or len(points) < 5:
+        return False
+    if not np.allclose(points[0], points[-1]):
+        points = np.vstack((points, points[0]))
+
+    starts = points[:-1]
+    ends = points[1:]
+    segment_count = len(starts)
+    first, second = np.triu_indices(segment_count, k=2)
+    non_adjacent = ~((first == 0) & (second == segment_count - 1))
+    first, second = first[non_adjacent], second[non_adjacent]
+    if not len(first):
+        return False
+
+    a, b = starts[first], ends[first]
+    c, d = starts[second], ends[second]
+    scale = max(
+        float(np.ptp(points[:, 0])),
+        float(np.ptp(points[:, 1])),
+        np.finfo(float).tiny,
+    )
+    coordinate_tolerance = scale * 1e-10
+    orientation_tolerance = scale * scale * 1e-10
+
+    overlaps = (
+        (np.maximum(a[:, 0], b[:, 0]) + coordinate_tolerance >= np.minimum(c[:, 0], d[:, 0]))
+        & (np.maximum(c[:, 0], d[:, 0]) + coordinate_tolerance >= np.minimum(a[:, 0], b[:, 0]))
+        & (np.maximum(a[:, 1], b[:, 1]) + coordinate_tolerance >= np.minimum(c[:, 1], d[:, 1]))
+        & (np.maximum(c[:, 1], d[:, 1]) + coordinate_tolerance >= np.minimum(a[:, 1], b[:, 1]))
+    )
+    if not np.any(overlaps):
+        return False
+
+    a, b, c, d = a[overlaps], b[overlaps], c[overlaps], d[overlaps]
+
+    def cross(origin, end, query):
+        edge = end - origin
+        offset = query - origin
+        return edge[:, 0] * offset[:, 1] - edge[:, 1] * offset[:, 0]
+
+    first_c = cross(a, b, c)
+    first_d = cross(a, b, d)
+    second_a = cross(c, d, a)
+    second_b = cross(c, d, b)
+    crosses = (
+        (((first_c > orientation_tolerance) & (first_d < -orientation_tolerance))
+         | ((first_c < -orientation_tolerance) & (first_d > orientation_tolerance)))
+        & (((second_a > orientation_tolerance) & (second_b < -orientation_tolerance))
+           | ((second_a < -orientation_tolerance) & (second_b > orientation_tolerance)))
+    )
+
+    def on_segment(start, end, query, orientation):
+        return (
+            (np.abs(orientation) <= orientation_tolerance)
+            & (query[:, 0] >= np.minimum(start[:, 0], end[:, 0]) - coordinate_tolerance)
+            & (query[:, 0] <= np.maximum(start[:, 0], end[:, 0]) + coordinate_tolerance)
+            & (query[:, 1] >= np.minimum(start[:, 1], end[:, 1]) - coordinate_tolerance)
+            & (query[:, 1] <= np.maximum(start[:, 1], end[:, 1]) + coordinate_tolerance)
+        )
+
+    touches = (
+        on_segment(a, b, c, first_c)
+        | on_segment(a, b, d, first_d)
+        | on_segment(c, d, a, second_a)
+        | on_segment(c, d, b, second_b)
+    )
+    return bool(np.any(crosses | touches))
+
+
 class LeadingEdge:
     """Set up detials for LEADING EDGE Spline"""
     def __init__(self, program):
@@ -37,6 +113,8 @@ class LeadingEdge:
         }
 
         self.params = {
+            "ps_wedge": Param("ps_wedge",10,DEG),
+            "ss_wedge": Param("ss_wedge",10,DEG),
             "ps_tan":    Param("ps_tan",0.05,M),
             "ps_slope":  Param("ps_slope",-20,DEG),
             "ps_curv":   Param("ps_curv",0.05,M),
@@ -67,6 +145,8 @@ class TrailingEdge:
         }
 
         self.params = {
+            "ps_wedge": Param("ps_wedge",10,DEG),
+            "ss_wedge": Param("ss_wedge",10,DEG),
             "ps_tan":    Param("ps_tan",0.004,M),
             "ps_slope":  Param("ps_slope",-30,DEG),
             "ps_curv":   Param("ps_curv",0.004,M),
@@ -179,9 +259,9 @@ class Airfoil:
             "origin_Y":  Param("origin_Y",0,M),
             "stretch":   Param("stretch",1,M),
             "incline":   Param("incline",0,DEG),
-            "LE_thickness": Param("thickness",0.1,M),
+            "LE_thickness": Param("thickness",DEFAULT_LE_THICKNESS,M),
             "LE_angle":     Param("angle",0.0,DEG),
-            "TE_thickness": Param("thickness",0.01,M),
+            "TE_thickness": Param("thickness",DEFAULT_TE_THICKNESS,M),
             "TE_angle":     Param("angle",0.0,DEG),
         }
 
@@ -201,8 +281,20 @@ class Airfoil:
         self.TE = TrailingEdge(self.PROGRAM)
         self.PS = PressureSide(self.PROGRAM)
         self.SS = SuctionSide(self.PROGRAM)
+        self.has_self_intersection = False
+        self._link_wedge_parameters()
 
         self.CHORD = ChordLine(self)
+
+    def _link_wedge_parameters(self):
+        """Use the pressure/suction-side wedges as the shared wedge parameters."""
+        self.LE.params["ps_wedge"] = self.PS.params["fwd_wedge"]
+        self.LE.params["ss_wedge"] = self.SS.params["fwd_wedge"]
+        self.TE.params["ps_wedge"] = self.PS.params["rwd_wedge"]
+        self.TE.params["ss_wedge"] = self.SS.params["rwd_wedge"]
+
+    def _edge_scaled_length(self, parameter, edge_thickness, default_thickness):
+        return parameter.value * edge_thickness / default_thickness
 
     def construct(self):
 
@@ -226,27 +318,30 @@ class Airfoil:
         #===================================
         # Creating handle for Pressure Side
         #===================================
+        le_thickness = self.params["LE_thickness"].value
+        te_thickness = self.params["TE_thickness"].value
+
         ### G1 continuity ###
         try:
             # PS (upper-like) forward tangent should move toward chordwards (inward), not further away.
-            p_ps_fwd_tan = tools.vec_translate(p_le_u, self.PS.params['fwd_tan'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["LE_angle"].value+factor*self.PS.params["fwd_wedge"].value))
+            p_ps_fwd_tan = tools.vec_translate(p_le_u, self._edge_scaled_length(self.PS.params['fwd_tan'], le_thickness, DEFAULT_LE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["LE_angle"].value+factor*self.PS.params["fwd_wedge"].value))
         except ZeroDivisionError:
             p_ps_fwd_tan = p_le_u
 
         try:
-            p_ps_rwd_tan = tools.vec_translate(p_te_u, -self.PS.params['rwd_tan'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["TE_angle"].value-factor*self.PS.params["rwd_wedge"].value))
+            p_ps_rwd_tan = tools.vec_translate(p_te_u, -self._edge_scaled_length(self.PS.params['rwd_tan'], te_thickness, DEFAULT_TE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["TE_angle"].value-factor*self.PS.params["rwd_wedge"].value))
         except ZeroDivisionError:
             p_ps_fwd_tan = p_te_u
 
         ### G2 continuity ###
         if self.PS.attrs['type'].value == 'G2':
             try:
-                p_ps_fwd_crv = tools.vec_translate(p_ps_fwd_tan, self.PS.params['fwd_curv'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["LE_angle"].value+factor*self.PS.params["fwd_wedge"].value+factor*self.PS.params["fwd_slope"].value))
+                p_ps_fwd_crv = tools.vec_translate(p_ps_fwd_tan, self._edge_scaled_length(self.PS.params['fwd_curv'], le_thickness, DEFAULT_LE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["LE_angle"].value+factor*self.PS.params["fwd_wedge"].value+factor*self.PS.params["fwd_slope"].value))
             except ZeroDivisionError:
                 p_ps_fwd_crv = p_ps_fwd_tan
 
             try:
-                p_ps_rwd_crv = tools.vec_translate(p_ps_rwd_tan, -self.PS.params['rwd_curv'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["TE_angle"].value-factor*self.PS.params["rwd_wedge"].value-factor*self.PS.params["rwd_slope"].value))
+                p_ps_rwd_crv = tools.vec_translate(p_ps_rwd_tan, -self._edge_scaled_length(self.PS.params['rwd_curv'], te_thickness, DEFAULT_TE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["TE_angle"].value-factor*self.PS.params["rwd_wedge"].value-factor*self.PS.params["rwd_slope"].value))
             except ZeroDivisionError:
                 p_ps_fwd_tan = p_ps_rwd_tan
         else:
@@ -258,24 +353,24 @@ class Airfoil:
         #===================================
         try:
             # SS (lower-like) forward tangent should move toward chordwards (inward) as well.
-            p_ss_fwd_tan = tools.vec_translate(p_le_d, self.SS.params['fwd_tan'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["LE_angle"].value-factor*self.SS.params["fwd_wedge"].value))
+            p_ss_fwd_tan = tools.vec_translate(p_le_d, self._edge_scaled_length(self.SS.params['fwd_tan'], le_thickness, DEFAULT_LE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["LE_angle"].value-factor*self.SS.params["fwd_wedge"].value))
         except ZeroDivisionError:
             p_ss_fwd_tan = p_le_d
 
         try:
-            p_ss_rwd_tan = tools.vec_translate(p_te_d, -self.SS.params['rwd_tan'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["TE_angle"].value+factor*self.SS.params["rwd_wedge"].value))
+            p_ss_rwd_tan = tools.vec_translate(p_te_d, -self._edge_scaled_length(self.SS.params['rwd_tan'], te_thickness, DEFAULT_TE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["TE_angle"].value+factor*self.SS.params["rwd_wedge"].value))
         except ZeroDivisionError:
             p_ss_fwd_tan = p_te_d
 
         ### G2 continuity ###
         if self.SS.attrs['type'].value == 'G2':
             try:
-                p_ss_fwd_crv = tools.vec_translate(p_ss_fwd_tan, self.SS.params['fwd_curv'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["LE_angle"].value-factor*self.SS.params["fwd_wedge"].value-factor*self.SS.params["fwd_slope"].value))
+                p_ss_fwd_crv = tools.vec_translate(p_ss_fwd_tan, self._edge_scaled_length(self.SS.params['fwd_curv'], le_thickness, DEFAULT_LE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["LE_angle"].value-factor*self.SS.params["fwd_wedge"].value-factor*self.SS.params["fwd_slope"].value))
             except ZeroDivisionError:
                 p_ss_fwd_crv = p_ss_fwd_tan
 
             try:
-                p_ss_rwd_crv = tools.vec_translate(p_ss_rwd_tan, -self.SS.params['rwd_curv'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["TE_angle"].value+factor*self.SS.params["rwd_wedge"].value+factor*self.SS.params["rwd_slope"].value))
+                p_ss_rwd_crv = tools.vec_translate(p_ss_rwd_tan, -self._edge_scaled_length(self.SS.params['rwd_curv'], te_thickness, DEFAULT_TE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["TE_angle"].value+factor*self.SS.params["rwd_wedge"].value+factor*self.SS.params["rwd_slope"].value))
             except ZeroDivisionError:
                 p_ss_rwd_crv = p_ss_rwd_tan
         else:
@@ -286,24 +381,24 @@ class Airfoil:
         # Creating handle for Leading Edge
         #===================================
         try:
-            p_le_ps_tan = tools.vec_translate(p_le_u, -self.LE.params['ps_tan'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["LE_angle"].value+factor*self.PS.params["fwd_wedge"].value))
+            p_le_ps_tan = tools.vec_translate(p_le_u, -self._edge_scaled_length(self.LE.params['ps_tan'], le_thickness, DEFAULT_LE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["LE_angle"].value+factor*self.PS.params["fwd_wedge"].value))
         except ZeroDivisionError:
             p_le_ps_tan = p_le_u
 
         try:
-            p_le_ss_tan = tools.vec_translate(p_le_d, -self.LE.params['ss_tan'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["LE_angle"].value-factor*self.SS.params["fwd_wedge"].value))
+            p_le_ss_tan = tools.vec_translate(p_le_d, -self._edge_scaled_length(self.LE.params['ss_tan'], le_thickness, DEFAULT_LE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["LE_angle"].value-factor*self.SS.params["fwd_wedge"].value))
         except ZeroDivisionError:
             p_le_ss_tan = p_le_d
 
         ### G2 continuity ###
         if self.LE.attrs['type'].value == 'G2':
             try:
-                p_le_ps_crv = tools.vec_translate(p_le_ps_tan, -self.LE.params['ps_curv'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["LE_angle"].value+factor*self.PS.params["fwd_wedge"].value-factor*self.LE.params["ps_slope"].value))
+                p_le_ps_crv = tools.vec_translate(p_le_ps_tan, -self._edge_scaled_length(self.LE.params['ps_curv'], le_thickness, DEFAULT_LE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["LE_angle"].value+factor*self.PS.params["fwd_wedge"].value-factor*self.LE.params["ps_slope"].value))
             except ZeroDivisionError:
                 p_le_ps_crv = p_le_ps_tan
 
             try:
-                p_le_ss_crv = tools.vec_translate(p_le_ss_tan, -self.LE.params['ss_curv'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["LE_angle"].value-factor*self.SS.params["fwd_wedge"].value+factor*self.LE.params["ss_slope"].value))
+                p_le_ss_crv = tools.vec_translate(p_le_ss_tan, -self._edge_scaled_length(self.LE.params['ss_curv'], le_thickness, DEFAULT_LE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["LE_angle"].value-factor*self.SS.params["fwd_wedge"].value+factor*self.LE.params["ss_slope"].value))
             except ZeroDivisionError:
                 p_le_ss_tan = p_le_ss_tan
         else:
@@ -315,24 +410,24 @@ class Airfoil:
         #===================================
         try:
             # TE-side tangents also should move inside toward chord (backward), not over-shoot +x.
-            p_te_ps_tan = tools.vec_translate(p_te_u, self.TE.params['ps_tan'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["TE_angle"].value-factor*self.PS.params["rwd_wedge"].value))
+            p_te_ps_tan = tools.vec_translate(p_te_u, self._edge_scaled_length(self.TE.params['ps_tan'], te_thickness, DEFAULT_TE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["TE_angle"].value-factor*self.PS.params["rwd_wedge"].value))
         except ZeroDivisionError:
             p_te_ps_tan = p_te_u
 
         try:
-            p_te_ss_tan = tools.vec_translate(p_te_d, self.TE.params['ss_tan'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["TE_angle"].value+factor*self.SS.params["rwd_wedge"].value))
+            p_te_ss_tan = tools.vec_translate(p_te_d, self._edge_scaled_length(self.TE.params['ss_tan'], te_thickness, DEFAULT_TE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["TE_angle"].value+factor*self.SS.params["rwd_wedge"].value))
         except ZeroDivisionError:
             p_te_ss_tan = p_te_d
 
         ### G2 continuity ###
         if self.TE.attrs['type'].value == 'G2':
             try:
-                p_te_ps_crv = tools.vec_translate(p_te_ps_tan, self.TE.params['ps_curv'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["TE_angle"].value-factor*self.PS.params["rwd_wedge"].value+factor*self.TE.params["ps_slope"].value))
+                p_te_ps_crv = tools.vec_translate(p_te_ps_tan, self._edge_scaled_length(self.TE.params['ps_curv'], te_thickness, DEFAULT_TE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["TE_angle"].value-factor*self.PS.params["rwd_wedge"].value+factor*self.TE.params["ps_slope"].value))
             except ZeroDivisionError:
                 p_te_ps_crv = p_te_ps_tan
 
             try:
-                p_te_ss_crv = tools.vec_translate(p_te_ss_tan, self.TE.params['ss_curv'].value*self.params['stretch'].value, (factor*self.params["incline"].value+factor*self.params["TE_angle"].value+factor*self.SS.params["rwd_wedge"].value-factor*self.TE.params["ss_slope"].value))
+                p_te_ss_crv = tools.vec_translate(p_te_ss_tan, self._edge_scaled_length(self.TE.params['ss_curv'], te_thickness, DEFAULT_TE_THICKNESS), (factor*self.params["incline"].value+factor*self.params["TE_angle"].value+factor*self.SS.params["rwd_wedge"].value-factor*self.TE.params["ss_slope"].value))
             except ZeroDivisionError:
                 p_te_ss_crv = p_te_ss_tan
         else:
@@ -356,17 +451,15 @@ class Airfoil:
         self.TE.spline.create()
         self.PS.spline.create()
         self.SS.spline.create()
-        
-        self.logger.info("3D AIRFOIL geometry updated - geometry stored in curves.BSpline objects")
 
-        self.logger.debug("LE, TE, PS, SS geometry established")
+        self.logger.debug("3D AIRFOIL geometry updated - geometry stored in curves.BSpline objects")
 
     def update(self):
         """Update airfoil 2D geometry (called during design)."""
-        self.logger.info("Recalculating airfoil geometry...")
-        self.construct()
 
-        self.logger.info("Recalculating airfoil statistics...")
+        self.construct()
+        self.has_self_intersection = self._has_self_intersecting_contour()
+
         self.stats['Chord'].set(self.CHORD.calc_chord())
         pos_le_x, pos_le_y = self.LE.calc_position()
         self.stats['Position LE X'].set(pos_le_x)
@@ -375,7 +468,31 @@ class Airfoil:
         self.stats['Position TE X'].set(pos_te_x)
         self.stats['Position TE Y'].set(pos_te_y)
 
-        
+        self.logger.info(f"{self.name} updated...")
+
+    def _has_self_intersecting_contour(self):
+        """Check the sampled perimeter, in surface-to-cap order."""
+        curves = []
+        for section in (self.PS, self.TE, self.SS, self.LE):
+            geometry = section.spline.geom
+            if len(geometry) < 2 or len(geometry[0]) < 2:
+                return False
+            points = np.column_stack((geometry[0], geometry[1]))
+            if len(points) > 100:
+                indices = np.linspace(0, len(points) - 1, 100, dtype=int)
+                points = points[indices]
+            curves.append(points)
+
+        pressure_side, trailing_edge, suction_side, leading_edge = curves
+        contour = np.vstack((
+            pressure_side,
+            trailing_edge[1:],
+            suction_side[::-1][1:],
+            leading_edge[::-1][1:],
+        ))
+        return _polyline_self_intersects(contour)
+
+
 class SeligAirfoil:
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -385,6 +502,11 @@ class SeligAirfoil:
         self.visible = False
         
         self.curve = []
+        self.source_curve = None
+
+        self.params = {
+            "scale":  Param("scale",1,M),
+            }
 
 
 class Airfoil_030ddls:

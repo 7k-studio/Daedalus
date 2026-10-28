@@ -29,7 +29,12 @@ from OpenGL.GLU import gluOrtho2D, gluProject  # Add this import
 
 #from .test_cube import draw_object_from_file  # Import the new function
 from .renderers.text_renderer import FreetypeTextRenderer
-from .renderers import grid_renderer, ruler_renderer, airfoil_renderer
+from .renderers import (
+    grid_renderer,
+    ruler_renderer,
+    airfoil_renderer,
+    geometry_warning_renderer,
+)
 from .renderers.render_context import RenderContext
 from .interaction.pan_tool import PanTool
 from .interaction.zoom_tool import ZoomTool
@@ -48,6 +53,7 @@ class ViewportOpenGL(QOpenGLWidget):
         self.translation = [-0.5, 0, 0]
         self.lastPos = QtCore.QPoint()
         self.airfoil = None
+        self.preview_lines = []
         self.viewport_settings = self.DAEDALUS.preferences["airfoil_designer"]["viewport"]
         self.airfoil_settings = self.DAEDALUS.preferences["airfoil_designer"]["airfoil"]
 
@@ -69,6 +75,10 @@ class ViewportOpenGL(QOpenGLWidget):
 
     def set_airfoil_to_display(self, airfoil):
         self.airfoil = airfoil
+        self.update()
+
+    def set_preview_lines(self, lines):
+        self.preview_lines = lines
         self.update()
 
     def initializeGL(self):
@@ -101,14 +111,40 @@ class ViewportOpenGL(QOpenGLWidget):
                 if reference.visible:
                     airfoil_renderer.draw_reference(self, reference)
 
+        self._draw_preview_lines()
         self._prepare_overlay_projection()
 
         glDisable(GL_DEPTH_TEST)
         if self.viewport_settings["ruler"]["show"]:
             ruler_renderer.draw(context)
+        if getattr(self.airfoil, "has_self_intersection", False):
+            glDisable(GL_DEPTH_TEST)
+            geometry_warning_renderer.draw(context)
         glEnable(GL_DEPTH_TEST)
 
         self._restore_projection_state()
+
+    def _draw_preview_lines(self):
+        if not self.preview_lines:
+            return
+
+        glDisable(GL_DEPTH_TEST)
+        for points, color, is_segments, line_width in self.preview_lines:
+            glLineWidth(line_width)
+            glColor3f(*color)
+            if is_segments:
+                glBegin(GL_LINES)
+                for segment in points:
+                    for point in segment:
+                        glVertex3f(point[0], point[1], 0.0)
+                glEnd()
+            else:
+                glBegin(GL_LINE_STRIP)
+                for point in points:
+                    glVertex3f(point[0], point[1], 0.0)
+                glEnd()
+        glLineWidth(1.0)
+        glEnable(GL_DEPTH_TEST)
 
     def _prepare_world_projection(self, context):
         left, right, bottom, top = self.camera.world_bounds(context.width, context.height)

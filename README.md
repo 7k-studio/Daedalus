@@ -76,7 +76,7 @@ Daedalus
 |   |   └── modules  
 |   |       ├── arfdes
 |   |       |   ├── airfoil_designer.py       # Main window layout and setup
-|   |       |   ├── fit_2_reference.py        # Experimental function for reference matching
+|   |       |   ├── fit_2_reference.py        # Joint four-spline least-squares fitting with optional parameter bounds
 |   |       |   ├── menu_bar.py               
 |   |       |   ├── tool_bar.py               
 |   |       |   ├── tools_airfoil.py          # Utility functions and helpers for airfoils
@@ -169,10 +169,20 @@ Daedalus
 - Export of objects:
   - for 2D airfoils to DXF file
   - for 3D wings to STEP file
+- Bounded, four-region parametric airfoil fitting to `.txt`, `.dat`, or DDLS
+  reference contours. See the [Fit to Reference user guide](src/assets/FIT_TO_REFERENCE.md)
+  for the workflow, and the [developer notes](src/assets/FIT_TO_REFERENCE_DEVELOPER.md)
+  for implementation and calibration details.
 
 ## Usage
 
 Once the application is running, you can create a parametric airfoil and wing design. Use interactive tabele of parameters to modify the objects. Interact with the 2D/3D viewport using the mouse to preview created objects. Use the tree menu to navigate through different components of the application. Use export functions to save project to standard CAD format like: .dxf and .step. Use save button to save current state of the project within Daedalus program. 
+
+To fit an airfoil to a coordinate reference, use **Fit Airfoil to Reference**
+in the Airfoil Designer. Follow the [user guide](src/assets/FIT_TO_REFERENCE.md)
+for recommended fitting steps and troubleshooting. The
+[developer notes](src/assets/FIT_TO_REFERENCE_DEVELOPER.md) describe the
+algorithm, objective weighting, and empirical calibration examples.
 
 ## License
 

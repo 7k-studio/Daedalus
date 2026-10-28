@@ -95,6 +95,10 @@ class MenuBar(QMenuBar):
             newAirfoilAction.triggered.connect(lambda: self.main_window.AIRFOIL_MODULE.addAirfoil() if self.main_window.AIRFOIL_MODULE else None)
             self.edit_menu.addAction(newAirfoilAction)
 
+            duplicateAirfoilAction = QAction('Duplicate Airfoil', self)
+            duplicateAirfoilAction.triggered.connect(lambda: utils_edit.duplicate_airfoil(self)) # this one needs QFileDialog
+            self.edit_menu.addAction(duplicateAirfoilAction)
+
             appendAirfoilAction = QAction('Append Airfoil', self)
             appendAirfoilAction.triggered.connect(lambda: utils_edit.append_airfoil(self)) # this one needs QFileDialog
             self.edit_menu.addAction(appendAirfoilAction)
@@ -119,15 +123,22 @@ class MenuBar(QMenuBar):
             renameAirfoilAction.triggered.connect(lambda: self.main_window.AIRFOIL_MODULE.renameAirfoil() if self.main_window.AIRFOIL_MODULE else None)
             self.edit_menu.addAction(renameAirfoilAction)
 
-            # if self.main_window.PROGRAM.preferences['general']['beta_features']:
-            #     fit2refAction = QAction('Fit2Reference', self)
-            #     fit2refAction.triggered.connect(self.fit2ref)
-            #     self.edit_menu.addAction(fit2refAction)
+            fit2refAction = QAction('Fit to Reference', self)
+            fit2refAction.triggered.connect(lambda: utils_edit.fit2ref(self))
+            self.edit_menu.addAction(fit2refAction)
 
         elif self.current_module == 'wing':
+            renameObjectAction = QAction('Rename Object', self)
+            renameObjectAction.triggered.connect(lambda: self.main_window.WING_MODULE.renameObject() if self.main_window.WING_MODULE else None)
+            self.edit_menu.addAction(renameObjectAction)
+            
             addComponentAction = QAction('Add Component', self)
             addComponentAction.triggered.connect(lambda: self.main_window.WING_MODULE.addComponent() if self.main_window.WING_MODULE else None)
             self.edit_menu.addAction(addComponentAction)
+
+            duplicateComponentAction = QAction('Duplicate Component', self)
+            duplicateComponentAction.triggered.connect(lambda: self.main_window.WING_MODULE.duplicateComponent() if self.main_window.WING_MODULE else None)
+            self.edit_menu.addAction(duplicateComponentAction)
 
             deleteComponentAction = QAction('Delete Component', self)
             deleteComponentAction.triggered.connect(lambda: utils_edit.delete_component(self))
@@ -139,6 +150,10 @@ class MenuBar(QMenuBar):
             addWingAction.triggered.connect(lambda: self.main_window.WING_MODULE.addWing() if self.main_window.WING_MODULE else None)
             self.edit_menu.addAction(addWingAction)
 
+            duplicateWingAction = QAction('Duplicate Wing', self)
+            duplicateWingAction.triggered.connect(lambda: self.main_window.WING_MODULE.duplicateWing() if self.main_window.WING_MODULE else None)
+            self.edit_menu.addAction(duplicateWingAction)
+
             deleteWingAction = QAction('Delete Wing', self)
             deleteWingAction.triggered.connect(lambda: utils_edit.delete_wing(self))
             self.edit_menu.addAction(deleteWingAction)
@@ -148,6 +163,10 @@ class MenuBar(QMenuBar):
             addSegmentAction = QAction('Add Segment', self)
             addSegmentAction.triggered.connect(lambda: self.main_window.WING_MODULE.addSegment() if self.main_window.WING_MODULE else None)
             self.edit_menu.addAction(addSegmentAction)
+
+            duplicateSegmentAction = QAction('Duplicate Segment', self)
+            duplicateSegmentAction.triggered.connect(lambda: self.main_window.WING_MODULE.duplicateSegment() if self.main_window.WING_MODULE else None)
+            self.edit_menu.addAction(duplicateSegmentAction)
 
             deleteSegmentAction = QAction('Delete Segment', self)
             deleteSegmentAction.triggered.connect(lambda: utils_edit.delete_segment(self))

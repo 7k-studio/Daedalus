@@ -271,13 +271,23 @@ class HomeScreen(QWidget):
 
         filePath, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Daedalus Database Files (*.ddls);; All Files (*)")
         if filePath:
-            self.PROJECT.open(filePath)
-        
-        # Set project in main window before switching modules
-        self.DAEDALUS.MAIN_WINDOW.set_project(self.PROJECT)
-        self.DAEDALUS.MAIN_WINDOW.switch_to_module('wing')
-        
-        self.close()
+            from src.widgets.menu_bar.utils.menu_file import start_project_load
+
+            def project_loaded():
+                self.PROJECT = self.DAEDALUS.MAIN_WINDOW.PROJECT
+                self.DAEDALUS.MAIN_WINDOW.switch_to_module('wing')
+                self.close()
+
+            start_project_load(
+                self,
+                self.DAEDALUS.MAIN_WINDOW,
+                filePath,
+                project_loaded,
+            )
+        else:
+            self.DAEDALUS.MAIN_WINDOW.set_project(self.PROJECT)
+            self.DAEDALUS.MAIN_WINDOW.switch_to_module('wing')
+            self.close()
 
     def open_preferences(self):
         self.logger.info("Opening preferences")

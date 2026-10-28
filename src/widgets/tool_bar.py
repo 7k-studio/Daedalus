@@ -136,11 +136,11 @@ class WingToolBar(QToolBar):
         
         # Add tool buttons wired to the provided callbacks
         self.add_tool_button("Add Component",    icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/AddComponent.svg",    shortcut="Shift+C", callback=add_comp_callback)
-        self.add_tool_button("Delete Component", icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/DeleteComponent.svg", shortcut="Shift+X", callback=del_comp_callback)
+        self.add_tool_button("Delete Component", icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/DeleteComponent.svg", callback=del_comp_callback)
         self.add_tool_button("Add Wing",         icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/AddWing.svg",         shortcut="Shift+W", callback=add_wing_callback)
-        self.add_tool_button("Delete Wing",      icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/DeleteWing.svg",      shortcut="Shift+X", callback=del_wing_callback)
+        self.add_tool_button("Delete Wing",      icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/DeleteWing.svg",      callback=del_wing_callback)
         self.add_tool_button("Add Segment",      icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/AddSegment.svg",      shortcut="Shift+S", callback=add_segm_callback)
-        self.add_tool_button("Delete Segment",   icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/DeleteSegment.svg",   shortcut="Shift+X", callback=del_segm_callback)
+        self.add_tool_button("Delete Segment",   icon_path=f"{self.DAEDALUS.color_scheme['pathToIcons']}/DeleteSegment.svg",   callback=del_segm_callback)
 
         def _rgb(c):
             if isinstance(c, (tuple, list)):

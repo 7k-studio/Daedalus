@@ -26,6 +26,43 @@ from PyQt6.QtWidgets import (
 )
 
 from src.widgets.widget_description import EditDescriptionDialog
+from src.widgets.widget_progress import ProgressDialog
+from src.program.project import ProjectLoadWorker
+
+
+def start_project_load(parent, main_window, file_path, on_success=None):
+    """Load a project off the GUI thread and replace the active project on success."""
+    existing_worker = getattr(main_window, "_project_load_worker", None)
+    if existing_worker is not None and existing_worker.isRunning():
+        return
+
+    progress_dialog = ProgressDialog(title="Opening Project...", parent=parent)
+    worker = ProjectLoadWorker(main_window.PROGRAM, file_path, main_window)
+    main_window._project_load_worker = worker
+    main_window._project_load_dialog = progress_dialog
+    worker.progress.connect(progress_dialog.set_progress)
+
+    def finish_loading():
+        progress_dialog.close()
+        if worker.error is not None:
+            QMessageBox.critical(
+                parent,
+                "Could not open project",
+                f"The project could not be opened:\n{worker.error}",
+            )
+        elif worker.loaded_project is not None:
+            main_window.set_project(worker.loaded_project)
+            if on_success is not None:
+                on_success()
+
+        main_window._project_load_worker = None
+        main_window._project_load_dialog = None
+        worker.deleteLater()
+        progress_dialog.deleteLater()
+
+    worker.finished.connect(finish_loading)
+    progress_dialog.show()
+    worker.start()
 
 def new_project(self):
     if self.main_window.PROJECT:
@@ -43,14 +80,12 @@ def open_project(self):
         # options = QFileDialog.Option.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Daedalus Database Files (*.ddls);; All Files (*)")
         if fileName:
-            self.main_window.PROJECT.open(fileName)
-            if self.current_module == 'airfoil' and self.main_window.AIRFOIL_MODULE:
-                if hasattr(self.main_window.AIRFOIL_MODULE, 'refresh'):
-                    self.main_window.AIRFOIL_MODULE.refresh()
-            if self.current_module == 'wing' and self.main_window.WING_MODULE:
-                if hasattr(self.main_window.WING_MODULE, 'refresh'):
-                    self.main_window.WING_MODULE.refresh()
-            self.logger.info(f"Opened file: {fileName}")
+            start_project_load(
+                self,
+                self.main_window,
+                fileName,
+                lambda: self.logger.info(f"Opened file: {fileName}"),
+            )
 
 def save_project(self):
     if self.main_window.PROJECT:

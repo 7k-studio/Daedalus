@@ -25,11 +25,13 @@ import json
 
 import os
 import datetime
+from PyQt6.QtCore import QThread, pyqtSignal
 
 # In-Program imports
 # import src.obj.objects3D as objects3D
 from src.utils.tools_airfoil import load_ddls_airfoil, load_ddls_airfoil_030, Reference_load
 from src.utils.tools_program import convert_ndarray_to_list, convert_list_to_ndarray, parse_from_params, parse_from_attrs, decode_json, get_archive_version, update_attrs_dict, update_params_dict
+from src.obj.class_airfoil import Airfoil
 
 class Project:
     def __init__(self, program=None):
@@ -85,39 +87,46 @@ class Project:
 
             self.logger.info(f"Saved file as: {self.name} to location: {self.path}")
 
-    def open(self, filePath):
+    def open(self, filePath, progress_callback=None):
         
         if not filePath:
             self.logger.error("File path not specified or incorrect!")
-            return
+            return False
 
         data = decode_json(filePath)
+        if data is None:
+            return False
         file_version = get_archive_version(data)
+        if not file_version or len(file_version) < 2:
+            self.logger.error("File has no valid Daedalus archive version.")
+            return False
 
         try:
             project_data = data["Project"]
         except KeyError as e:
-            self.logger.error(f"Missing key in ARF data - {e}")
-            self.logger.warning("File may not load properly or is not compatible with DAEDALUS")
-            return
+            self.logger.error("File corrupted or not compatible with DAEDALUS")
+            self.logger.debug(f"Missing key in ARF data - {e}")
+            return False
+        except TypeError as e:
+            self.logger.error("File corrupted or not supported! Cannot load")
+            self.logger.debug(f"TypeError: {e}")
+            return False
 
         # Check compatibility
         self.logger.debug("Checking compatibility...")
-        print(int(file_version[0]), int(file_version[1]))
-        print(int(file_version[0]) == 0, int(file_version[1]) < 4)
         if int(file_version[0]) == 0 and int(file_version[1]) < 4:
             self.logger.warning("There were critical changes to airfoil definition. Program will try to recreate saved airfoil to latest format. Checing the appending results is advised!")
             # Load airfoils from in-memory JSON
             self.logger.info("Loading airfoil using legacy approach...")
-            self._030_project_reader(data, self.PROGRAM, filePath)
+            self._030_project_reader(self.PROGRAM, data)
         else:
-            project_data = data["Project"]
-            self._project_reader(project_data)
+            if not self._project_reader(project_data, progress_callback):
+                return False
             
         self.logger.debug("Processing the data...")
+        return True
 
-    def _project_reader(self, project_data):
-        from src.widgets.widget_progress import ProgressDialog
+    def _project_reader(self, project_data, progress_callback=None):
         from src.obj.param import Param, Attr, M, MM, IN, FT, DEG, RAD
         from src.obj.class_airfoil import Airfoil
         from src.obj.class_component import Component
@@ -150,11 +159,24 @@ class Project:
         comp_no = len(components_vec)
 
         objects_no = comp_no + wing_no + segm_no
+        total_work = max(1, 2 * (airf_no + objects_no))
+        completed_work = 0
+        last_progress = 0
 
-        self.progressWidget = ProgressDialog(title="Opening Project...")
-        self.progressWidget.show()
-        self.progressWidget.max_value = 2*objects_no+10
-        self.progressWidget.set_progress(0, "Restoring project attributes...")
+        def update_progress(value, message):
+            nonlocal last_progress
+            last_progress = max(last_progress, min(99, value))
+            if progress_callback is not None:
+                progress_callback(last_progress, message)
+
+        def report_progress(message):
+            nonlocal completed_work
+            completed_work += 1
+            progress = min(99, int(completed_work * 100 / total_work))
+            update_progress(progress, message)
+
+        if progress_callback is not None:
+            update_progress(0, "Restoring project attributes...")
 
         # Restore PROJECT info
         self.name = project_data.get("name", self.name)
@@ -165,27 +187,27 @@ class Project:
         self.airfoils.clear()
      
         # Load airfoils from in-memory JSON
-        self.progressWidget.set_progress(5, "Loading airfoil entires...")
+        if progress_callback is not None:
+            update_progress(5, "Loading airfoil entries...")
         self.logger.debug("Loading airfoil entires...")
         try:
             airfoil_entries = project_data.get("airfoils", [])
-            print(airfoil_entries)
             for airfoil_entry in airfoil_entries:
                 arf_obj = load_ddls_airfoil(Airfoil(self.PROGRAM), airfoil_entry)
                 if arf_obj:
                     self.logger.debug(f"Found airfoil: {arf_obj.name}")
-                    # self.PROJECT._ensure_unique_airfoil_name(arf_obj)  # Ensure unique name
+                    # self.PROJECT._ensure_unique_name(arf_obj)  # Ensure unique name
                     self.airfoils.append(arf_obj)
                     arf_obj.update()
-                    self.progressWidget.increase_progress(1)
+                    report_progress(f"Loaded airfoil: {arf_obj.name}")
 
         except KeyError as e:
             self.logger.error(f"Missing key in ARF data - {e}")
             self.logger.warning("File may not load properly or is not compatible with DAEDALUS")
-            self.progressWidget.close()
-            return
+            return False
         
-        self.progressWidget.set_progress(30, "Loading components entires...")
+        if progress_callback is not None:
+            update_progress(30, "Loading component entries...")
         # Load components using templates
         self.logger.debug("Loading components entires...")
         for comp_data in project_data.get("components", []):
@@ -210,20 +232,21 @@ class Project:
                     update_params_dict(segment.params, seg_data.get("params", {}), UNITS_MAP)
 
                     wing.segments.append(segment)
-                    self.progressWidget.increase_progress(1, "Loaded segment...")
+                    report_progress(f"Loaded segment: {segment.name}")
                 component.wings.append(wing)
-                self.progressWidget.increase_progress(1, "Loaded wing...")
+                report_progress(f"Loaded wing: {wing.name}")
             self.components.append(component)
-            self.progressWidget.increase_progress(1, "Loaded component...")
+            report_progress(f"Loaded component: {component.name}")
 
         self.logger.info(f"Objects found inside saved file: ALL OBJECTS: {objects_no} | Components: {comp_no}, Wings: {wing_no}, Segments: {segm_no}, Airfoils: {airf_no}"),
 
-        self.progressWidget.increase_progress(5, "Rebuilding geometries...")
+        if progress_callback is not None:
+            update_progress(75, "Rebuilding geometry...")
         self.logger.info(f"Rebuilidng geometries...")
 
         for airfoil in self.airfoils:
             airfoil.update()
-            self.progressWidget.increase_progress(1)
+            report_progress(f"Rebuilding airfoil: {airfoil.name}")
         for c in range(len(self.components)):
             component = self.components[c]
             for w in range(len(component.wings)):
@@ -231,18 +254,19 @@ class Project:
                 for s in range(len(wing.segments)):
                     segment = wing.segments[s]
                     segment.update()
-                    self.progressWidget.increase_progress(1, "Updating segment...")
+                    report_progress(f"Updating segment: {segment.name}")
                 wing.update()
-                self.progressWidget.increase_progress(1, "Updating wing...")
+                report_progress(f"Updating wing: {wing.name}")
             component.update()
-            self.progressWidget.increase_progress(1, "Updating component...")
+            report_progress(f"Updating component: {component.name}")
 
-        self.progressWidget.set_progress(100, "Update finished!")
+        if progress_callback is not None:
+            progress_callback(100, "Project loaded.")
         self.logger.debug("Update finished!")
 
         self.logger.info(f"Project archive '{self.name}' successfully loaded")
 
-        self.progressWidget.close()
+        return True
 
     def _030_project_reader(self, program, project_data):
         # Restore PROJECT info
@@ -356,30 +380,38 @@ class Project:
         # This is also the perfect place to set an "unsaved changes" flag if you have one!
         # self.is_modified = True
 
-    def _ensure_unique_airfoil_name(self, airfoil):
-        """Ensure the airfoil has a unique name by appending a number if necessary."""
-        base_name = airfoil.name
-        counter = 1
-        existing_names = [a.name for a in self.airfoils if a is not airfoil]
-        while airfoil.name in existing_names:
-            airfoil.name = f"{base_name}.{str(counter).zfill(3)}"
-            counter += 1
-    
-    def _ensure_unique_object_name(self, object):
-        """Ensure the airfoil has a unique name by appending a number if necessary."""
-        base_name = object.name
-        counter = 1
-        existing_names = []
+    def _ensure_unique_name(self, obj):
+        """Normalize generated .NNN suffixes and assign a unique name."""
+        base_name = obj.name
+        while True:
+            prefix, separator, suffix = base_name.rpartition(".")
+            if (
+                not separator
+                or not prefix
+                or len(suffix) != 3
+                or not suffix.isdigit()
+            ):
+                break
+            base_name = prefix
 
-        for component in self.components:
-            existing_names.append(component.name)
-            for wing in component.wings:
-                existing_names.append(wing.name)
-                for segment in wing.segments:
-                    existing_names.append(segment.name)
-                    
-        while object.name in existing_names:
-            object.name = f"{base_name}.{str(counter).zfill(3)}"
+        if isinstance(obj, Airfoil):
+            existing_names = [airfoil.name for airfoil in self.airfoils if airfoil is not obj]
+        else:
+            existing_names = []
+            for component in self.components:
+                if component is not obj:
+                    existing_names.append(component.name)
+                for wing in component.wings:
+                    if wing is not obj:
+                        existing_names.append(wing.name)
+                    for segment in wing.segments:
+                        if segment is not obj:
+                            existing_names.append(segment.name)
+
+        obj.name = base_name
+        counter = 1
+        while obj.name in existing_names:
+            obj.name = f"{base_name}.{counter:03d}"
             counter += 1
     
     def _prep_json_data(self):
@@ -524,3 +556,26 @@ class Project:
         # json_object = json.dumps(airfoils, indent=1)
 
         return designed_components
+
+
+class ProjectLoadWorker(QThread):
+    progress = pyqtSignal(int, str)
+
+    def __init__(self, program, file_path, parent=None):
+        super().__init__(parent)
+        self.program = program
+        self.file_path = file_path
+        self.loaded_project = None
+        self.error = None
+
+    def run(self):
+        try:
+            project = Project(self.program)
+            if not project.open(self.file_path, self.progress.emit):
+                raise ValueError("The selected file could not be loaded.")
+            self.loaded_project = project
+        except Exception as error:
+            self.error = error
+            logging.getLogger(__name__).exception(
+                "Failed to load project '%s'.", self.file_path
+            )

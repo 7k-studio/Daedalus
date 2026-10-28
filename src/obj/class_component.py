@@ -43,7 +43,7 @@ class Component:
         }
 
         self.stats = {
-            'Test': Param('test', 0, M)
+            'Wings number': Param('Wings', 0, M)
         }
 
         self.wings = []
@@ -61,6 +61,7 @@ class Component:
     def update(self):
         self.logger.info("Updating COMPONENT...")
         self.logger.debug("   This function is pointless :( ")
+        self.stats['Wings number'].set(self.calc_wings_no())
         #self.params['origin_X'] = 0
         #self.params['origin_Y'] = 0
         #self.params['origin_Z'] = 0
@@ -76,3 +77,6 @@ class Component:
         self.params['origin_Y'].set(self.params['origin_Y'].get() + cmp_Y)
         self.params['origin_Z'].set(self.params['origin_Z'].get() + cmp_Z)
         self.logger.debug("Done!")
+
+    def calc_wings_no(self):
+        return len(self.wings)

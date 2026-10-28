@@ -22,31 +22,11 @@ import os
 from PyQt6.QtWidgets import QFileDialog, QMessageBox
 
 def fit2ref(menu_obj):
-    """Fit the currently selected airfoil in airfoils_menu to the reference_airfoil by optimizing its parameters."""
+    """Open the reference-fitting dialog for the selected airfoil."""
     menu_obj.logger.info("Opening Fit2Ref window...")
-    if menu_obj.main_window.AIRFOIL_MODULE:
-        # Get selected item and corresponding airfoil object
-        selected_items = menu_obj.main_window.AIRFOIL_MODULE.TREE_AIRFOIL.tree.selectedItems()
-        if not selected_items:
-            menu_obj.logger.warning("No airfoil selected in the tree menu.")
-            return None
-        selected_item = selected_items[0]
-        airfoil_name = selected_item.text(0)
-        # Find airfoil object by name
-        current_airfoil = None
-        import src.program.program as globals
-        for af in globals.PROJECT.project_airfoils:
-            if af.info.get('name', '') == airfoil_name:
-                current_airfoil = af
-                break
-        if current_airfoil is None:
-            menu_obj.logger.warning("Selected airfoil object not found.")
-            return None
-        
-        # Open the Fit2RefWindow dialog
-        import program.modules.arfdes.fit_2_reference as fit_2_reference
-        dlg = fit_2_reference.Fit2RefWindow(parent=menu_obj.main_window.AIRFOIL_MODULE, current_airfoil=current_airfoil, reference_airfoil=menu_obj.main_window.AIRFOIL_MODULE.reference_airfoil)
-        dlg.exec_()
+    module = menu_obj.main_window.AIRFOIL_MODULE
+    if module:
+        module.fit2Reference()
 
 def placeholder(menu_obj):
     menu_obj.logger.info("Placeholder action triggered")
@@ -95,6 +75,9 @@ def export_airfoil(menu_obj):
     else:
         menu_obj.logger.error("No valid file path provided")
         return
+
+def duplicate_airfoil(menu_obj):
+    menu_obj.main_window.AIRFOIL_MODULE.duplicateAirfoil()
 
 def delete_airfoil(menu_obj):
     msg = QMessageBox.question(None, "Delete Airfoil", "Are you sure you want to delete the airfoil? Current version of the program does not have an Undo button!", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.No)

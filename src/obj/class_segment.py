@@ -26,7 +26,7 @@ from src.obj.param import Param, Attr, M, DEG
 from src.obj.curves import BSpline
 
 class Segment:
-    def __init__(self, program=None, project=None, parent=None):
+    def __init__(self, program=None, project=None, parent=None, airfoil=None):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.DAEDALUS = program
         self.PROJECT = project
@@ -48,8 +48,10 @@ class Segment:
 
         self.skin = Skin(self.DAEDALUS, self)
         
+        if airfoil is None:
+            airfoil = self.PROJECT.airfoils[-1]
         self.attrs = {
-            'airfoil': Attr('airfoil', self.PROJECT.airfoils[-1], [arf.name for arf in self.PROJECT.airfoils]) # G2 later add 'segment'
+            'airfoil': Attr('airfoil', airfoil, [arf.name for arf in self.PROJECT.airfoils]) # G2 later add 'segment'
         }
         
         # Segment positioning parameters
@@ -61,8 +63,27 @@ class Segment:
         }
 
         self.stats = {
-            'Test': Param('test', 0, M)
+            "Position LE X": Param("Position LE X", 0, M),
+            "Position LE Y": Param("Position LE Y", 0, M),
+            "Position TE X": Param("Position TE X", 0, M),
+            "Position TE Y": Param("Position TE Y", 0, M),
             }
+        
+    def calc_LE_position(self):
+    
+        index_min = min(range(len(self.le_spline.geom[0])), key=self.le_spline.geom[0].__getitem__)
+        pos_X = self.le_spline.geom[0][index_min]
+        pos_Y = self.le_spline.geom[1][index_min]
+
+        return pos_X, pos_Y
+
+    def calc_TE_position(self):
+        
+        index_min = min(range(len(self.le_spline.geom[0])), key=self.le_spline.geom[0].__getitem__)
+        pos_X = self.le_spline.geom[0][index_min]
+        pos_Y = self.le_spline.geom[1][index_min]
+
+        return pos_X, pos_Y
     
     def update(self):
         """
@@ -115,6 +136,13 @@ class Segment:
         self.te_spline.create()
         self.ps_spline.create()
         self.ss_spline.create()
+
+        pos_le_x, pos_le_y = self.calc_LE_position()
+        self.stats['Position LE X'].set(pos_le_x)
+        self.stats['Position LE Y'].set(pos_le_y)
+        pos_te_x, pos_te_y = self.calc_TE_position()
+        self.stats['Position TE X'].set(pos_te_x)
+        self.stats['Position TE Y'].set(pos_te_y)
         
         self.logger.info("SEGMENT 3D splines successfully generated from shared airfoil.")
     

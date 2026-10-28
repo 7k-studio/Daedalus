@@ -1,213 +1,122 @@
-# Change Log
+# Change Log v0.4.0-beta
 
-## v0.4.0-beta status - 2026-09-01
+This release **migrates the Daedalus to reworked and unified object definition model**, in which:
+- An airfoil is composed of separate Leading Edge (LE), Trailing Edge (TE), Pressure Side (PS), and Suction Side (SS) which use common **spline geometrical object**.
+- The Wing surface is crated using **Surface Patch object** creating an interpolated or approximated loft between the Segments.
 
-This release migrates the Daedalus to v0.4 object definition model, in which:
-- An airfoil is composed of separate Leading Edge (LE), Trailing Edge (TE), Pressure Side (PS), and Suction Side (SS) spline objects
-- The Wing surface is crated using Surface Patch creating a loft between the Segments
+Additionally, the changes to the program code/structure were introduced separating ***Project***, form ***Program***.
 
-### Completed
+### Program
+ - Program now stores the user preferences and **appearance**.
+    - four color schemes are available for Daedalus GUI: *Light*, *Dark*, *Daeadalus-Light*, *Daedalus-Dark*
+    - four color schemes are available for Airfoil Designer: *Light*, *Dark*, *Greenprint*, *Blueprint*
+ - The GUI environment migrated from PyQt5 to latest standard **PyQt6**
+ - Splash Screen menu replaced with **Home Screen**
 
-- Airfoil files can be saved using the new LE/TE/PS/SS object hierarchy.
-- File **New**, **Open**, **Save**, and **Save As** operations were adapted to
-    the new airfoil structure. **Edit Project Description** and **Exit** are
-    also working, including widget updates and exit confirmation.
-- Airfoil actions now work with the new definition: create, append, delete,
-    flip, save, export, and rename. Rename preserves unique airfoil names.
-- The airfoil tree now displays spline type information, stores selected
-    object data, and handles refreshes when type information is missing.
-- The parameter table updates from selected airfoils, clears after deletion,
-    and preserves nominal values until project opening or refresh.
-- Description editing supports viewing, editing, accepting or rejecting
-    changes, and clearing the widget after an airfoil is deleted.
-- The statistics table works in both Airfoil Designer and Wing Designer and
-    reacts to parameter-table changes.
-- Reference airfoils can be added, deleted, shown, and hidden through the
-    reference widget and menu. The menu also provides a management pop-up.
-- The toolbar provides airfoil actions and keyboard shortcuts:
-    `Shift+N` (new), `Shift+A` (append), `Shift+X` (delete), `Shift+F` (flip),
-    and `Shift+S` (save).
-- View fitting, synchronized window actions, the Wing module switch, and the
-    User Manual, About, and Preferences dialogs are available.
-- Wing Designer supports adding and deleting components, wings, and segments.
-    Segment creation also updates the parent airfoil in the object tree.
-- Wing wireframes, connection wireframes, surfaces, skin instances, and
-    surface patches are handled by OpenGL. STEP export was adapted to the v0.4
-    object model.
-- The application was migrated to PyQt6. Window color schemes and the 2D
-    viewport modes Bright, Dark, Blueprint, and Greenprint are available.
+### Project
+Saving adapted to new airfoil and component standards.
+Each object (Component, Wing, Segment, Airfoil) now has to have unique name. When creating or renaming the program takes care of it.
 
-### Known limitations and postponed work
+### Widget
+Widgets are now devided between *commmon* and *module specific*.
+*Common*:
+1. **Project description** - Edits the **Project** description
+2. **Logger Console** - outputs the data. Updates the log file once the file is updated. The color is adjusted to differenciate between DEBUG, INFO, WARNING, ERROR, CRITICAL.
+3. **Tool Bar** - quick access to the functions of the program. It is possible to use shortcuts: `Ctrl+N` for New Project, `Ctrl+O` for Open Project, `Ctrl+S` for Save Project, `Ctrl+E` for Edit description.
+    > Common between modules are file menu functions
+4. **Parameters Table** - displays and modifies the parameters (Each module has its own instance but build is common)
+5. **Statistics Table** - displays selected airfoil statistics (Each module has its own instance but build is common)
 
-- Current `.ddls` airfoils and archived `.ddls` files cannot yet be loaded as
-    reference airfoils. Selig `.txt` and `.dat` references are supported.
-- Reference editing and flipping are postponed to v4.1.
-- Fit2Reference, curvature comb, camberline, and spline control-type editing
-    are postponed to v4.1.
+For now the airfoil functions are displayed for quick access it also supports shortcuts:
+
+
+## Compatibility note
+
+> Projects and exporters must account for the v0.4 hierarchy: LE, TE, PS, and SS are independent objects rather than subsections stored only in the airfoil parameter or attribute dictionaries.
+
+### Known limitations
+
+- Some archived DDLS versions may require recreation during reference import;
+    inspect the loaded geometry before fitting.
 - Some preference changes still require an application restart.
-- Further investigation of the statistics provided by the application is
-    postponed to v4.1.
-
-### Compatibility note
-
-Projects and exporters must account for the v0.4 hierarchy: LE, TE, PS, and
-SS are independent objects rather than subsections stored only in the
-airfoil parameter or attribute dictionaries.
-
-# Previous ToDo
-
-### Airfoil Tree
-An airfoil tree was adjusted to match new convention
-**ToDo:**
-- [x] Add 'type' column Airfoil tree
-    - [ ] control type of LE and TE: free (F), circle (C), elipse(E)
-- [x] There is a bug on tree refreshe when ***Type*** is missing
-
-### Reference Tree
-A reference widget with buttons was created.
-- [x] **Add** button works properly for selig format airfoils
-- [x] **Show/Hide** button works properly for selig format airfoils
-**ToDo:**
-- [ ] To be able to load ddls files as reference
-- [ ] To allow to delete reference
-- [ ] Secondary:
-    - [ ] To allow to modify the reference
-
-### Parameter Table
-Updates and populates the tabel properly with the selected airfoil data
-**ToDo:**
-- [ ] To repair nominal to stay put untill project open or refresh
-
-### Description TextArea
-Exists but does not work as intendet
-**ToDo:**
-- [ ] To populate the text area with description of selected airfoil
-
-### Statistics Table
-Populates the table with selected airfoil's statistics
-**ToDo:**
-- [ ] To investigate the statistics of interest
-- [ ] To enlarge the available statistics storage
-
-### Tool Bar
-Exists but does not work as intendet
-**ToDo:**
-- [ ] To assign functions to each button
-- [ ] To enlarge the Toolbar with other Essentail Tools
-
-### Menu Bar
-Has a lot to investiagte
-**Checked/Partially Checked:**
-- File Menu:
-    - [ ] New ← works and refreshes the widgets of tree airfoil and reference
-    - [ ] Open ← works as a button but **function should be checked after clarification of new airfoil definition**
-    - [ ] Save ← works as a button but **function should be checked after clarification of new airfoil definition**
-    - [ ] Save As ← works as a button but **function should be checked after clarification of new airfoil definition**
-    - [x] Edit Project Description ← **works as intended**
-    - [x] Exit ← **works as intended**
-
-- Program Menu:
-    - [x] User Manual ← **works as intended**
-    - [x] About ← **works as intended**
-    - [x] Preferences ← **works as intended**
-
-**ToDo:**
-- Airfoil -- *Check if functions are working with new airfoil definition:*
-    - [ ] Create ← works! + to add to tool bar
-    - [ ] Append
-    - [ ] Delete ← works! + to add to tool bar
-    - [ ] Flip
-    - [ ] Save
-    - [ ] Export
-    - [ ] Rename
-    - [ ] Edit description ← requires rework
-    - [ ] Fit2Reference
-- Reference
-    - [ ] Add
-    - [ ] Delete
-    - [ ] Show
-    - [ ] Edit
-    - [ ] Flip
-- View
-    - [ ] Fit view
-    - [ ] Show Curvature comb
-    - [ ] Show camberline
-- Window
-    - [ ] Airfoil Tree
-    - [ ] Reference Tree
-    - [ ] Parameter Table
-    - [ ] Logger Console
-    - [ ] Description TextArea
-    - [ ] Statistics Table
-- Module
-    - [ ] Wing Module
-
-## Rework:
-**View menu**
-- [ ] set view back to airfoil
-- [ ] curvature comb?
-- [ ] strzalka ugięcia
-
-**Description Widget**
-**Reference Widget**
-**Statistics Table**
-Looks like it refreshes only after click on airfoil tree
-
-Chords statistic: calc from Pitagoras
 
 ---
-
-# Changelog notes
-
-A new airfoil definition was introduced in the 0.4 version. LE, TE, PS and SS are now separated objects, creating whole airofil.
-This led to new Tree Layout where Airfoil is created out of respective objects as parents and childrens.
-
-Migration to PyQt6
-
-## Program class
-
-## Project
-The structure of Project has been reworked with more conviniently alocated functions such as **New**, **Open**, **Save**, **Save As**, **Edit project description**, **Exit**
-Project collects data of:
- - Project Name
- - Project Path
- - Creation Date
- - Modification Date
- - Project Description
- - Created Airfoils
- - Nominal versions of created airfoils - **TO DO: which should refresh on each project launch**
- - Reference Airfoils stored as Selig format .txt or .dat file or **TO DO: handle ddls airfoils**
- - ***Project Components***
- - ***Nominal Components***
-
-## Color schemes
-With version 0.4.X color schemes are to be choosen from preferences for viewports and for windows and widgets.
-New window modes added:
- - Light - bright mode including white and grey
- - Dark - dark mode including black and dark grey
- - Deadalus Light - bright mode with deadalus characteristic colors light blue and light orange
- - Deadalus Dark - dark mode including reversed Deadalus characterisict colors mostly dark blue  
-
-Additionaly 2D viewport in Airfoil Designer has 4 modes:
- - Bright: white color with dark construction elements 
- - Dark: dark color with bright construction elements
- - Blueprint: dark blue background
- - Greenprint: green background 
-
----
-
 ## Airfoil Designer
 
 ### New Airfoil definition
-A new airfoil definition was established.
+Several changes were made in the Airfoil Designer including a new airfoil definition. New airfoil definition divides the airfoil's parameters into:
+- **main paramters** - which allow to specify thickness, legnth and angles
+- **curvature parameters** - which refine the airfoil and control the shape of the curves
 
-### Airfoil Designer - New widgets
-Airfoil Designer was extended to new widgets and old ones got refined. From version v0.4 following widgets are available:
+Module was extended to new widgets and old ones got refined. 
 
-#### 1. Airfoil Tree
-An airfoil tree was adjusted to match new convention. The column ***type*** was also added to the widget. It displays the type of the spline: 
+### Airfoils
+There are several operations to be performed on airfoil in v0.4 which can be:
+- Select via: **Airfoil Tree Widget**
+- Modified via: **Edit menu**, **Parameter Table Widget**, **Tool Bar Widget**
+- Analyzed via: **Statistics Table**
 
-The control type of Leading Edge *LE* and Trailing Edge *TE*: free (**F**) <br> for Pressure Side *PS* and Suction Side *SS*: curvature (**C**)
 
-#### 2. Logger Console
-Console only outputs the data. Updates the log file once the file is updated. The color is adjusted to differenciate between DEBUG, INFO, WARNING, ERROR, CRITICAL.
+New functions:
+- **Duplicate** selected airfoil
+- **Fit to Reference** shows a widgets where interatively an airfoil can be matched with a reference
+
+Removed functions:
+- **Airfoil description** option was removed and replaced with **Project description**
+
+### References
+The references in the v0.4 can be handled independently of selected airfoil. The references can be accessed:
+- via dockable widget
+- via Reference menu and Reference Manager Window
+
+In both cases it is possible to:
+-  **Add** which allows to load:
+    - current format airfoil,
+    - ddls v0.3 format airfoil,
+    - XY-point reference airfoil, 
+- **Delete** selected unused reference
+- **Show/Hide** an airfoil in the viewport
+- **Edit** to scale the XY-point reference to the size of interest
+
+### Widgets
+1. **Airfoil Tree** was adjusted to match new convention. The column ***type*** was also added to the widget. It displays the type of the spline. The type of Leading Edge *LE*, Trailing Edge *TE*, Pressure Side *PS* and Suction Side *SS*: can be set to **G1** or **G2**
+2. **Tool Bar** New element added to GUI to quickly navigate the functions of the program. The toolbar provides airfoil actions and keyboard shortcuts: `Shift+N` (new), `Shift+A` (append), `Shift+X` (delete), `Shift+F` (flip), and `Shift+S` (save).
+
+---
+## Wing Designer
+
+Wing Designer changes were triggered by the refined Airfoil definition. Similarly the Wing object was changed from several segments to 4 normalzied surfaces defined by spline geometrical objects.
+
+**New:**
+- **Rename Object** - it is possible to rename the objects in the Wing Designer. The objects must have the unique name which is ensured on each name change. If name is taken an intiger will be assigned in the end of the name.
+- 
+
+### Component object
+
+**New:**
+- **Duplicate** - it is possible to duplicate the component
+
+### Wing object
+Wing object now stores the surfaces defined by it's segments and the connecting spline. 
+
+**Removed:**
+- Wings no longer have their own coordinate system
+
+**New:**
+- Wings now have 2 attributes: 
+    - ***direction*** - will allow to change the growth direction
+    - ***connection*** - does allow to change the connecting splines definition (*Approximated* or *Interpolated*)
+- **Duplicate** - it is possible to duplicate the wing
+
+### Segment object
+Segments continue to store parameters such as *position X, Y*, but the Z coordinate was changed to ***span***. In v0.4 in **Object Tree** below the *Segment* instance the parent Airfoil appears allowing to modify the main airfoil parameters on the spot in Wing Designer. For detailed airfoil modification movig to Airfoil Designer is needed.
+
+**New:**
+- **Duplicate** - it is possible to duplicate the segment
+
+
+### Widgets
+1. **Tool Bar** New element added to GUI to quickly navigate the functions of the program. The toolbar provides Component/Wing/Segment actions and keyboard shortcuts: `Shift+C` (new component), `Shift+W` (new wing), `Shift+S` (new segment)
+
+### STEP export
+STEP export now modified to proveide more robust model from standardized geometries definition. The export uses the same spline for surface definition in STEP ensuring connectivity and continuity of the surface.

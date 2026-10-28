@@ -29,6 +29,8 @@ from PyQt6.QtWidgets import (
     )
 from PyQt6.QtCore import Qt, pyqtSignal
 
+from src.obj.class_airfoil import SeligAirfoil
+
 class WidgetReference(QWidget):
     referenceStatus = pyqtSignal(bool, str)
     def __init__(self, program=None, project=None, parent=None, airfoil_designer=None, mode='show', references=None):
@@ -78,12 +80,13 @@ class WidgetReference(QWidget):
         delButton.setFixedSize(24, 24)
 
         ediButton = QPushButton("Edit")
-        ediButton.clicked.connect(self.AIRFOIL_MODULE.editReference)
+        ediButton.clicked.connect(self.trigger_edit)
         ediButton.setFixedHeight(24)
 
         options_buttons.addWidget(addButton)
         options_buttons.addWidget(delButton)
         options_buttons.addStretch()
+        options_buttons.addWidget(ediButton)
         
         # if self.PROGRAM.preferences['general'].get('beta_features', False):
         #     options_buttons.addWidget(ediButton)
@@ -112,6 +115,21 @@ class WidgetReference(QWidget):
                 
         if refs_to_delete:
             self.AIRFOIL_MODULE.deleteReference(refs_to_delete)
+        self.refresh_table()
+
+    def trigger_edit(self):
+        selected_rows = self.table.selectionModel().selectedRows()
+        if not selected_rows:
+            self.logger.warning("First select a reference airfoil to edit!")
+            return
+        
+        name_item = self.table.item(selected_rows[0].row(), 0)
+        selected_reference = name_item.data(Qt.ItemDataRole.UserRole) if name_item else None
+        if not isinstance(selected_reference, SeligAirfoil):
+            self.logger.warning("Only XY-format reference airfoils can be edited!")
+            return
+
+        self.AIRFOIL_MODULE.editReference(selected_reference)
         self.refresh_table()
 
     def on_item_changed(self, item):

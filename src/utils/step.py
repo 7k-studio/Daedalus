@@ -155,6 +155,9 @@ class Daedalus2Step:
         all_open_shells = []
 
         self.all_elements_store["patches"] = []
+        cartesian_point_cache = {}
+        vertex_point_cache = {}
+        edge_curve_cache = {}
 
         if not self.PROJECT:
             return None
@@ -182,12 +185,25 @@ class Daedalus2Step:
                     if not cp_grid_data:
                         continue
 
-                    cp_store, cp_grid_objs = _write_control_points(cp_grid_data, key)
-                    vp_store, vp_grid_objs = _write_vertex_point(cp_grid_objs, key)
+                    cp_store, cp_grid_objs = _write_control_points(
+                        cp_grid_data, key, cartesian_point_cache
+                    )
+                    vp_store, vp_grid_objs = _write_vertex_point(
+                        cp_grid_objs, key, vertex_point_cache
+                    )
 
                     bound_attrs = patch_boundary_map[key]
                     parent_splines = [getattr(patch, attr, None) for attr in bound_attrs]
-                    o_edges, e_curves, b_splines = _write_oriented_edge_from_uv_grid(key, cp_grid_objs, vp_grid_objs, parent_splines)
+                    o_edges, e_curves, b_splines = _write_oriented_edge_from_uv_grid(
+                        key,
+                        cp_grid_objs,
+                        vp_grid_objs,
+                        parent_splines,
+                        cartesian_point_cache,
+                        vertex_point_cache,
+                        edge_curve_cache,
+                        (id(wing), key),
+                    )
 
                     b_spline_surf, edge_loop, face_bound, advanced_face = _write_advanced_face_from_patch(
                         key, u_deg, v_deg, cp_grid_objs, knots_u, knots_v, o_edges
@@ -268,23 +284,31 @@ def _extract_patch_data(patch):
     return None, 3, 3, None, None
 
 
-def _write_control_points(uv_grid=None, key=None):
+def _write_control_points(uv_grid=None, key=None, point_cache=None):
     cp_store = []
     rows = len(uv_grid)
     cols = len(uv_grid[0])
     tmp_control_points_grid = [[None for _ in range(cols)] for _ in range(rows)]
+    point_cache = {} if point_cache is None else point_cache
 
     for j in range(rows):
         for i in range(cols):
             coords = normalized_coords(uv_grid[j][i][0], uv_grid[j][i][1], uv_grid[j][i][2])
-            cp = CartesianPoint(desc='Control Point', X=coords[0], Y=coords[1], Z=coords[2])
+            cp = point_cache.get(coords)
+            if cp is None:
+                cp = CartesianPoint(
+                    desc='Control Point', X=coords[0], Y=coords[1], Z=coords[2]
+                )
+                point_cache[coords] = cp
             tmp_control_points_grid[j][i] = cp
             cp_store.append(cp)
 
     return cp_store, tmp_control_points_grid
 
 
-def _write_vertex_point(uv_grid_of_objects: list, key: str):
+def _write_vertex_point(
+    uv_grid_of_objects: list, key: str, vertex_point_cache=None
+):
     vp_store = []
     rows = len(uv_grid_of_objects)
     cols = len(uv_grid_of_objects[0])
@@ -292,9 +316,18 @@ def _write_vertex_point(uv_grid_of_objects: list, key: str):
     max_u = rows - 1
     max_v = cols - 1
     tmp_vertex_points_grid = [[None for _ in range(cols)] for _ in range(rows)]
+    vertex_point_cache = (
+        {} if vertex_point_cache is None else vertex_point_cache
+    )
 
     def add_vp(r, c, label):
-        vp = VertexPoint(f"End point {key} {label}", cartesian_point=uv_grid_of_objects[r][c])
+        point = uv_grid_of_objects[r][c]
+        vp = vertex_point_cache.get(id(point))
+        if vp is None:
+            vp = VertexPoint(
+                f"End point {key} {label}", cartesian_point=point
+            )
+            vertex_point_cache[id(point)] = vp
         tmp_vertex_points_grid[r][c] = vp
         vp_store.append(vp)
 
@@ -306,10 +339,24 @@ def _write_vertex_point(uv_grid_of_objects: list, key: str):
     return vp_store, tmp_vertex_points_grid
 
 
-def _write_oriented_edge_from_uv_grid(key, cp_uv_grid, vp_uv_grid, parent_splines=None):
+def _write_oriented_edge_from_uv_grid(
+    key,
+    cp_uv_grid,
+    vp_uv_grid,
+    parent_splines=None,
+    point_cache=None,
+    vertex_point_cache=None,
+    edge_curve_cache=None,
+    face_key=None,
+):
     spline_store = []
     ec_store = []
     oe_store = []
+    point_cache = {} if point_cache is None else point_cache
+    vertex_point_cache = (
+        {} if vertex_point_cache is None else vertex_point_cache
+    )
+    edge_curve_cache = {} if edge_curve_cache is None else edge_curve_cache
 
     key_lower = key.lower()
     txt = [f'{key_lower}_v_fwd', f'{key_lower}_u_rwd', f'{key_lower}_v_rwd', f'{key_lower}_u_fwd']
@@ -330,23 +377,118 @@ def _write_oriented_edge_from_uv_grid(key, cp_uv_grid, vp_uv_grid, parent_spline
         if slice_type == 'row':
             for c in range(cols):
                 spline_cp.append(cp_uv_grid[idx_val][c])
-            ve_start = vp_uv_grid[idx_val][0]
-            ve_end = vp_uv_grid[idx_val][-1]
+            grid_start_vertex = vp_uv_grid[idx_val][0]
+            grid_end_vertex = vp_uv_grid[idx_val][-1]
         else:
             for r in range(rows):
                 spline_cp.append(cp_uv_grid[r][idx_val])
-            ve_start = vp_uv_grid[0][idx_val]
-            ve_end = vp_uv_grid[-1][idx_val]
+            grid_start_vertex = vp_uv_grid[0][idx_val]
+            grid_end_vertex = vp_uv_grid[-1][idx_val]
 
         parent_spline = parent_splines[p_idx] if parent_splines and len(parent_splines) > p_idx else None
+        spline_coordinates = None
+        if parent_spline is not None:
+            try:
+                coordinates = np.asarray(
+                    parent_spline.control_points, dtype=float
+                )
+                if coordinates.ndim == 2 and coordinates.shape[0] in (2, 3):
+                    spline_coordinates = coordinates.T
+            except (TypeError, ValueError):
+                spline_coordinates = None
+
+        if spline_coordinates is not None and len(spline_coordinates) >= 2:
+            spline_cp = []
+            for point in spline_coordinates:
+                coords = normalized_coords(
+                    point[0], point[1], point[2] if len(point) > 2 else 0.0
+                )
+                cartesian_point = point_cache.get(coords)
+                if cartesian_point is None:
+                    cartesian_point = CartesianPoint(
+                        desc='Shared boundary control point',
+                        X=coords[0],
+                        Y=coords[1],
+                        Z=coords[2],
+                    )
+                    point_cache[coords] = cartesian_point
+                spline_cp.append(cartesian_point)
 
         bspline = BSplineWithKnots(label, cartesian_points=spline_cp, spline_obj=parent_spline)
-        spline_store.append(bspline)
+        point_coordinates = tuple(
+            (point.X, point.Y, point.Z) for point in spline_cp
+        )
+        reversed_coordinates = tuple(reversed(point_coordinates))
+        canonical_coordinates = min(point_coordinates, reversed_coordinates)
+        edge_key = (
+            id(parent_spline) if parent_spline is not None else None,
+            canonical_coordinates,
+            bspline.degree,
+            tuple(bspline.mults),
+            tuple(bspline.knots),
+        )
+        face_identity = face_key if face_key is not None else (key, id(cp_uv_grid))
+        matching_edge = next(
+            (
+                entry for entry in edge_curve_cache.get(edge_key, ())
+                if face_identity not in entry["faces"]
+                and len(entry["faces"]) < 2
+            ),
+            None,
+        )
+        if matching_edge is not None:
+            edge_curve = matching_edge["edge_curve"]
+            # Adjacent faces must traverse their shared edge in opposite directions.
+            orientation = (
+                'F' if matching_edge["orientation"] == 'T' else 'T'
+            )
+            matching_edge["faces"].add(face_identity)
+        else:
+            start_point = spline_cp[0]
+            end_point = spline_cp[-1]
+            start_vertex = vertex_point_cache.get(id(start_point))
+            if start_vertex is None and getattr(
+                grid_start_vertex, "cartesian_point", None
+            ) is start_point:
+                start_vertex = grid_start_vertex
+            if start_vertex is None:
+                start_vertex = VertexPoint(
+                    f"End point {key} {label} start",
+                    cartesian_point=start_point,
+                )
+            vertex_point_cache[id(start_point)] = start_vertex
 
-        edge_curve = EdgeCurve(f'spline {label}', vp1=ve_start, vp2=ve_end, Curv=bspline)
+            end_vertex = vertex_point_cache.get(id(end_point))
+            if end_vertex is None and getattr(
+                grid_end_vertex, "cartesian_point", None
+            ) is end_point:
+                end_vertex = grid_end_vertex
+            if end_vertex is None:
+                end_vertex = VertexPoint(
+                    f"End point {key} {label} end",
+                    cartesian_point=end_point,
+                )
+            vertex_point_cache[id(end_point)] = end_vertex
+            edge_curve = EdgeCurve(
+                f'spline {label}',
+                vp1=start_vertex,
+                vp2=end_vertex,
+                Curv=bspline,
+            )
+            edge_curve_cache.setdefault(edge_key, []).append({
+                "edge_curve": edge_curve,
+                "orientation": orientation,
+                "faces": {face_identity},
+            })
+
+        spline_store.append(edge_curve.curve)
         ec_store.append(edge_curve)
 
-        oriented_edge = OrientedEdge(f'spline {label}', ec_obj=edge_curve, orientation=orientation)
+        oriented_edge = OrientedEdge(
+            f'spline {label}',
+            ec_obj=edge_curve,
+            orientation=orientation,
+        )
         oe_store.append(oriented_edge)
 
     return oe_store, ec_store, spline_store

@@ -65,6 +65,9 @@ def draw_wireframe(PROJECT, component_idx, wing_idx, segment_idx):
         if geom is not None and len(geom) > 0 and len(geom[0]) > 0:
             lines.draw_styled_line(geom, color=color_map[key])
 
+    if len(wing.segments) < 2:
+        return
+
     try:
         le_ps = wing.LE_PS.geom
         le_ss = wing.LE_SS.geom

@@ -55,6 +55,7 @@ def load_xy_points_as_reference(file):
     airfoil = SeligAirfoil()
     #airfoil.full_curve = np.vstack([UP_points, DW_points])
     airfoil.curve = AirfoilCoord
+    airfoil.source_curve = [point.copy() for point in AirfoilCoord]
     airfoil.name = airfoil_name
     logger.info(f"Finished loading {airfoil.name} in selig format")
     

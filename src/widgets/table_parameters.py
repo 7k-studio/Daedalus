@@ -478,12 +478,6 @@ class TableParameters(QTableWidget):
                 
                 segment_item = self.PROJECT.components[grandparent_index].wings[parent_index].segments[item_index]
                 element_item = segment_item.attrs['airfoil'].value
-                try:
-                    element_item.update()
-                    self.PROJECT.components[grandparent_index].wings[parent_index].segments[item_index].update()
-                    self.PROJECT.components[grandparent_index].wings[parent_index].update()
-                except Exception as e:
-                    self.logger.warning(f'Failed to transform segment: {e}')
 
             # ----- SEGMENT UPDATE -----
             elif parent_item and grandparent_item:
@@ -576,6 +570,7 @@ class TableParameters(QTableWidget):
             # Level 4: Airfoil triggers Segment update
             if great_grandparent_item:
                 updated_airfoil = element_item
+                updated_airfoil.update()
                 self._update_all_segments_with_airfoil(updated_airfoil)
 
             # Level 3: Segment update

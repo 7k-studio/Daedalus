@@ -1,0 +1,248 @@
+{
+ "Program": {
+  "program name": "Daedalus",
+  "program version": "0.4.0-beta"
+ },
+ "Project": {
+  "name": "Not assigned",
+  "path": "D:/Programy/7kStudio/Daedalus/20261014_2047.arf.ddls",
+  "creation date": "2026-10-14 20:34:54",
+  "modification date": "2026-10-14 20:34:54",
+  "description": "Project description",
+  "airfoils": {
+   "name": "20261014_2047",
+   "path": "D:/Programy/7kStudio/Daedalus/20261014_2047.arf.ddls",
+   "format": "ddls-parametric",
+   "info": {
+    "creation_date": "2026-10-14",
+    "modification_date": "2026-10-14",
+    "description": ""
+   },
+   "attrs": {},
+   "params": {
+    "origin_X": {
+     "value": 0.019686515624999998,
+     "unit": "m"
+    },
+    "origin_Y": {
+     "value": 0.008437078125,
+     "unit": "m"
+    },
+    "stretch": {
+     "value": 0.98,
+     "unit": "m"
+    },
+    "incline": {
+     "value": 2.71875,
+     "unit": "deg"
+    },
+    "LE_thickness": {
+     "value": 0.06499774999999999,
+     "unit": "m"
+    },
+    "LE_angle": {
+     "value": 35.625,
+     "unit": "deg"
+    },
+    "TE_thickness": {
+     "value": 0.001,
+     "unit": "m"
+    },
+    "TE_angle": {
+     "value": 0.0,
+     "unit": "deg"
+    }
+   },
+   "stats": {
+    "Chord": {
+     "value": 0.9995457035923418,
+     "unit": "m"
+    },
+    "Position LE X": {
+     "value": -9.815199436126291e-07,
+     "unit": "m"
+    },
+    "Position LE Y": {
+     "value": 0.011594737845302773,
+     "unit": "m"
+    },
+    "Position TE X": {
+     "value": 0.9985834334321971,
+     "unit": "m"
+    },
+    "Position TE Y": {
+     "value": 0.05542143957610093,
+     "unit": "m"
+    }
+   },
+   "LE": {
+    "attrs": {
+     "type": {
+      "value": "G2"
+     }
+    },
+    "params": {
+     "ps_wedge": {
+      "value": 10.0,
+      "unit": "deg"
+     },
+     "ss_wedge": {
+      "value": 10.0,
+      "unit": "deg"
+     },
+     "ps_tan": {
+      "value": 0.0,
+      "unit": "m"
+     },
+     "ps_slope": {
+      "value": -38.0,
+      "unit": "deg"
+     },
+     "ps_curv": {
+      "value": 0.059996999999999995,
+      "unit": "m"
+     },
+     "ss_tan": {
+      "value": 0.0,
+      "unit": "m"
+     },
+     "ss_slope": {
+      "value": -32.0,
+      "unit": "deg"
+     },
+     "ss_curv": {
+      "value": 0.05,
+      "unit": "m"
+     }
+    },
+    "stats": {}
+   },
+   "TE": {
+    "attrs": {
+     "type": {
+      "value": "G2"
+     }
+    },
+    "params": {
+     "ps_wedge": {
+      "value": 5.0,
+      "unit": "deg"
+     },
+     "ss_wedge": {
+      "value": 8.0,
+      "unit": "deg"
+     },
+     "ps_tan": {
+      "value": 0.0,
+      "unit": "m"
+     },
+     "ps_slope": {
+      "value": -33.0,
+      "unit": "deg"
+     },
+     "ps_curv": {
+      "value": 0.0,
+      "unit": "m"
+     },
+     "ss_tan": {
+      "value": 0.0,
+      "unit": "m"
+     },
+     "ss_slope": {
+      "value": -33.0,
+      "unit": "deg"
+     },
+     "ss_curv": {
+      "value": 0.0,
+      "unit": "m"
+     }
+    },
+    "stats": {}
+   },
+   "PS": {
+    "attrs": {
+     "type": {
+      "value": "G2"
+     }
+    },
+    "params": {
+     "fwd_wedge": {
+      "value": 10.0,
+      "unit": "deg"
+     },
+     "fwd_tan": {
+      "value": 0.05,
+      "unit": "m"
+     },
+     "fwd_slope": {
+      "value": 0.0,
+      "unit": "deg"
+     },
+     "fwd_curv": {
+      "value": 0.1,
+      "unit": "m"
+     },
+     "rwd_wedge": {
+      "value": 5.0,
+      "unit": "deg"
+     },
+     "rwd_tan": {
+      "value": 0.4799809999999998,
+      "unit": "m"
+     },
+     "rwd_slope": {
+      "value": 3.0,
+      "unit": "deg"
+     },
+     "rwd_curv": {
+      "value": 0.3599869999999999,
+      "unit": "m"
+     }
+    },
+    "stats": {}
+   },
+   "SS": {
+    "attrs": {
+     "type": {
+      "value": "G2"
+     }
+    },
+    "params": {
+     "fwd_wedge": {
+      "value": 10.0,
+      "unit": "deg"
+     },
+     "fwd_tan": {
+      "value": 0.05,
+      "unit": "m"
+     },
+     "fwd_slope": {
+      "value": 0.0,
+      "unit": "deg"
+     },
+     "fwd_curv": {
+      "value": 0.1,
+      "unit": "m"
+     },
+     "rwd_wedge": {
+      "value": 8.0,
+      "unit": "deg"
+     },
+     "rwd_tan": {
+      "value": 0.3799859999999999,
+      "unit": "m"
+     },
+     "rwd_slope": {
+      "value": -42.0,
+      "unit": "deg"
+     },
+     "rwd_curv": {
+      "value": 0.1,
+      "unit": "m"
+     }
+    },
+    "stats": {}
+   }
+  }
+ }
+}

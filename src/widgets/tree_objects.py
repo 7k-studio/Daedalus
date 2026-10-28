@@ -39,6 +39,7 @@ class TreeObject(QTreeWidget):
         self.selected_component = None
         self.selected_wing = None
         self.selected_segment = None
+        self.selected_airfoil = None
         self.setIconSize(QSize(18, 18))
         self.setIndentation(12)
 
